@@ -1,0 +1,5 @@
+include setup.cfg *.rst *.md LICENSE
+exclude .bumpversion.cfg
+exclude *.txt
+recursive-include grafana_wtf *.py *.ini *.json
+prune tests
