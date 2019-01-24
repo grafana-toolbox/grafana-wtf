@@ -53,10 +53,15 @@ Create an API key by:
 
 - Go to https://daq.example.org/grafana/org/apikeys
 - Choose "New API Key"
-  - Key name: grafana-wtf
-  - Role: Admin
+    - Key name: grafana-wtf
+    - Role: Admin
 - From the output ``curl -H "Authorization: Bearer eyJrIjoiWHg...dGJpZCI6MX0=" ...``,
   please take note of the Bearer token. This is your Grafana API key.
+
+- Before running, define URL and access token of Grafana instance::
+
+    export GRAFANA_URL=https://daq.example.org/grafana/
+    export GRAFANA_TOKEN=eyJrIjoiWHg...dGJpZCI6MX0=
 
 
 ********

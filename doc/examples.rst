@@ -10,7 +10,7 @@ General
 =======
 ::
 
-    # Define URL to Grafana instance.
+    # Define URL and access token of Grafana instance.
     export GRAFANA_URL=https://daq.example.org/grafana/
     export GRAFANA_TOKEN=eyJrIjoiWHg...dGJpZCI6MX0=
 
