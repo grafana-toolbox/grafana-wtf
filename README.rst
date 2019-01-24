@@ -31,6 +31,22 @@ Search Grafana API for string "ldi_readings".
     grafana-wtf find ldi_readings
 
 
+*****
+Setup
+*****
+
+Configure
+---------
+Create an API key by:
+
+- Go to https://daq.example.org/grafana/org/apikeys
+- Choose "New API Key"
+    - Key name: grafana-wtf
+    - Role: Viewer
+- From the output ``curl -H "Authorization: Bearer eyJrIjoiWHg...dGJpZCI6MX0=" ...``,
+  please take note of the Bearer token. This is your Grafana API key.
+
+
 ********
 Examples
 ********

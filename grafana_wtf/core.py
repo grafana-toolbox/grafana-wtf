@@ -14,17 +14,24 @@ log = logging.getLogger(__name__)
 
 class GrafanaSearch:
 
-    def __init__(self, grafana_url):
+    def __init__(self, grafana_url, grafana_token):
         self.grafana_url = grafana_url
+        self.grafana_token = grafana_token
 
         url = urlparse(grafana_url)
 
-        # Set defaults
-        username = url.username or 'admin'
-        password = url.password or 'admin'
+        # Grafana API Key auth
+        if self.grafana_token:
+            auth = self.grafana_token
+
+        # HTTP basic auth
+        else:
+            username = url.username or 'admin'
+            password = url.password or 'admin'
+            auth = (username, password)
 
         self.grafana = GrafanaFace(
-            (username, password), protocol=url.scheme,
+            auth, protocol=url.scheme,
             host=url.hostname, port=url.port, url_path_prefix=url.path)
 
         self.data = Munch(datasources=[], dashboard_list=[], dashboards=[])

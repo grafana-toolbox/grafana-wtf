@@ -15,30 +15,34 @@ log = logging.getLogger(__name__)
 def run():
     """
     Usage:
-      grafana-wtf [--grafana-url=<grafana-url>] [--verbose] find [<expression>]
+      grafana-wtf [--grafana-url=<grafana-url>] [--grafana-token=<grafana-token>] [--verbose] find [<expression>]
       grafana-wtf --version
       grafana-wtf (-h | --help)
 
     Options:
-      --grafana-url=<grafana-url>   URL to Grafana instance
-      --verbose                     Enable verbose mode
-      --version                     Show version information
-      --debug                       Enable debug messages
-      -h --help                     Show this screen
+      --grafana-url=<grafana-url>       URL to Grafana instance
+      --grafana-token=<grafana-token>   Grafana API Key token
+      --verbose                         Enable verbose mode
+      --version                         Show version information
+      --debug                           Enable debug messages
+      -h --help                         Show this screen
 
     Note:
 
       Instead of obtaining the URL to the Grafana instance using
       the command line option "--grafana-url", you can use the
-      environment variable "GRAFANA_URL". Enjoy.
+      environment variable "GRAFANA_URL".
+      Likewise, use "GRAFANA_TOKEN" instead of "--grafana-token"
+      for propagating the Grafana API Key.
 
     Examples:
 
       # Search through all Grafana entities for string "ldi_readings".
-      grafana-wtf --grafana-url=https://admin:admin@daq.example.org/grafana/ find ldi_readings
+      grafana-wtf --grafana-url=https://daq.example.org/grafana/ --grafana-token=eyJrIjoiWHg...dGJpZCI6MX0= find ldi_readings
 
       # Search Grafana instance for string "luftdaten", using more convenient invoking flavor.
-      export GRAFANA_URL=https://admin:admin@daq.example.org/grafana/
+      export GRAFANA_URL=https://daq.example.org/grafana/
+      export GRAFANA_TOKEN=eyJrIjoiWHg...dGJpZCI6MX0=
       grafana-wtf find luftdaten
 
     """
@@ -56,12 +60,14 @@ def run():
     # Debugging
     #log.info('Options: {}'.format(json.dumps(options, indent=4)))
 
-    # Sanity checks
     grafana_url = options['grafana-url'] or os.getenv('GRAFANA_URL')
+    grafana_token = options['grafana-token'] or os.getenv('GRAFANA_TOKEN')
+
+    # Sanity checks
     if grafana_url is None:
         raise DocoptExit('No Grafana URL given. Please use "--grafana-url" option or environment variable "GRAFANA_URL".')
 
-    engine = GrafanaSearch(grafana_url)
+    engine = GrafanaSearch(grafana_url, grafana_token)
     expression = options['expression']
     if options.find:
         result = engine.search(expression)

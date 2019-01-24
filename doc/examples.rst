@@ -5,10 +5,14 @@ grafana-wtf examples
 *******
 Running
 *******
+
+General
+=======
 ::
 
     # Define URL to Grafana instance.
-    export GRAFANA_URL=https://admin:admin@daq.example.org/grafana/
+    export GRAFANA_URL=https://daq.example.org/grafana/
+    export GRAFANA_TOKEN=eyJrIjoiWHg...dGJpZCI6MX0=
 
     # Search through all Grafana entities for string "ldi_readings".
     grafana-wtf find ldi_readings
