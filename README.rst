@@ -40,6 +40,13 @@ Search Grafana API for string "ldi_readings".
 Setup
 *****
 
+Install
+-------
+::
+
+    pip install grafana-wtf
+
+
 Configure
 ---------
 Create an API key by:

@@ -19,8 +19,8 @@ def setup_logging(level=logging.INFO):
         level=level)
 
     # TODO: Control debug logging of HTTP requests through yet another commandline option "--debug-http" or "--debug-requests"
-    requests_log = logging.getLogger('requests')
-    requests_log.setLevel(logging.WARN)
+    #requests_log = logging.getLogger('requests')
+    #requests_log.setLevel(logging.WARN)
 
 
 def normalize_options(options):
