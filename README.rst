@@ -19,14 +19,19 @@ About
 *****
 grafana-wtf - grep through all Grafana entities in the spirit of `git-wtf`_.
 
+.. _git-wtf: http://thrawn01.org/posts/2014/03/03/git-wtf/
+
 
 ********
 Synopsis
 ********
+Search Grafana API for string "ldi_readings".
 ::
 
-    # Search through all Grafana entities for string "ldi_readings".
-    grafana-wtf --grafana-url=https://admin:admin@daq.example.org/grafana/ find ldi_readings
+    grafana-wtf find ldi_readings
 
 
-.. _git-wtf: http://thrawn01.org/posts/2014/03/03/git-wtf/
+********
+Examples
+********
+See `grafana-wtf examples <https://github.com/daq-tools/grafana-wtf/blob/master/doc/examples.rst>`_.

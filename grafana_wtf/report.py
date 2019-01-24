@@ -17,7 +17,7 @@ class WtfReport:
 
     def display(self, expression, result):
         expression = expression or '*'
-        print('Searching for expression {} at Grafana instance {}'.format(_v(expression), self.grafana_url))
+        print('Searching for expression "{}" at Grafana instance {}'.format(_v(expression), self.grafana_url))
         self.output_items(_s('Data Sources'), result.datasources, self.compute_url_datasource)
         self.output_items(_s('Dashboards'), result.dashboards, self.compute_url_dashboard)
 

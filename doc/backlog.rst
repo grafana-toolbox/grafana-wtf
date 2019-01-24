@@ -7,6 +7,7 @@ grafana-wtf backlog
 Prio 1
 ******
 - [o] Caching and drop-cache option
+- [o] Case insensitive searching
 
 
 ******
