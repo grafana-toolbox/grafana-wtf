@@ -4,3 +4,4 @@
 /.venv*
 /var
 /dist
+cache.sqlite

@@ -3,6 +3,7 @@
 # License: GNU Affero General Public License, Version 3
 import colored
 import logging
+import requests_cache
 from urllib.parse import urlparse
 from munch import Munch, munchify
 from grafana_api.grafana_api import GrafanaClientError
@@ -18,7 +19,18 @@ class GrafanaSearch:
         self.grafana_url = grafana_url
         self.grafana_token = grafana_token
 
-        url = urlparse(grafana_url)
+        self.grafana = None
+        self.data = Munch(datasources=[], dashboard_list=[], dashboards=[])
+
+    def enable_cache(self, expire_after=300, drop_cache=False):
+        requests_cache.install_cache(expire_after=expire_after)
+        if drop_cache:
+            requests_cache.clear()
+
+        return self
+
+    def setup(self):
+        url = urlparse(self.grafana_url)
 
         # Grafana API Key auth
         if self.grafana_token:
@@ -34,7 +46,7 @@ class GrafanaSearch:
             auth, protocol=url.scheme,
             host=url.hostname, port=url.port, url_path_prefix=url.path)
 
-        self.data = Munch(datasources=[], dashboard_list=[], dashboards=[])
+        return self
 
     def search(self, expression):
         log.info('Searching Grafana at "{}" for expression "{}"'.format(self.grafana_url, expression))

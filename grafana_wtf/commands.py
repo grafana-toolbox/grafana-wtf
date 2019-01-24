@@ -15,13 +15,14 @@ log = logging.getLogger(__name__)
 def run():
     """
     Usage:
-      grafana-wtf [--grafana-url=<grafana-url>] [--grafana-token=<grafana-token>] [--verbose] find [<expression>]
+      grafana-wtf [--grafana-url=<grafana-url>] [--grafana-token=<grafana-token>] [--drop-cache] [--verbose] [--debug] find [<expression>]
       grafana-wtf --version
       grafana-wtf (-h | --help)
 
     Options:
       --grafana-url=<grafana-url>       URL to Grafana instance
       --grafana-token=<grafana-token>   Grafana API Key token
+      --drop-cache                      Drop cache before requesting resources
       --verbose                         Enable verbose mode
       --version                         Show version information
       --debug                           Enable debug messages
@@ -67,7 +68,8 @@ def run():
     if grafana_url is None:
         raise DocoptExit('No Grafana URL given. Please use "--grafana-url" option or environment variable "GRAFANA_URL".')
 
-    engine = GrafanaSearch(grafana_url, grafana_token)
+    engine = GrafanaSearch(grafana_url, grafana_token).enable_cache(drop_cache=options['drop-cache']).setup()
+
     expression = options['expression']
     if options.find:
         result = engine.search(expression)

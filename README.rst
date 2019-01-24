@@ -30,6 +30,11 @@ Search Grafana API for string "ldi_readings".
 
     grafana-wtf find ldi_readings
 
+.. note::
+
+    ``grafana-wtf`` will cache HTTP responses for 300 seconds,
+    unless running with the ``--drop-cache`` option.
+
 
 *****
 Setup
