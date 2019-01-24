@@ -2,12 +2,17 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU Affero General Public License, Version 3
 import sys
+import json
 import logging
 from munch import munchify
+from jsonpath_rw import parse
+from pygments import highlight
+from pygments.lexers import JsonLexer
+from pygments.formatters import TerminalFormatter
 
 
 def setup_logging(level=logging.INFO):
-    log_format = '%(asctime)-15s [%(name)-30s] %(levelname)-7s: %(message)s'
+    log_format = '%(asctime)-15s [%(name)-20s] %(levelname)-7s: %(message)s'
     logging.basicConfig(
         format=log_format,
         stream=sys.stderr,
@@ -24,3 +29,20 @@ def normalize_options(options):
         key = key.strip('--<>')
         normalized[key] = value
     return munchify(normalized)
+
+
+def find_needle(needle, haystack):
+    jsonpath_expr = parse('$..*')
+    scalars = [str, int, float]
+    matches = []
+    for node in jsonpath_expr.find(haystack):
+        if type(node.value) in scalars:
+            value = json.dumps(node.value)
+            if needle in value:
+                matches.append(node)
+    return matches
+
+
+def prettify_json(data):
+    json_str = json.dumps(data, indent=4)
+    return highlight(json_str, JsonLexer(), TerminalFormatter())

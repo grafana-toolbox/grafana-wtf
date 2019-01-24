@@ -6,6 +6,7 @@ import logging
 from docopt import docopt, DocoptExit
 from grafana_wtf import __appname__, __version__
 from grafana_wtf.core import GrafanaSearch
+from grafana_wtf.report import WtfReport
 from grafana_wtf.util import normalize_options, setup_logging
 
 log = logging.getLogger(__name__)
@@ -14,12 +15,13 @@ log = logging.getLogger(__name__)
 def run():
     """
     Usage:
-      grafana-wtf [--grafana-url=<grafana-url>] <expression>
+      grafana-wtf [--grafana-url=<grafana-url>] [--verbose] find [<expression>]
       grafana-wtf --version
       grafana-wtf (-h | --help)
 
     Options:
       --grafana-url=<grafana-url>   URL to Grafana instance
+      --verbose                     Enable verbose mode
       --version                     Show version information
       --debug                       Enable debug messages
       -h --help                     Show this screen
@@ -33,7 +35,11 @@ def run():
     Examples:
 
       # Search through all Grafana entities for string "ldi_readings".
-      grafana-wtf --grafana-url=https://daq.example.org/grafana/ ldi_readings
+      grafana-wtf --grafana-url=https://admin:admin@daq.example.org/grafana/ find ldi_readings
+
+      # Search Grafana instance for string "luftdaten", using more convenient invoking flavor.
+      export GRAFANA_URL=https://admin:admin@daq.example.org/grafana/
+      grafana-wtf find luftdaten
 
     """
 
@@ -56,5 +62,10 @@ def run():
         raise DocoptExit('No Grafana URL given. Please use "--grafana-url" option or environment variable "GRAFANA_URL".')
 
     engine = GrafanaSearch(grafana_url)
-    results = engine.search(options['expression'])
-    print(results)
+    expression = options['expression']
+    if options.find:
+        result = engine.search(expression)
+        #print(json.dumps(result, indent=4))
+
+        report = WtfReport(grafana_url, verbose=options.verbose)
+        report.display(expression, result)

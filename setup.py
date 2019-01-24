@@ -19,13 +19,17 @@ requires = [
     # Caching
     'requests-cache==0.4.13',
 
+    # Output
+    'colored==1.3.93',
+    'Pygments==2.3.1',
+
 ]
 
-extras = {}
+extras = {'test': []}
 
 setup(name='grafana-wtf',
       version='0.0.0',
-      description='Grep through all Grafana entities',
+      description='Grep through all Grafana entities in the spirit of git-wtf',
       long_description=README,
       license="AGPL 3, EUPL 1.2",
       classifiers=[
