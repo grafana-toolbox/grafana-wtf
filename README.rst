@@ -25,43 +25,62 @@ grafana-wtf - grep through all Grafana entities in the spirit of `git-wtf`_.
 ********
 Synopsis
 ********
-Search Grafana API for string "ldi_readings".
+Search Grafana API for string "weatherbase".
 ::
 
-    grafana-wtf find ldi_readings
+    grafana-wtf find weatherbase
 
-.. note::
 
-    ``grafana-wtf`` will cache HTTP responses for 300 seconds,
-    unless running with the ``--drop-cache`` option.
+***********
+Screenshots
+***********
+
+.. image:: https://user-images.githubusercontent.com/453543/51694547-5c78fd80-2001-11e9-96ea-3fcc2e0fb016.png
 
 
 *****
 Setup
 *****
 
-Install
--------
+Install ``grafana-wtf``
+=======================
 ::
 
     pip install grafana-wtf
 
 
-Configure
----------
-Create an API key by:
+Configure Grafana
+=================
+Please take these steps to create an API key with your Grafana instance:
 
-- Go to https://daq.example.org/grafana/org/apikeys
-- Choose "New API Key"
-    - Key name: grafana-wtf
-    - Role: Admin
+- Go to ``https://daq.example.org/grafana/org/apikeys``.
+
+- Choose "New API Key".
+
+  - Key name: grafana-wtf
+  - Role: Admin
+
 - From the output ``curl -H "Authorization: Bearer eyJrIjoiWHg...dGJpZCI6MX0=" ...``,
   please take note of the Bearer token. This is your Grafana API key.
 
-- Before running, define URL and access token of Grafana instance::
+
+*******
+Running
+*******
+
+Before running ``grafana-wtf``, define URL and access token of your Grafana instance::
 
     export GRAFANA_URL=https://daq.example.org/grafana/
     export GRAFANA_TOKEN=eyJrIjoiWHg...dGJpZCI6MX0=
+
+Then::
+
+    grafana-wtf find weatherbase
+
+.. note::
+
+    ``grafana-wtf`` will cache HTTP responses for 300 seconds by default.
+    When running it with the ``--drop-cache`` option, it will drop its cache upfront.
 
 
 ********
