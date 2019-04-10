@@ -15,6 +15,7 @@ requires = [
     # Grafana
     'requests==2.21.0',
     'grafana-api==0.5.0',
+    'jsonpath-rw==1.4.0',
 
     # Caching
     'requests-cache==0.4.13',
