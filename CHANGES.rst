@@ -5,6 +5,10 @@ grafana-wtf changelog
 
 in progress
 ===========
+
+
+2019-04-10 0.2.0
+================
 - Add missing dependency "jsonpath-rw"
 
 

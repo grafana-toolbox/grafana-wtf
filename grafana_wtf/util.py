@@ -38,6 +38,7 @@ def find_needle(needle, haystack):
     for node in jsonpath_expr.find(haystack):
         if type(node.value) in scalars:
             value = json.dumps(node.value)
+            # TODO: Add regex support.
             if needle in value:
                 matches.append(node)
     return matches
