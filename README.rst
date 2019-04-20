@@ -30,12 +30,19 @@ Search Grafana API for string "weatherbase".
 
     grafana-wtf find weatherbase
 
+Display 50 most recent changes across all dashboards.
+::
+
+    grafana-wtf log --number=50
+
 
 ***********
 Screenshots
 ***********
 
 .. image:: https://user-images.githubusercontent.com/453543/51694547-5c78fd80-2001-11e9-96ea-3fcc2e0fb016.png
+
+.. image:: https://user-images.githubusercontent.com/453543/56455736-87ee5880-6362-11e9-8cd2-c356393d09c4.png
 
 
 *****
