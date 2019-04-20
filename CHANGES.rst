@@ -7,6 +7,11 @@ in progress
 ===========
 
 
+2019-04-20 0.3.0
+================
+- Add ``grafana-wtf log`` subcommand for displaying edit history
+
+
 2019-04-10 0.2.0
 ================
 - Add missing dependency "jsonpath-rw"

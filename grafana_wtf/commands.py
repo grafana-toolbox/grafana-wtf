@@ -2,8 +2,13 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU Affero General Public License, Version 3
 import os
+import json
 import logging
+from tabulate import tabulate
+from operator import itemgetter
+from collections import OrderedDict
 from docopt import docopt, DocoptExit
+
 from grafana_wtf import __appname__, __version__
 from grafana_wtf.core import GrafanaSearch
 from grafana_wtf.report import WtfReport
@@ -15,7 +20,8 @@ log = logging.getLogger(__name__)
 def run():
     """
     Usage:
-      grafana-wtf [--grafana-url=<grafana-url>] [--grafana-token=<grafana-token>] [--drop-cache] [--verbose] [--debug] find [<expression>]
+      grafana-wtf [options] find [<expression>]
+      grafana-wtf [options] log [<dashboard_uid>] [--number=<count>]
       grafana-wtf --version
       grafana-wtf (-h | --help)
 
@@ -23,6 +29,7 @@ def run():
       --grafana-url=<grafana-url>       URL to Grafana instance
       --grafana-token=<grafana-token>   Grafana API Key token
       --drop-cache                      Drop cache before requesting resources
+      --format=<format>                 Output format. [default: json]
       --verbose                         Enable verbose mode
       --version                         Show version information
       --debug                           Enable debug messages
@@ -36,7 +43,7 @@ def run():
       Likewise, use "GRAFANA_TOKEN" instead of "--grafana-token"
       for propagating the Grafana API Key.
 
-    Examples:
+    Search examples:
 
       # Search through all Grafana entities for string "ldi_readings".
       grafana-wtf --grafana-url=https://daq.example.org/grafana/ --grafana-token=eyJrIjoiWHg...dGJpZCI6MX0= find ldi_readings
@@ -45,6 +52,21 @@ def run():
       export GRAFANA_URL=https://daq.example.org/grafana/
       export GRAFANA_TOKEN=eyJrIjoiWHg...dGJpZCI6MX0=
       grafana-wtf find luftdaten
+
+    History examples:
+
+      # Display 50 most recent changes across all dashboards.
+      grafana-wtf log --number=50
+
+      # Display 5 most recent changes for specific dashboard.
+      grafana-wtf log NP0wTOtmk --number=5
+
+      # Output full history table in Markdown format
+      grafana-wtf log --format=tabular:pipe
+
+      # Output full history table in Grid format
+      grafana-wtf log --format=tabular:grid
+
 
     """
 
@@ -70,10 +92,73 @@ def run():
 
     engine = GrafanaSearch(grafana_url, grafana_token).enable_cache(drop_cache=options['drop-cache']).setup()
 
-    expression = options['expression']
     if options.find:
-        result = engine.search(expression)
+        result = engine.search(options.expression)
         #print(json.dumps(result, indent=4))
 
         report = WtfReport(grafana_url, verbose=options.verbose)
-        report.display(expression, result)
+        report.display(options.expression, result)
+
+    elif options.log:
+        engine.scan_dashboards()
+        #print(options.dashboard_uid)
+        entries = engine.log(dashboard_uid=options.dashboard_uid)
+        entries = sorted(entries, key=itemgetter('datetime'), reverse=True)
+
+        if options.number is not None:
+            count = int(options.number)
+            entries = entries[:count]
+
+        # https://bitbucket.org/astanin/python-tabulate
+        output_format = options['format']
+        if output_format.startswith('tabular'):
+
+            entries = compact_table(to_table(entries), output_format)
+
+            try:
+                tablefmt = options['format'].split(':')[1]
+            except:
+                tablefmt = 'psql'
+
+            #output = tabulate(data, headers=data.columns, showindex=showindex, tablefmt=tablefmt).encode('utf-8')
+            output = tabulate(entries, headers="keys", tablefmt=tablefmt) #.encode('utf-8')
+
+        else:
+            output = json.dumps(entries, indent=4)
+
+        print(output)
+
+
+def to_table(entries):
+    for entry in entries:
+        item = entry
+        name = item['title']
+        if item['folder']:
+            name = item['folder'].strip() + ' » ' + name.strip()
+        item['name'] = name.strip(' 🤓')
+        #del item['url']
+        del item['folder']
+        del item['title']
+        del item['version']
+        yield item
+
+
+def compact_table(entries, format):
+    seperator = '\n'
+    if format.endswith('pipe'):
+        seperator = '<br/>'
+    for entry in entries:
+        item = OrderedDict()
+        if format.endswith('pipe'):
+            link = '[{}]({})'.format(entry['name'], entry['url'])
+        else:
+            link = 'Name: {}\nURL: {}'.format(entry['name'], entry['url'])
+        item['Dashboard'] = seperator.join([
+            'Notes: {}'.format(entry['message'].capitalize() or 'n/a'),
+            link,
+        ])
+        item['Update'] = seperator.join([
+            'User: {}'.format(entry['user']),
+            'Date: {}'.format(entry['datetime']),
+        ])
+        yield item

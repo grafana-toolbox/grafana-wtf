@@ -21,6 +21,7 @@ requires = [
     'requests-cache==0.4.13',
 
     # Output
+    'tabulate==0.8.3',
     'colored==1.3.93',
     'Pygments==2.3.1',
 
