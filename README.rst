@@ -40,8 +40,12 @@ Display 50 most recent changes across all dashboards.
 Screenshots
 ***********
 
+``grafana-wtf find``
+====================
 .. image:: https://user-images.githubusercontent.com/453543/51694547-5c78fd80-2001-11e9-96ea-3fcc2e0fb016.png
 
+``grafana-wtf log``
+===================
 .. image:: https://user-images.githubusercontent.com/453543/56455736-87ee5880-6362-11e9-8cd2-c356393d09c4.png
 
 
