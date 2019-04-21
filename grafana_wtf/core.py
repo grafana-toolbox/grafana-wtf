@@ -4,6 +4,7 @@
 import colored
 import logging
 import requests_cache
+from tqdm import tqdm
 from munch import Munch, munchify
 from urllib.parse import urlparse, urljoin
 from collections import OrderedDict
@@ -57,15 +58,21 @@ class GrafanaSearch:
         results = Munch(datasources=[], dashboard_list=[], dashboards=[])
 
         # Check datasources
+        log.info('Searching data sources')
         self.search_items(expression, self.data.datasources, results.datasources)
 
         # Check dashboards
+        log.info('Searching dashboards')
         self.search_items(expression, self.data.dashboards, results.dashboards)
 
         return results
 
     def log(self, dashboard_uid=None):
-        log.info('Log for Grafana dashboard "{}" at "{}"'.format(dashboard_uid, self.grafana_url))
+        if dashboard_uid:
+            what = 'Grafana dashboard "{}"'.format(dashboard_uid)
+        else:
+            what = 'multiple Grafana dashboards'
+        log.info('Aggregating edit history for {what} at {url}'.format(what=what, url=self.grafana_url))
 
         entries = []
         for dashboard_meta in self.data.dashboard_list:
@@ -115,6 +122,7 @@ class GrafanaSearch:
         log.info('Scanning datasources')
         try:
             self.data.datasources = self.grafana.datasource.list_datasources()
+            log.info('Found {} data sources'.format(len(self.data.datasources)))
         except GrafanaClientError as ex:
             message = '{name}: {ex}'.format(name=ex.__class__.__name__, ex=ex)
             message = colored.stylize(message, colored.fg("red") + colored.attr("bold"))
@@ -125,13 +133,14 @@ class GrafanaSearch:
         log.info('Scanning dashboards')
         try:
             self.data.dashboard_list = self.grafana.search.search_dashboards()
+            log.info('Found {} dashboards'.format(len(self.data.dashboard_list)))
         except GrafanaClientError as ex:
             message = '{name}: {ex}'.format(name=ex.__class__.__name__, ex=ex)
             message = colored.stylize(message, colored.fg("red") + colored.attr("bold"))
             log.error(message)
 
         log.info('Fetching dashboards')
-        for dashboard_info in self.data.dashboard_list:
+        for dashboard_info in tqdm(self.data.dashboard_list):
             dashboard = self.grafana.dashboard.get_dashboard(dashboard_info['uid'])
             self.data.dashboards.append(dashboard)
 

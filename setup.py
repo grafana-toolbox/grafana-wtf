@@ -11,6 +11,7 @@ requires = [
     'six==1.12.0',
     'docopt==0.6.2',
     'munch==2.3.2',
+    'tqdm==4.28.1',
 
     # Grafana
     'requests==2.21.0',

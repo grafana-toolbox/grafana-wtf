@@ -7,6 +7,12 @@ in progress
 ===========
 
 
+2019-04-21 0.3.1
+================
+- Add progress indicator
+- Improve logging and reporting
+
+
 2019-04-20 0.3.0
 ================
 - Add ``grafana-wtf log`` subcommand for displaying edit history
