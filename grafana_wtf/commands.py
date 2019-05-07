@@ -31,6 +31,7 @@ def run():
       --format=<format>                 Output format. [default: json]
       --cache-ttl=<cache-ttl>           Time-to-live for the request cache in seconds. [default: 300]
       --drop-cache                      Drop cache before requesting resources
+      --concurrency=<concurrency>       Run multiple requests in parallel. [default: 5]
       --verbose                         Enable verbose mode
       --version                         Show version information
       --debug                           Enable debug messages
@@ -108,6 +109,7 @@ def run():
 
     engine = GrafanaSearch(grafana_url, grafana_token)
     engine.enable_cache(expire_after=cache_ttl, drop_cache=options['drop-cache'])
+    engine.enable_concurrency(int(options['concurrency']))
     engine.setup()
 
     if options.find:

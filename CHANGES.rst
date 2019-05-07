@@ -5,6 +5,8 @@ grafana-wtf changelog
 
 in progress
 ===========
+- Add "--concurrency" option to run multiple requests in
+  parallel as requested through #2. Thanks, `@jangaraj`_.
 - Extend non_leaf_nodes with "list" and "links"
 - Improve logging
 
