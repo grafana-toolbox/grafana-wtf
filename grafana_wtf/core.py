@@ -11,7 +11,7 @@ from collections import OrderedDict
 
 from grafana_api.grafana_api import GrafanaClientError, GrafanaUnauthorizedError
 from grafana_api.grafana_face import GrafanaFace
-from grafana_wtf.util import find_needle
+from grafana_wtf.util import JsonPathFinder
 
 log = logging.getLogger(__name__)
 
@@ -24,6 +24,8 @@ class GrafanaSearch:
 
         self.grafana = None
         self.data = Munch(datasources=[], dashboard_list=[], dashboards=[])
+
+        self.finder = JsonPathFinder()
 
     def enable_cache(self, expire_after=300, drop_cache=False):
         if expire_after is None:
@@ -107,7 +109,7 @@ class GrafanaSearch:
             if expression is None:
                 effective_item = munchify({'meta': {}, 'data': item})
             else:
-                matches = find_needle(expression, item)
+                matches = self.finder.find(expression, item)
                 if matches:
                     effective_item = munchify({'meta': {'matches': matches}, 'data': item})
 

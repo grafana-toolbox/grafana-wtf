@@ -10,6 +10,8 @@ from pygments import highlight
 from pygments.lexers import JsonLexer
 from pygments.formatters import TerminalFormatter
 
+log = logging.getLogger(__name__)
+
 
 def setup_logging(level=logging.INFO):
     log_format = '%(asctime)-15s [%(name)-20s] %(levelname)-7s: %(message)s'
@@ -31,17 +33,42 @@ def normalize_options(options):
     return munchify(normalized)
 
 
-def find_needle(needle, haystack):
-    jsonpath_expr = parse('$..*')
-    scalars = [str, int, float]
-    matches = []
-    for node in jsonpath_expr.find(haystack):
-        if type(node.value) in scalars:
-            value = json.dumps(node.value)
-            # TODO: Add regex support.
-            if needle in value:
-                matches.append(node)
-    return matches
+class JsonPathFinder:
+
+    def __init__(self):
+        self.jsonpath_expr = parse('$..*')
+        self.node_blacklist = ('rows', 'panels', 'targets', 'tags', 'groupBy')
+        self.scalars = (str, int, float, list)
+
+    def find(self, needle, haystack):
+        matches = []
+
+        # Iterate JSON, node by node.
+        for node in self.jsonpath_expr.find(haystack):
+
+            # Ignore empty nodes.
+            if node.value is None:
+                continue
+
+            # Ignore top level nodes.
+            if str(node.path) in self.node_blacklist:
+                continue
+
+            if isinstance(node.value, self.scalars):
+
+                # Check if node matches search expression. Currently, this
+                # is essentially a basic "string contains" match but it might
+                # be improved in the future.
+                # Todo: Use regex or other more sophisticated search expressions.
+                if needle in str(node.value):
+                    matches.append(node)
+
+            else:
+                if not isinstance(node.value, dict):
+                    log.warning(f'Ignored data type {type(node.value)} when matching.\n'
+                                f'Node was "{node.path}", value was "{node.value}".')
+
+        return matches
 
 
 def prettify_json(data):
