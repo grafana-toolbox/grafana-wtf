@@ -6,16 +6,21 @@ grafana-wtf changelog
 in progress
 ===========
 
+2019-05-07 0.5.0
+================
+- Raise the limit for ``search_dashboards()`` to its maximum value (5000).
+  Thanks, `@jangaraj`_.
 
 2019-05-07 0.4.0
 ================
 Slightly improve the situation with large Grafana installations, see #2.
-Thanks `@jangaraj <https://github.com/jangaraj>`_.
+Thanks, `@jangaraj`_.
 
 - Add option ``--cache-ttl`` for controlling the cache expiration time
 - Improve error logging when hitting Grafana unauthorized
 - Improve performance of search routine
 
+.. _@jangaraj: https://github.com/jangaraj
 
 2019-04-21 0.3.1
 ================

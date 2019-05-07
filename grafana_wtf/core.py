@@ -145,7 +145,7 @@ class GrafanaSearch:
 
         log.info('Scanning dashboards')
         try:
-            self.data.dashboard_list = self.grafana.search.search_dashboards()
+            self.data.dashboard_list = self.grafana.search.search_dashboards(limit=5000)
             log.info('Found {} dashboards'.format(len(self.data.dashboard_list)))
         except GrafanaClientError as ex:
             message = '{name}: {ex}'.format(name=ex.__class__.__name__, ex=ex)
