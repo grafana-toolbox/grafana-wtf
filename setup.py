@@ -11,15 +11,15 @@ requires = [
     'six==1.12.0',
     'docopt==0.6.2',
     'munch==2.3.2',
-    'tqdm==4.28.1',
+    'tqdm==4.31.1',
 
     # Grafana
     'requests==2.21.0',
-    'grafana-api==0.6.0',
+    'grafana-api==0.7.3',
     'jsonpath-rw==1.4.0',
 
     # Caching
-    'requests-cache==0.4.13',
+    'requests-cache==0.5.0',
 
     # Output
     'tabulate==0.8.3',
