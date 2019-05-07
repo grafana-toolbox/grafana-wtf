@@ -9,7 +9,7 @@ from munch import Munch, munchify
 from urllib.parse import urlparse, urljoin
 from collections import OrderedDict
 
-from grafana_api.grafana_api import GrafanaClientError
+from grafana_api.grafana_api import GrafanaClientError, GrafanaUnauthorizedError
 from grafana_api.grafana_face import GrafanaFace
 from grafana_wtf.util import find_needle
 
@@ -130,8 +130,14 @@ class GrafanaSearch:
             log.info('Found {} data sources'.format(len(self.data.datasources)))
         except GrafanaClientError as ex:
             message = '{name}: {ex}'.format(name=ex.__class__.__name__, ex=ex)
-            message = colored.stylize(message, colored.fg("red") + colored.attr("bold"))
-            log.error(message)
+            log.error(self.get_red_message(message))
+            if isinstance(ex, GrafanaUnauthorizedError):
+                log.error(self.get_red_message('Please use --grafana-token or GRAFANA_TOKEN '
+                                               'for authenticating with Grafana'))
+
+    @staticmethod
+    def get_red_message(message):
+        return colored.stylize(message, colored.fg("red") + colored.attr("bold"))
 
     def scan_dashboards(self):
 
@@ -142,7 +148,10 @@ class GrafanaSearch:
         except GrafanaClientError as ex:
             message = '{name}: {ex}'.format(name=ex.__class__.__name__, ex=ex)
             message = colored.stylize(message, colored.fg("red") + colored.attr("bold"))
-            log.error(message)
+            log.error(self.get_red_message(message))
+            if isinstance(ex, GrafanaUnauthorizedError):
+                log.error(self.get_red_message('Please use --grafana-token or GRAFANA_TOKEN '
+                                               'for authenticating with Grafana'))
 
         log.info('Fetching dashboards')
         for dashboard_info in tqdm(self.data.dashboard_list):
