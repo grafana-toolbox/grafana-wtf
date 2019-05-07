@@ -28,8 +28,9 @@ def run():
     Options:
       --grafana-url=<grafana-url>       URL to Grafana instance
       --grafana-token=<grafana-token>   Grafana API Key token
-      --drop-cache                      Drop cache before requesting resources
       --format=<format>                 Output format. [default: json]
+      --cache-ttl=<cache-ttl>           Time-to-live for the request cache in seconds. [default: 300]
+      --drop-cache                      Drop cache before requesting resources
       --verbose                         Enable verbose mode
       --version                         Show version information
       --debug                           Enable debug messages
@@ -52,6 +53,12 @@ def run():
       export GRAFANA_URL=https://daq.example.org/grafana/
       export GRAFANA_TOKEN=eyJrIjoiWHg...dGJpZCI6MX0=
       grafana-wtf find luftdaten
+
+      # Use infinite cache expiration time, essentially caching forever.
+      grafana-wtf find '#299c46' --cache-ttl=inf
+
+      # Set cache expiration time to zero, essentially disabling the cache.
+      grafana-wtf find geohash --cache-ttl=0
 
     History examples:
 
@@ -86,11 +93,22 @@ def run():
     grafana_url = options['grafana-url'] or os.getenv('GRAFANA_URL')
     grafana_token = options['grafana-token'] or os.getenv('GRAFANA_TOKEN')
 
+    # Compute cache expiration time.
+    try:
+        cache_ttl = int(options['cache-ttl'])
+    except:
+        if not options['cache-ttl'] or 'infinite'.startswith(options['cache-ttl'].lower()):
+            cache_ttl = None
+        else:
+            raise
+
     # Sanity checks
     if grafana_url is None:
         raise DocoptExit('No Grafana URL given. Please use "--grafana-url" option or environment variable "GRAFANA_URL".')
 
-    engine = GrafanaSearch(grafana_url, grafana_token).enable_cache(drop_cache=options['drop-cache']).setup()
+    engine = GrafanaSearch(grafana_url, grafana_token)
+    engine.enable_cache(expire_after=cache_ttl, drop_cache=options['drop-cache'])
+    engine.setup()
 
     if options.find:
         result = engine.search(options.expression)

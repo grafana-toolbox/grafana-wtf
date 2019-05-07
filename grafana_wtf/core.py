@@ -26,8 +26,13 @@ class GrafanaSearch:
         self.data = Munch(datasources=[], dashboard_list=[], dashboards=[])
 
     def enable_cache(self, expire_after=300, drop_cache=False):
+        if expire_after is None:
+            log.info(f'Setting up response cache to never expire (infinite caching)')
+        else:
+            log.info(f'Setting up response cache to expire after {expire_after} seconds')
         requests_cache.install_cache(expire_after=expire_after)
         if drop_cache:
+            log.info(f'Dropping cache')
             requests_cache.clear()
 
         return self
