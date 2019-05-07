@@ -5,6 +5,8 @@ grafana-wtf changelog
 
 in progress
 ===========
+- Extend non_leaf_nodes with "list" and "links"
+- Improve logging
 
 2019-05-07 0.5.0
 ================

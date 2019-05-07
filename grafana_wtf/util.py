@@ -40,7 +40,7 @@ class JsonPathFinder:
 
     def __init__(self):
         self.jsonpath_expr = parse('$..*')
-        self.node_blacklist = ('rows', 'panels', 'targets', 'tags', 'groupBy')
+        self.non_leaf_nodes = ('rows', 'panels', 'targets', 'tags', 'groupBy', 'list', 'links')
         self.scalars = (str, int, float, list)
 
     def find(self, needle, haystack):
@@ -54,7 +54,7 @@ class JsonPathFinder:
                 continue
 
             # Ignore top level nodes.
-            if str(node.path) in self.node_blacklist:
+            if str(node.path) in self.non_leaf_nodes:
                 continue
 
             if isinstance(node.value, self.scalars):
