@@ -34,8 +34,7 @@ class GrafanaSearch:
         self.concurrency = 5
 
         self.debug = log.getEffectiveLevel() == logging.DEBUG
-        if not self.debug:
-            self.taqadum = tqdm()
+        self.progressbar = not self.debug
 
     def enable_cache(self, expire_after=300, drop_cache=False):
         if expire_after is None:
@@ -78,6 +77,10 @@ class GrafanaSearch:
         self.grafana.api.s.mount('https://', adapter)
 
         return self
+
+    def start_progressbar(self, total):
+        if self.progressbar:
+            self.taqadum = tqdm(total=total)
 
     def search(self, expression):
         log.info('Searching Grafana at "{}" for expression "{}"'.format(self.grafana_url, expression))
@@ -178,8 +181,8 @@ class GrafanaSearch:
                                                'for authenticating with Grafana'))
             return
 
-        if self.taqadum is not None:
-            self.taqadum.total = len(self.data.dashboard_list)
+        if self.progressbar:
+            self.start_progressbar(len(self.data.dashboard_list))
 
         if self.concurrency is None or self.concurrency <= 1:
             self.fetch_dashboards()
@@ -196,8 +199,6 @@ class GrafanaSearch:
     def fetch_dashboards(self):
         log.info('Fetching dashboards one by one')
         results = self.data.dashboard_list
-        #if not self.debug:
-        #    results = tqdm(results)
         for dashboard_info in results:
             self.fetch_dashboard(dashboard_info)
 
@@ -230,16 +231,11 @@ class GrafanaSearch:
             #    pass
 
     def get_dashboard_versions(self, dashboard_id):
-        """
-
-        :param dashboard_id:
-        :return:
-        """
         # https://grafana.com/docs/http_api/dashboard_versions/
         get_dashboard_versions_path = '/dashboards/id/%s/versions' % dashboard_id
         r = self.grafana.dashboard.api.GET(get_dashboard_versions_path)
         return r
 
     def __del__(self):
-        if self.taqadum:
+        if self.progressbar and self.taqadum is not None:
             self.taqadum.close()

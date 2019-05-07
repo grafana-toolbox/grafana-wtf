@@ -5,6 +5,7 @@ grafana-wtf changelog
 
 in progress
 ===========
+- Improve progressbar behavior
 
 2019-05-08 0.6.0
 ================
