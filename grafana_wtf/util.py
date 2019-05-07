@@ -14,15 +14,18 @@ log = logging.getLogger(__name__)
 
 
 def setup_logging(level=logging.INFO):
-    log_format = '%(asctime)-15s [%(name)-20s] %(levelname)-7s: %(message)s'
+    log_format = '%(asctime)-15s [%(name)-22s] %(levelname)-7s: %(message)s'
     logging.basicConfig(
         format=log_format,
         stream=sys.stderr,
         level=level)
 
-    # TODO: Control debug logging of HTTP requests through yet another commandline option "--debug-http" or "--debug-requests"
+    # Todo: Control debug logging of HTTP requests through yet another commandline option "--debug-http" or "--debug-requests"
     #requests_log = logging.getLogger('requests')
-    #requests_log.setLevel(logging.WARN)
+    #requests_log.setLevel(logging.INFO)
+
+    requests_log = logging.getLogger('urllib3.connectionpool')
+    requests_log.setLevel(logging.INFO)
 
 
 def normalize_options(options):
