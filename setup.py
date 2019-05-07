@@ -15,7 +15,7 @@ requires = [
 
     # Grafana
     'requests==2.21.0',
-    'grafana-api==0.5.0',
+    'grafana-api==0.6.0',
     'jsonpath-rw==1.4.0',
 
     # Caching
@@ -31,7 +31,7 @@ requires = [
 extras = {'test': []}
 
 setup(name='grafana-wtf',
-      version='0.5.0',
+      version='0.6.0',
       description='Grep through all Grafana entities in the spirit of git-wtf',
       long_description=README,
       license="AGPL 3, EUPL 1.2",
