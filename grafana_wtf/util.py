@@ -46,7 +46,12 @@ class JsonPathFinder:
     def find(self, needle, haystack):
         matches = []
 
-        # Iterate JSON, node by node.
+        # Fast search whether needle is in haystack at all.
+        if needle not in str(haystack):
+            return matches
+
+        # Iterate JSON, node by node, to find out about
+        # where in the JSON document the needle is located.
         for node in self.jsonpath_expr.find(haystack):
 
             # Ignore empty nodes.

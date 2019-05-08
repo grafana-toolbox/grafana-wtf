@@ -5,6 +5,10 @@ grafana-wtf changelog
 
 in progress
 ===========
+
+2019-05-08 0.7.0
+================
+- Improve search performance
 - Improve report output. Add title, folder, uid, created, updated fields for dashboards.
 - Fix progressbar shutdown
 
