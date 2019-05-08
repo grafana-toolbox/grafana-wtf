@@ -5,6 +5,7 @@ grafana-wtf changelog
 
 in progress
 ===========
+- Improve report output. Add title, folder, uid, created, updated fields for dashboards.
 
 2019-05-08 0.6.1
 ================
