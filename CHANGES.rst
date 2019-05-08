@@ -6,6 +6,10 @@ grafana-wtf changelog
 in progress
 ===========
 
+2019-05-08 0.8.1
+================
+- Compensate for leading slash in API URL inserted by ``grafana_api``. Thanks, `@jangaraj`_.
+
 2019-05-08 0.8.0
 ================
 - Add "--http-logging" option

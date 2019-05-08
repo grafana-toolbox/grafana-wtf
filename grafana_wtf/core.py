@@ -66,7 +66,7 @@ class GrafanaSearch:
 
         self.grafana = GrafanaFace(
             auth, protocol=url.scheme,
-            host=url.hostname, port=url.port, url_path_prefix=url.path)
+            host=url.hostname, port=url.port, url_path_prefix=url.path.lstrip('/'))
 
         # Configure a larger HTTP request pool.
         # Todo: Review the pool settings and eventually adjust according to concurrency level or other parameters.
