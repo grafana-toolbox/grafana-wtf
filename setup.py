@@ -31,7 +31,7 @@ requires = [
 extras = {'test': []}
 
 setup(name='grafana-wtf',
-      version='0.6.1',
+      version='0.7.0',
       description='Grep through all Grafana entities in the spirit of git-wtf',
       long_description=README,
       license="AGPL 3, EUPL 1.2",
