@@ -20,19 +20,34 @@ def setup_logging(level=logging.INFO):
         stream=sys.stderr,
         level=level)
 
-    # Todo: Control debug logging of HTTP requests through yet another commandline option "--debug-http" or "--debug-requests"
-    #requests_log = logging.getLogger('requests')
-    #requests_log.setLevel(logging.INFO)
+
+def configure_http_logging(options):
+    # Control debug logging of HTTP requests.
+
+    if options.http_logging:
+        log_level = log.getEffectiveLevel()
+    else:
+        log_level = logging.WARNING
+
+    requests_log = logging.getLogger('requests')
+    requests_log.setLevel(log_level)
 
     requests_log = logging.getLogger('urllib3.connectionpool')
-    requests_log.setLevel(logging.INFO)
+    requests_log.setLevel(log_level)
 
 
 def normalize_options(options):
     normalized = {}
     for key, value in options.items():
+
+        # Add primary variant.
         key = key.strip('--<>')
         normalized[key] = value
+
+        # Add second variant.
+        key = key.replace('-', '_')
+        normalized[key] = value
+
     return munchify(normalized)
 
 

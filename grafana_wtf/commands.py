@@ -12,7 +12,7 @@ from docopt import docopt, DocoptExit
 from grafana_wtf import __appname__, __version__
 from grafana_wtf.core import GrafanaSearch
 from grafana_wtf.report import WtfReport
-from grafana_wtf.util import normalize_options, setup_logging
+from grafana_wtf.util import normalize_options, setup_logging, configure_http_logging
 
 log = logging.getLogger(__name__)
 
@@ -35,6 +35,7 @@ def run():
       --verbose                         Enable verbose mode
       --version                         Show version information
       --debug                           Enable debug messages
+      --http-logging                    Enable logging for underlying HTTP client machinery
       -h --help                         Show this screen
 
     Note:
@@ -89,7 +90,9 @@ def run():
     setup_logging(log_level)
 
     # Debugging
-    #log.info('Options: {}'.format(json.dumps(options, indent=4)))
+    log.debug('Options: {}'.format(json.dumps(options, indent=4)))
+
+    configure_http_logging(options)
 
     grafana_url = options['grafana-url'] or os.getenv('GRAFANA_URL')
     grafana_token = options['grafana-token'] or os.getenv('GRAFANA_TOKEN')

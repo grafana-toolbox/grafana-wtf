@@ -6,6 +6,10 @@ grafana-wtf changelog
 in progress
 ===========
 
+2019-05-08 0.8.0
+================
+- Add "--http-logging" option
+
 2019-05-08 0.7.0
 ================
 - Improve search performance
