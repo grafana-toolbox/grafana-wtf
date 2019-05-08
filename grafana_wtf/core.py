@@ -189,6 +189,9 @@ class GrafanaSearch:
         else:
             self.fetch_dashboards_parallel()
 
+        if self.progressbar:
+            self.taqadum.close()
+
     def fetch_dashboard(self, dashboard_info):
         log.debug(f'Fetching dashboard "{dashboard_info["title"]}" ({dashboard_info["uid"]})')
         dashboard = self.grafana.dashboard.get_dashboard(dashboard_info['uid'])
@@ -235,7 +238,3 @@ class GrafanaSearch:
         get_dashboard_versions_path = '/dashboards/id/%s/versions' % dashboard_id
         r = self.grafana.dashboard.api.GET(get_dashboard_versions_path)
         return r
-
-    def __del__(self):
-        if self.progressbar and self.taqadum is not None:
-            self.taqadum.close()
