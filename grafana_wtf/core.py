@@ -84,7 +84,6 @@ class GrafanaSearch:
 
     def search(self, expression):
         log.info('Searching Grafana at "{}" for expression "{}"'.format(self.grafana_url, expression))
-        self.scan()
 
         results = Munch(datasources=[], dashboard_list=[], dashboards=[])
 
@@ -165,20 +164,25 @@ class GrafanaSearch:
     def get_red_message(message):
         return colored.stylize(message, colored.fg("red") + colored.attr("bold"))
 
-    def scan_dashboards(self):
+    def scan_dashboards(self, dashboard_uids=None):
 
         log.info('Scanning dashboards')
         try:
-            self.data.dashboard_list = self.grafana.search.search_dashboards(limit=5000)
+            if dashboard_uids is not None:
+                for uid in dashboard_uids:
+                    log.info(f'Fetching dashboard by uid {uid}')
+                    try:
+                        dashboard = self.grafana.dashboard.get_dashboard(uid)
+                        self.data.dashboard_list.append(dashboard['dashboard'])
+                    except GrafanaClientError as ex:
+                        self.handle_grafana_error(ex)
+                        continue
+            else:
+                self.data.dashboard_list = self.grafana.search.search_dashboards(limit=5000)
             log.info('Found {} dashboards'.format(len(self.data.dashboard_list)))
 
         except GrafanaClientError as ex:
-            message = '{name}: {ex}'.format(name=ex.__class__.__name__, ex=ex)
-            message = colored.stylize(message, colored.fg("red") + colored.attr("bold"))
-            log.error(self.get_red_message(message))
-            if isinstance(ex, GrafanaUnauthorizedError):
-                log.error(self.get_red_message('Please use --grafana-token or GRAFANA_TOKEN '
-                                               'for authenticating with Grafana'))
+            self.handle_grafana_error(ex)
             return
 
         if self.progressbar:
@@ -191,6 +195,14 @@ class GrafanaSearch:
 
         if self.progressbar:
             self.taqadum.close()
+
+    def handle_grafana_error(self, ex):
+        message = '{name}: {ex}'.format(name=ex.__class__.__name__, ex=ex)
+        message = colored.stylize(message, colored.fg("red") + colored.attr("bold"))
+        log.error(self.get_red_message(message))
+        if isinstance(ex, GrafanaUnauthorizedError):
+            log.error(self.get_red_message('Please use --grafana-token or GRAFANA_TOKEN '
+                                           'for authenticating with Grafana'))
 
     def fetch_dashboard(self, dashboard_info):
         log.debug(f'Fetching dashboard "{dashboard_info["title"]}" ({dashboard_info["uid"]})')

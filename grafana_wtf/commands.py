@@ -12,7 +12,7 @@ from docopt import docopt, DocoptExit
 from grafana_wtf import __appname__, __version__
 from grafana_wtf.core import GrafanaSearch
 from grafana_wtf.report import WtfReport
-from grafana_wtf.util import normalize_options, setup_logging, configure_http_logging
+from grafana_wtf.util import normalize_options, setup_logging, configure_http_logging, read_list
 
 log = logging.getLogger(__name__)
 
@@ -28,6 +28,8 @@ def run():
     Options:
       --grafana-url=<grafana-url>       URL to Grafana instance
       --grafana-token=<grafana-token>   Grafana API Key token
+      --select-dashboard=<uuid>         Restrict operation to dashboard by UID.
+                                        Can be a list of comma-separated dashboard UIDs.
       --format=<format>                 Output format. [default: json]
       --cache-ttl=<cache-ttl>           Time-to-live for the request cache in seconds. [default: 300]
       --drop-cache                      Drop cache before requesting resources
@@ -61,6 +63,9 @@ def run():
 
       # Set cache expiration time to zero, essentially disabling the cache.
       grafana-wtf find geohash --cache-ttl=0
+
+      # Search keyword within list of specific dashboards.
+      grafana-wtf --select-dashboard=_JJ22OZZk,5iGTqNWZk find grafana-worldmap
 
     History examples:
 
@@ -116,6 +121,16 @@ def run():
     engine.setup()
 
     if options.find:
+
+        if options.select_dashboard:
+            # Restrict scan to list of dashboards.
+            dashboard_uids = read_list(options.select_dashboard)
+            engine.scan_dashboards(dashboard_uids)
+
+        else:
+            # Scan everything.
+            engine.scan()
+
         result = engine.search(options.expression)
         #print(json.dumps(result, indent=4))
 

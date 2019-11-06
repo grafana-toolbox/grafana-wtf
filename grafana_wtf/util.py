@@ -44,11 +44,20 @@ def normalize_options(options):
         key = key.strip('--<>')
         normalized[key] = value
 
-        # Add second variant.
+        # Add secondary variant.
         key = key.replace('-', '_')
         normalized[key] = value
 
     return munchify(normalized)
+
+
+def read_list(data, separator=u','):
+    if data is None:
+        return []
+    result = list(map(lambda x: x.strip(), data.split(separator)))
+    if len(result) == 1 and not result[0]:
+        result = []
+    return result
 
 
 class JsonPathFinder:
