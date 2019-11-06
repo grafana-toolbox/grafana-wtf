@@ -5,8 +5,12 @@ grafana-wtf changelog
 
 in progress
 ===========
+
+2019-11-06 0.9.0
+================
 - Add option ``--select-dashboard`` to scan specific dashboards by list of uids
 - Bump dependent modules to their most recent versions
+- Add option to replace string within dashboard
 
 2019-05-08 0.8.1
 ================

@@ -20,7 +20,8 @@ log = logging.getLogger(__name__)
 def run():
     """
     Usage:
-      grafana-wtf [options] find [<expression>]
+      grafana-wtf [options] find [<search-expression>]
+      grafana-wtf [options] replace <search-expression> <replacement>
       grafana-wtf [options] log [<dashboard_uid>] [--number=<count>]
       grafana-wtf --version
       grafana-wtf (-h | --help)
@@ -66,6 +67,11 @@ def run():
 
       # Search keyword within list of specific dashboards.
       grafana-wtf --select-dashboard=_JJ22OZZk,5iGTqNWZk find grafana-worldmap
+
+    Replace examples:
+
+      # Replace string within specific dashboard.
+      grafana-wtf --select-dashboard=_JJ22OZZk replace grafana-worldmap-panel grafana-map-panel
 
     History examples:
 
@@ -120,7 +126,7 @@ def run():
     engine.enable_concurrency(int(options['concurrency']))
     engine.setup()
 
-    if options.find:
+    if options.find or options.replace:
 
         if options.select_dashboard:
             # Restrict scan to list of dashboards.
@@ -131,13 +137,16 @@ def run():
             # Scan everything.
             engine.scan()
 
-        result = engine.search(options.expression)
+        result = engine.search(options.search_expression)
         #print(json.dumps(result, indent=4))
 
         report = WtfReport(grafana_url, verbose=options.verbose)
-        report.display(options.expression, result)
+        report.display(options.search_expression, result)
 
-    elif options.log:
+    if options.replace:
+        engine.replace(options.search_expression, options.replacement)
+
+    if options.log:
         engine.scan_dashboards()
         #print(options.dashboard_uid)
         entries = engine.log(dashboard_uid=options.dashboard_uid)

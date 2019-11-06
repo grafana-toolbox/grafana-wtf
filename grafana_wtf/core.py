@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU Affero General Public License, Version 3
+import json
 import colored
 import logging
 import asyncio
@@ -97,6 +98,18 @@ class GrafanaSearch:
 
         return results
 
+    def replace(self, expression, replacement):
+        log.info(f'Replacing "{expression}" by "{replacement}" within Grafana at "{self.grafana_url}"')
+        for dashboard in self.data.dashboards:
+            payload_before = json.dumps(dashboard)
+            payload_after = payload_before.replace(expression, replacement)
+            if payload_before == payload_after:
+                log.info(f'No replacements for dashboard with uid "{dashboard.dashboard.uid}"')
+                continue
+            dashboard_new = json.loads(payload_after)
+            dashboard_new['message'] = f'grafana-wtf: Replaced "{expression}" by "{replacement}"'
+            self.grafana.dashboard.update_dashboard(dashboard=dashboard_new)
+
     def log(self, dashboard_uid=None):
         if dashboard_uid:
             what = 'Grafana dashboard "{}"'.format(dashboard_uid)
@@ -151,7 +164,7 @@ class GrafanaSearch:
     def scan_datasources(self):
         log.info('Scanning datasources')
         try:
-            self.data.datasources = self.grafana.datasource.list_datasources()
+            self.data.datasources = munchify(self.grafana.datasource.list_datasources())
             log.info('Found {} data sources'.format(len(self.data.datasources)))
         except GrafanaClientError as ex:
             message = '{name}: {ex}'.format(name=ex.__class__.__name__, ex=ex)
@@ -207,7 +220,7 @@ class GrafanaSearch:
     def fetch_dashboard(self, dashboard_info):
         log.debug(f'Fetching dashboard "{dashboard_info["title"]}" ({dashboard_info["uid"]})')
         dashboard = self.grafana.dashboard.get_dashboard(dashboard_info['uid'])
-        self.data.dashboards.append(dashboard)
+        self.data.dashboards.append(munchify(dashboard))
         if self.taqadum is not None:
             self.taqadum.update(1)
 
