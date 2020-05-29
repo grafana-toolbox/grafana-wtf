@@ -4,6 +4,7 @@
 import os
 import json
 import logging
+from functools import partial
 from tabulate import tabulate
 from operator import itemgetter
 from collections import OrderedDict
@@ -12,6 +13,7 @@ from docopt import docopt, DocoptExit
 from grafana_wtf import __appname__, __version__
 from grafana_wtf.core import GrafanaSearch
 from grafana_wtf.report import WtfReport
+from grafana_wtf.tabular_report import TabularReport
 from grafana_wtf.util import normalize_options, setup_logging, configure_http_logging, read_list
 
 log = logging.getLogger(__name__)
@@ -140,10 +142,20 @@ def run():
             # Scan everything.
             engine.scan()
 
-        result = engine.search(options.search_expression)
+        result = engine.search(options.search_expression or None)
         #print(json.dumps(result, indent=4))
-
-        report = WtfReport(grafana_url, verbose=options.verbose)
+        _format = options.get("format")
+        _format_detail = _format.split(":")[1] or None
+        _generator = (
+            WtfReport
+            if not (_format and _format.startswith("tabular"))
+            else (
+                TabularReport
+                if _format_detail
+                else partial(TabularReport, tblfmt=_format_detail)
+            )
+        )
+        report = _generator(grafana_url, verbose=options.verbose)
         report.display(options.search_expression, result)
 
     if options.replace:
