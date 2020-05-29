@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from grafana_wtf.report import WtfReport
 from tabulate import tabulate
+from jsonpath_rw import parse
 
 
 class TabularReport(WtfReport):
@@ -17,13 +18,13 @@ class TabularReport(WtfReport):
             }
             for item in items
         ]
-        print(tabulate(items_rows,tablefmt=self.format))
+        print(tabulate(items_rows, tablefmt=self.format))
 
     def get_bibdata_dict(self, item, **kwargs):
 
         # Sanity checks.
         if "dashboard" not in item.data:
-            return {}
+            return {"data_source_type": item.data.type} if "type" in item.data else {}
         bibdata = OrderedDict()
         bibdata["Title"] = item.data.dashboard.title
         bibdata["Folder"] = item.data.meta.folderTitle
@@ -32,5 +33,10 @@ class TabularReport(WtfReport):
         bibdata["created by"] = item.data.meta.createdBy
         bibdata["last update date"] = f"{item.data.meta.updated}"
         bibdata["updated by"] = item.data.meta.updatedBy
+        _finder = parse("$..datasource")
+        _datasources = _finder.find(item)
+        bibdata["datasources"] = ",".join(
+            set([str(_ds.value) for _ds in _datasources if _ds.value]) if _datasources else ""
+        )
         bibdata.update(kwargs)
         return bibdata
