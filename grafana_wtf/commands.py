@@ -144,16 +144,14 @@ def run():
 
         result = engine.search(options.search_expression or None)
         #print(json.dumps(result, indent=4))
-        _format = options.get("format")
-        _format_detail = _format.split(":")[1] or None
+        _format = options.get("format", "")
+        _format_detail = (
+            "psql" if len(_format.split(":")) == 1 else _format.split(":")[1]
+        )
         _generator = (
             WtfReport
             if not (_format and _format.startswith("tabular"))
-            else (
-                TabularReport
-                if _format_detail
-                else partial(TabularReport, tblfmt=_format_detail)
-            )
+            else (partial(TabularReport, tblfmt=_format_detail))
         )
         report = _generator(grafana_url, verbose=options.verbose)
         report.display(options.search_expression, result)
