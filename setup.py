@@ -24,7 +24,7 @@ requires = [
     # Output
     'tabulate==0.8.5',
     'colored==1.4.0',
-    'Pygments==2.4.2',
+    'Pygments==2.7.4',
 
 ]
 
