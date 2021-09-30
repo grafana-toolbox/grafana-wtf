@@ -126,6 +126,9 @@ def run():
     engine.enable_concurrency(int(options['concurrency']))
     engine.setup()
 
+    if options.replace:
+        engine.clear_cache()
+
     if options.find or options.replace:
 
         if options.select_dashboard:
@@ -145,6 +148,7 @@ def run():
 
     if options.replace:
         engine.replace(options.search_expression, options.replacement)
+        engine.clear_cache()
 
     if options.log:
         engine.scan_dashboards()

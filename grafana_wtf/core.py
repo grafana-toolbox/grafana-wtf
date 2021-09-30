@@ -44,10 +44,13 @@ class GrafanaSearch:
             log.info(f'Setting up response cache to expire after {expire_after} seconds')
         requests_cache.install_cache(expire_after=expire_after)
         if drop_cache:
-            log.info(f'Dropping cache')
-            requests_cache.clear()
+            self.clear_cache()
 
         return self
+
+    def clear_cache(self):
+        log.info(f'Clearing cache')
+        requests_cache.clear()
 
     def enable_concurrency(self, concurrency):
         self.concurrency = concurrency
