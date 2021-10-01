@@ -39,8 +39,9 @@ def test_find_select_empty(docker_grafana, capsys, caplog):
         grafana_wtf.commands.run()
         captured = capsys.readouterr()
 
-        assert "GrafanaClientError: Client Error 404: Dashboard not found" in caplog.text
-        assert caplog.text.count("GrafanaClientError: Client Error 404: Dashboard not found") == 2
+        assert \
+            'GrafanaClientError: Client Error 404: Dashboard not found' in caplog.text or \
+            'GrafanaClientError: Client Error 404: {"message":"Dashboard not found"}' in caplog.text
 
         assert "Data Sources: 0 hits" in captured.out
         assert "Dashboards: 0 hits" in captured.out
