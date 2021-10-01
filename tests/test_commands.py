@@ -24,7 +24,7 @@ def test_failure_grafana_url_missing():
     assert ex.match(re.escape('No Grafana URL given. Please use "--grafana-url" option or environment variable "GRAFANA_URL".'))
 
 
-def test_find_empty(docker_grafana, capsys):
+def test_find_textual_empty(docker_grafana, capsys):
     set_command("find foobar")
     grafana_wtf.commands.run()
     captured = capsys.readouterr()
@@ -33,7 +33,7 @@ def test_find_empty(docker_grafana, capsys):
     assert "Dashboards: 0 hits" in captured.out
 
 
-def test_find_select_empty(docker_grafana, capsys, caplog):
+def test_find_textual_select_empty(docker_grafana, capsys, caplog):
     set_command("find foobar", "--select-dashboard=foo,bar")
     with caplog.at_level(logging.DEBUG):
         grafana_wtf.commands.run()
@@ -47,7 +47,7 @@ def test_find_select_empty(docker_grafana, capsys, caplog):
         assert "Dashboards: 0 hits" in captured.out
 
 
-def test_find_dashboard_success(docker_grafana, capsys):
+def test_find_textual_dashboard_success(docker_grafana, capsys):
     set_command("find ldi_readings")
     grafana_wtf.commands.run()
     captured = capsys.readouterr()
@@ -62,7 +62,7 @@ def test_find_dashboard_success(docker_grafana, capsys):
     assert "dashboard.panels.[7].panels.[0].targets.[0].measurement: ldi_readings" in captured.out
 
 
-def test_find_datasource_dashboard_success(docker_grafana, capsys):
+def test_find_textual_datasource_dashboard_success(docker_grafana, capsys):
     set_command("find ldi_v2")
     grafana_wtf.commands.run()
     captured = capsys.readouterr()
@@ -76,6 +76,25 @@ def test_find_datasource_dashboard_success(docker_grafana, capsys):
     assert "luftdaten-info-generic-trend" in captured.out
     assert "dashboard.panels.[1].datasource: ldi_v2" in captured.out
     assert "dashboard.panels.[7].panels.[0].datasource: ldi_v2" in captured.out
+
+
+def test_find_tabular_dashboard_success(docker_grafana, capsys):
+    set_command("find ldi_readings", "--format=tabular:pipe")
+    grafana_wtf.commands.run()
+    captured = capsys.readouterr()
+
+    assert "Searching for expression \"ldi_readings\" at Grafana instance http://localhost:3000" in captured.out
+
+    reference_table = """
+| type       | name                         | Title                        | Folder    | UID       | Creation date        | created by   | last update date     | updated by   | datasources                      | URL                                                            |
+|:-----------|:-----------------------------|:-----------------------------|:----------|:----------|:---------------------|:-------------|:---------------------|:-------------|:---------------------------------|:---------------------------------------------------------------|
+| Dashboards | luftdaten-info-generic-trend | luftdaten.info generic trend | Testdrive | ioUrPwQiz | xxxx-xx-xxTxx:xx:xxZ | Anonymous    | xxxx-xx-xxTxx:xx:xxZ | admin        | -- Grafana --,ldi_v2,weatherbase | http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend |
+    """.strip()
+
+    output_table = captured.out[captured.out.find("| type"):]
+    output_table_normalized = re.sub(r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ", r"xxxx-xx-xxTxx:xx:xxZ", output_table).strip()
+
+    assert output_table_normalized == reference_table
 
 
 def test_replace_dashboard_success(docker_grafana, capsys):
@@ -118,7 +137,7 @@ def test_log_empty(docker_grafana, capsys, caplog):
         assert "[]" in captured.out
 
 
-def test_log_json(docker_grafana, capsys, caplog):
+def test_log_json_success(docker_grafana, capsys, caplog):
     set_command("log ioUrPwQiz")
     with caplog.at_level(logging.DEBUG):
         grafana_wtf.commands.run()
@@ -142,7 +161,7 @@ def test_log_json(docker_grafana, capsys, caplog):
         assert item == reference
 
 
-def test_log_tabular_pipe(docker_grafana, capsys, caplog):
+def test_log_tabular_success(docker_grafana, capsys, caplog):
     set_command("log ioUrPwQiz", "--format=tabular:pipe")
     with caplog.at_level(logging.DEBUG):
         grafana_wtf.commands.run()
