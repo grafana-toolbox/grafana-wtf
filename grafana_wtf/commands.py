@@ -70,6 +70,9 @@ def run():
       # Search keyword within list of specific dashboards.
       grafana-wtf --select-dashboard=_JJ22OZZk,5iGTqNWZk find grafana-worldmap
 
+      # Output search results in tabular format.
+      grafana-wtf find luftdaten --format=tabular:psql
+
     Replace examples:
 
       # Replace string within specific dashboard.
@@ -131,6 +134,8 @@ def run():
     if options.replace:
         engine.clear_cache()
 
+    output_format = options["format"]
+
     if options.find or options.replace:
 
         if options.select_dashboard:
@@ -143,17 +148,14 @@ def run():
             engine.scan()
 
         result = engine.search(options.search_expression or None)
-        #print(json.dumps(result, indent=4))
-        _format = options.get("format", "")
-        _format_detail = (
-            "psql" if len(_format.split(":")) == 1 else _format.split(":")[1]
-        )
-        _generator = (
-            WtfReport
-            if not (_format and _format.startswith("tabular"))
-            else (partial(TabularReport, tblfmt=_format_detail))
-        )
-        report = _generator(grafana_url, verbose=options.verbose)
+
+        table_format = get_table_format(output_format)
+        if table_format is None:
+            generator = WtfReport
+        else:
+            generator = partial(TabularReport, tblfmt=table_format)
+
+        report = generator(grafana_url, verbose=options.verbose)
         report.display(options.search_expression, result)
 
     if options.replace:
@@ -162,7 +164,6 @@ def run():
 
     if options.log:
         engine.scan_dashboards()
-        #print(options.dashboard_uid)
         entries = engine.log(dashboard_uid=options.dashboard_uid)
         entries = sorted(entries, key=itemgetter('datetime'), reverse=True)
 
@@ -172,26 +173,29 @@ def run():
 
         # TODO: Refactor tabular formatting to WtfTabularReport class.
         # https://bitbucket.org/astanin/python-tabulate
-        output_format = options['format']
-        if output_format.startswith('tabular'):
-
-            entries = compact_table(to_table(entries), output_format)
-
-            try:
-                tablefmt = options['format'].split(':')[1]
-            except:
-                tablefmt = 'psql'
-
-            #output = tabulate(data, headers=data.columns, showindex=showindex, tablefmt=tablefmt).encode('utf-8')
-            output = tabulate(entries, headers="keys", tablefmt=tablefmt) #.encode('utf-8')
-
-        elif output_format == "json":
+        if output_format == "json":
             output = json.dumps(entries, indent=4)
+
+        elif output_format.startswith("tabular"):
+            table_format = get_table_format(output_format)
+            entries = compact_table(to_table(entries), output_format)
+            output = tabulate(entries, headers="keys", tablefmt=table_format)
 
         else:
             raise ValueError(f"Unknown output format \"{output_format}\"")
 
         print(output)
+
+
+def get_table_format(output_format):
+    tablefmt = None
+    if output_format is not None and output_format.startswith("tabular"):
+        try:
+            tablefmt = output_format.split(":")[1]
+        except:
+            tablefmt = "psql"
+
+    return tablefmt
 
 
 def to_table(entries):
