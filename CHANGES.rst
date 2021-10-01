@@ -8,6 +8,7 @@ in progress
 - Improve behaviour of "replace" action by clearing the cache
 - Croak when obtaining unknown report format
 - Use ANSI colors only on TTYs
+- Add software tests
 
 2019-11-06 0.9.0
 ================

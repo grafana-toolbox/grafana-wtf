@@ -28,7 +28,10 @@ requires = [
 
 ]
 
-extras = {'test': []}
+extras = {'test': [
+    "pytest>=5,<7",
+    "lovely-pytest-docker>=0.2.1,<3"
+]}
 
 setup(name='grafana-wtf',
       version='0.9.0',
@@ -48,6 +51,14 @@ setup(name='grafana-wtf',
         "Intended Audience :: Science/Research",
         "Intended Audience :: System Administrators",
         "Intended Audience :: Telecommunications Industry",
+        "Operating System :: POSIX",
+        "Operating System :: Unix",
+        "Operating System :: MacOS",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Topic :: Communications",
         "Topic :: Database",
         "Topic :: Internet",
@@ -58,13 +69,10 @@ setup(name='grafana-wtf',
         "Topic :: Software Development :: Libraries",
         "Topic :: System :: Archiving",
         "Topic :: System :: Networking :: Monitoring",
-        "Operating System :: POSIX",
-        "Operating System :: Unix",
-        "Operating System :: MacOS"
-        ],
+      ],
       author='Andreas Motl',
       author_email='andreas@hiveeyes.org',
-      url='https://github.com/daq-tools/grafana-wtf',
+      url='https://github.com/panodata/grafana-wtf',
       keywords='grafana search index',
       packages=find_packages(),
       include_package_data=True,
