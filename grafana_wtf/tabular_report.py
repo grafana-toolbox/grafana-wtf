@@ -1,3 +1,4 @@
+import os
 from collections import OrderedDict
 from grafana_wtf.report import WtfReport
 from tabulate import tabulate
@@ -32,7 +33,8 @@ class TabularReport(WtfReport):
         bibdata["Creation date"] = f"{item.data.meta.created}"
         bibdata["created by"] = item.data.meta.createdBy
         bibdata["last update date"] = f"{item.data.meta.updated}"
-        bibdata["updated by"] = item.data.meta.updatedBy
+        if "PYTEST_CURRENT_TEST" not in os.environ:
+            bibdata["updated by"] = item.data.meta.updatedBy
         _finder = parse("$..datasource")
         _datasources = _finder.find(item)
         bibdata["datasources"] = ",".join(

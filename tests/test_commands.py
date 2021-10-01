@@ -86,9 +86,9 @@ def test_find_tabular_dashboard_success(docker_grafana, capsys):
     assert "Searching for expression \"ldi_readings\" at Grafana instance http://localhost:3000" in captured.out
 
     reference_table = """
-| type       | name                         | Title                        | Folder    | UID       | Creation date        | created by   | last update date     | updated by   | datasources                      | URL                                                            |
-|:-----------|:-----------------------------|:-----------------------------|:----------|:----------|:---------------------|:-------------|:---------------------|:-------------|:---------------------------------|:---------------------------------------------------------------|
-| Dashboards | luftdaten-info-generic-trend | luftdaten.info generic trend | Testdrive | ioUrPwQiz | xxxx-xx-xxTxx:xx:xxZ | Anonymous    | xxxx-xx-xxTxx:xx:xxZ | admin        | -- Grafana --,ldi_v2,weatherbase | http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend |
+| type       | name                         | Title                        | Folder    | UID       | Creation date        | created by   | last update date     | datasources                      | URL                                                            |
+|:-----------|:-----------------------------|:-----------------------------|:----------|:----------|:---------------------|:-------------|:---------------------|:---------------------------------|:---------------------------------------------------------------|
+| Dashboards | luftdaten-info-generic-trend | luftdaten.info generic trend | Testdrive | ioUrPwQiz | xxxx-xx-xxTxx:xx:xxZ | Anonymous    | xxxx-xx-xxTxx:xx:xxZ | -- Grafana --,ldi_v2,weatherbase | http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend |
     """.strip()
 
     output_table = captured.out[captured.out.find("| type"):]
