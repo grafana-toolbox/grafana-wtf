@@ -6,6 +6,7 @@ grafana-wtf changelog
 in progress
 ===========
 - Improve behaviour of "replace" action by clearing the cache
+- Croak when obtaining unknown report format
 
 2019-11-06 0.9.0
 ================

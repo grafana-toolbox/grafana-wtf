@@ -160,6 +160,7 @@ def run():
             count = int(options.number)
             entries = entries[:count]
 
+        # TODO: Refactor tabular formatting to WtfTabularReport class.
         # https://bitbucket.org/astanin/python-tabulate
         output_format = options['format']
         if output_format.startswith('tabular'):
@@ -174,8 +175,11 @@ def run():
             #output = tabulate(data, headers=data.columns, showindex=showindex, tablefmt=tablefmt).encode('utf-8')
             output = tabulate(entries, headers="keys", tablefmt=tablefmt) #.encode('utf-8')
 
-        else:
+        elif output_format == "json":
             output = json.dumps(entries, indent=4)
+
+        else:
+            raise ValueError(f"Unknown output format \"{output_format}\"")
 
         print(output)
 
