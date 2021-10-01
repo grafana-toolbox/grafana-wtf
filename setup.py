@@ -8,23 +8,23 @@ README = open(os.path.join(here, 'README.rst')).read()
 requires = [
 
     # Core
-    'six==1.13.0',
-    'docopt==0.6.2',
-    'munch==2.5.0',
-    'tqdm==4.37.0',
+    'six',
+    'docopt>=0.6.2,<0.7',
+    'munch>=2.5.0,<3',
+    'tqdm>=4.37.0,<5',
 
     # Grafana
-    'requests==2.22.0',
-    'grafana-api==0.9.1',
-    'jsonpath-rw==1.4.0',
+    'requests>=2.23.0,<3',
+    'grafana-api>=1.0.3,<2',
+    'jsonpath-rw>=1.4.0,<2',
 
     # Caching
-    'requests-cache==0.5.2',
+    'requests-cache>=0.5.2,<1',
 
     # Output
-    'tabulate==0.8.5',
-    'colored==1.4.0',
-    'Pygments==2.4.2',
+    'tabulate>=0.8.5,<0.9',
+    'colored>=1.4.0',
+    'Pygments>=2.7.4,<3',
 
 ]
 
