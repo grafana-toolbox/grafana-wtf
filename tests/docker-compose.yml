@@ -2,7 +2,7 @@ version: '3'
 services:
 
   grafana:
-    image: grafana/grafana:8.1.5
+    image: grafana/grafana:${GRAFANA_VERSION}
     volumes:
       - ./grafana/datasources:/etc/grafana/provisioning/datasources/
       - ./grafana/dashboards:/etc/grafana/provisioning/dashboards/

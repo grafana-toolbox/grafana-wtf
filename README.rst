@@ -19,6 +19,10 @@
 .. image:: https://img.shields.io/pypi/dm/grafana-wtf.svg
     :target: https://pypi.org/project/grafana-wtf/
 
+.. image:: https://img.shields.io/badge/Grafana-6.x%20--%208.x-blue.svg
+    :target: https://github.com/grafana/grafana
+    :alt: Supported Grafana versions
+
 |
 
 ###########
