@@ -4,20 +4,17 @@
 .. image:: https://img.shields.io/pypi/pyversions/grafana-wtf.svg
     :target: https://pypi.org/project/grafana-wtf/
 
-.. image:: https://img.shields.io/github/tag/panodata/grafana-wtf.svg
-    :target: https://github.com/panodata/grafana-wtf
-
 .. image:: https://img.shields.io/pypi/status/grafana-wtf.svg
     :target: https://pypi.org/project/grafana-wtf/
 
 .. image:: https://img.shields.io/pypi/v/grafana-wtf.svg
     :target: https://pypi.org/project/grafana-wtf/
 
-.. image:: https://img.shields.io/pypi/l/grafana-wtf.svg
-    :target: https://github.com/panodata/grafana-wtf/blob/main/LICENSE
-
 .. image:: https://img.shields.io/pypi/dm/grafana-wtf.svg
     :target: https://pypi.org/project/grafana-wtf/
+
+.. image:: https://img.shields.io/pypi/l/grafana-wtf.svg
+    :target: https://github.com/panodata/grafana-wtf/blob/main/LICENSE
 
 .. image:: https://img.shields.io/badge/Grafana-6.x%20--%208.x-blue.svg
     :target: https://github.com/grafana/grafana
