@@ -13,8 +13,14 @@ from collections import OrderedDict
 from urllib.parse import urlparse, urljoin
 from concurrent.futures.thread import ThreadPoolExecutor
 
+from grafana_wtf.monkey import monkeypatch_grafana_api
+# Apply monkeypatch to grafana-api
+# https://github.com/m0nhawk/grafana_api/pull/85/files
+monkeypatch_grafana_api()
+
 from grafana_api.grafana_api import GrafanaClientError, GrafanaUnauthorizedError
 from grafana_api.grafana_face import GrafanaFace
+
 from grafana_wtf.util import JsonPathFinder
 
 log = logging.getLogger(__name__)
