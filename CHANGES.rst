@@ -11,6 +11,7 @@ in progress
 - Add software tests
 - Add monkeypatch for grafana-api package to mitigate flaw with "replace" action.
   See also https://github.com/m0nhawk/grafana_api/pull/85.
+- Bump/improve dependency versions to 3rd-party packages
 
 2019-11-06 0.9.0
 ================
