@@ -149,11 +149,11 @@ def run():
 
         result = engine.search(options.search_expression or None)
 
-        table_format = get_table_format(output_format)
-        if table_format is None:
-            generator = WtfReport
-        else:
+        if output_format.startswith("tabular"):
+            table_format = get_table_format(output_format)
             generator = partial(TabularReport, tblfmt=table_format)
+        else:
+            generator = WtfReport
 
         report = generator(grafana_url, verbose=options.verbose)
         report.display(options.search_expression, result)

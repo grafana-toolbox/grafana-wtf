@@ -36,7 +36,7 @@ class TabularReport(WtfReport):
         _finder = parse("$..datasource")
         _datasources = _finder.find(item)
         bibdata["datasources"] = ",".join(
-            set([str(_ds.value) for _ds in _datasources if _ds.value]) if _datasources else ""
+            sorted(set([str(_ds.value) for _ds in _datasources if _ds.value])) if _datasources else ""
         )
         bibdata.update(kwargs)
         return bibdata
