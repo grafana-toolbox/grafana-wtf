@@ -8,10 +8,11 @@ in progress
 - Improve behaviour of "replace" action by clearing the cache
 - Croak when obtaining unknown report format
 - Use ANSI colors only on TTYs
-- Add software tests
+- Add software tests, with CI on GHA
 - Add monkeypatch for grafana-api package to mitigate flaw with "replace" action.
   See also https://github.com/m0nhawk/grafana_api/pull/85.
 - Bump/improve dependency versions to 3rd-party packages
+- Run tests on CI against different versions of Grafana
 
 2019-11-06 0.9.0
 ================

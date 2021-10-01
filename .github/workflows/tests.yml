@@ -19,7 +19,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ] # , macos-latest, windows-latest ]
         python-version: [ "3.6", "3.7", "3.8", "3.9" ]
-        grafana-version: [ "8.x.x" ]
+        grafana-version: [ "6.7.6", "7.5.10", "8.1.5" ]
         include:
         - os: ubuntu-latest
           path: ~/.cache/pip
@@ -29,8 +29,9 @@ jobs:
         #  path: ~\AppData\Local\pip\Cache
 
     env:
-      OS: ${{ matrix.os }}
-      PYTHON: ${{ matrix.python-version }}
+      OS_TYPE: ${{ matrix.os }}
+      PYTHON_VERSION: ${{ matrix.python-version }}
+      GRAFANA_VERSION: ${{ matrix.grafana-version }}
 
     name: OS ${{ matrix.os }}, Python ${{ matrix.python-version }}, Grafana ${{ matrix.grafana-version }}
     steps:
