@@ -1,11 +1,23 @@
-.. image:: https://img.shields.io/badge/Python-3.6-green.svg
+.. image:: https://github.com/panodata/grafana-wtf/workflows/Tests/badge.svg
+    :target: https://github.com/panodata/grafana-wtf/actions?workflow=Tests
+
+.. image:: https://img.shields.io/pypi/pyversions/grafana-wtf.svg
+    :target: https://pypi.org/project/grafana-wtf/
+
+.. image:: https://img.shields.io/github/tag/panodata/grafana-wtf.svg
+    :target: https://github.com/panodata/grafana-wtf
+
+.. image:: https://img.shields.io/pypi/status/grafana-wtf.svg
     :target: https://pypi.org/project/grafana-wtf/
 
 .. image:: https://img.shields.io/pypi/v/grafana-wtf.svg
     :target: https://pypi.org/project/grafana-wtf/
 
-.. image:: https://img.shields.io/github/tag/daq-tools/grafana-wtf.svg
-    :target: https://github.com/daq-tools/grafana-wtf
+.. image:: https://img.shields.io/pypi/l/grafana-wtf.svg
+    :target: https://github.com/panodata/grafana-wtf/blob/main/LICENSE
+
+.. image:: https://img.shields.io/pypi/dm/grafana-wtf.svg
+    :target: https://pypi.org/project/grafana-wtf/
 
 |
 
@@ -102,4 +114,14 @@ Then::
 ********
 Examples
 ********
-See `grafana-wtf examples <https://github.com/daq-tools/grafana-wtf/blob/master/doc/examples.rst>`_.
+See `grafana-wtf examples <https://github.com/panodata/grafana-wtf/blob/master/doc/examples.rst>`_.
+
+
+***********
+Development
+***********
+::
+
+    git clone https://github.com/panodata/grafana-wtf
+    cd grafana-wtf
+    make test

@@ -7,7 +7,7 @@
 # Configuration
 # -------------
 
-$(eval venvpath     := .venv_util)
+$(eval venvpath     := .venv)
 $(eval pip          := $(venvpath)/bin/pip)
 $(eval python       := $(venvpath)/bin/python)
 $(eval pytest       := $(venvpath)/bin/pytest)
@@ -17,7 +17,7 @@ $(eval sphinx       := $(venvpath)/bin/sphinx-build)
 
 # Setup Python virtualenv
 setup-virtualenv:
-	@test -e $(python) || `command -v virtualenv` --python=python3 --no-site-packages $(venvpath)
+	@test -e $(python) || python3 -m venv $(venvpath)
 
 
 # -------
@@ -27,7 +27,7 @@ setup-virtualenv:
 # Run the main test suite
 test:
 	@test -e $(pytest) || $(MAKE) install-tests
-	@$(pytest) tests -m 'not slow' --show-capture=all --verbose
+	@$(pytest) --keepalive tests --show-capture=all -vvv
 
 test-refresh: install-tests test
 
@@ -96,4 +96,4 @@ install-tests: setup-virtualenv
 # -------
 
 grafana-start:
-	grafana-server --config=/usr/local/etc/grafana/grafana.ini --homepath /usr/local/share/grafana cfg:default.paths.logs=/usr/local/var/log/grafana cfg:default.paths.data=/usr/local/var/lib/grafana cfg:default.paths.plugins=/usr/local/var/lib/grafana/plugins
+	cd tests/grafana; docker-compose up
