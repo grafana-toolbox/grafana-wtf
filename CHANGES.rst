@@ -5,6 +5,9 @@ grafana-wtf changelog
 
 in progress
 ===========
+
+2021-10-01 0.10.0
+=================
 - Improve behaviour of "replace" action by clearing the cache
 - Croak when obtaining unknown report format
 - Use ANSI colors only on TTYs
