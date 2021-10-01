@@ -13,6 +13,7 @@ in progress
   See also https://github.com/m0nhawk/grafana_api/pull/85.
 - Bump/improve dependency versions to 3rd-party packages
 - Run tests on CI against different versions of Grafana
+- Add a tabular report to the find command. Thanks, @cronosnull!
 
 2019-11-06 0.9.0
 ================
