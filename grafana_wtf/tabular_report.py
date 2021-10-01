@@ -18,7 +18,7 @@ class TabularReport(WtfReport):
             }
             for item in items
         ]
-        print(tabulate(items_rows, tablefmt=self.format))
+        print(tabulate(items_rows, headers="keys", tablefmt=self.format))
 
     def get_bibdata_dict(self, item, **kwargs):
 
