@@ -25,9 +25,6 @@ from grafana_wtf.util import JsonPathFinder
 
 log = logging.getLogger(__name__)
 
-# Use ANSI colors only on TTYs.
-colored.set_tty_aware()
-
 
 class GrafanaSearch:
 

@@ -5,6 +5,7 @@ grafana-wtf changelog
 
 in progress
 ===========
+- Upgrade to ``colored==1.4.3``
 
 2021-10-01 0.10.0
 =================
