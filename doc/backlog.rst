@@ -34,3 +34,4 @@ Done
 - [x] Introduce concurrent resource fetching using asyncio or grequests,
   see https://github.com/kennethreitz/grequests
 - [x] Add software tests
+- [x] Document "replace" feature in README

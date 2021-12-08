@@ -93,16 +93,20 @@ Please take these steps to create an API key with your Grafana instance:
   please take note of the Bearer token. This is your Grafana API key.
 
 
-*******
-Running
-*******
+*****
+Usage
+*****
 
 Before running ``grafana-wtf``, define URL and access token of your Grafana instance::
 
     export GRAFANA_URL=https://daq.example.org/grafana/
     export GRAFANA_TOKEN=eyJrIjoiWHg...dGJpZCI6MX0=
 
-Then::
+
+Searching for strings
+=====================
+
+Find the string ``weatherbase`` throughout all dashboards and data sources::
 
     grafana-wtf find weatherbase
 
@@ -112,10 +116,31 @@ Then::
     When running it with the ``--drop-cache`` option, it will drop its cache upfront.
 
 
+Replacing strings
+=================
+
+Replace all occurrences of ``ldi_v2`` with ``ldi_v3`` within dashboard with
+UID ``_JJ22OZZk``::
+
+    grafana-wtf --select-dashboard=_JJ22OZZk replace ldi_v2 ldi_v3
+
+
+Displaying changes / revision logs
+==================================
+
+Watching out for recent editing activity on any dashboards?::
+
+    # Display 50 most recent changes across all dashboards.
+    grafana-wtf log --number=50
+
+
 ********
 Examples
 ********
-See `grafana-wtf examples <https://github.com/panodata/grafana-wtf/blob/master/doc/examples.rst>`_.
+
+For discovering more command line parameters and their arguments, please invoke
+``grafana-wtf --help`` and have a look at `grafana-wtf examples`_.
+
 
 
 ***********
@@ -126,3 +151,6 @@ Development
     git clone https://github.com/panodata/grafana-wtf
     cd grafana-wtf
     make test
+
+
+.. _grafana-wtf examples: https://github.com/panodata/grafana-wtf/blob/master/doc/examples.rst

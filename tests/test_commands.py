@@ -99,8 +99,6 @@ def test_find_tabular_dashboard_success(docker_grafana, capsys):
 
 def test_replace_dashboard_success(docker_grafana, capsys):
 
-    grafana_url = "http://localhost:3000"
-
     # Rename references from "ldi_v2" to "ldi_v3".
     set_command("replace ldi_v2 ldi_v3")
     grafana_wtf.commands.run()
