@@ -2,6 +2,7 @@ version: '3'
 services:
 
   grafana:
+    container_name: grafana-wtf-test
     image: grafana/grafana:${GRAFANA_VERSION}
     volumes:
       - ./grafana/datasources:/etc/grafana/provisioning/datasources/

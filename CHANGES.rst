@@ -6,6 +6,7 @@ grafana-wtf changelog
 in progress
 ===========
 - Upgrade to ``colored==1.4.3``
+- Tests: Use ``.env`` file for propagating environment variables to Docker Compose
 
 2021-10-01 0.10.0
 =================
