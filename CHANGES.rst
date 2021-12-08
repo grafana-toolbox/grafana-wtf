@@ -7,6 +7,7 @@ in progress
 ===========
 - Upgrade to ``colored==1.4.3``
 - Tests: Use ``.env`` file for propagating environment variables to Docker Compose
+- CI/GHA test matrix: Use Grafana 7.5.11 and 8.3.1 and add Python 3.10
 
 2021-10-01 0.10.0
 =================
