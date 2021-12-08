@@ -13,19 +13,6 @@ def clean_environment():
             pass
 
 
-def update_environment():
-
-    # Set default Grafana version.
-    GRAFANA_VERSION_DEFAULT = "8.1.5"
-    if "GRAFANA_VERSION" not in os.environ:
-        os.environ["GRAFANA_VERSION"] = GRAFANA_VERSION_DEFAULT
-
-    # Report about Grafana version.
-    GRAFANA_VERSION = os.environ["GRAFANA_VERSION"]
-    sys.stderr.write(f"INFO: Running tests against Grafana version {GRAFANA_VERSION}\n")
-    sys.stderr.flush()
-
-
 @pytest.fixture(scope="session")
 def docker_compose_files(pytestconfig):
     """
@@ -51,4 +38,3 @@ def docker_grafana(docker_services):
 
 
 clean_environment()
-update_environment()
