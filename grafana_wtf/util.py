@@ -4,6 +4,9 @@
 import sys
 import json
 import logging
+from collections import OrderedDict
+
+import yaml
 from munch import munchify
 from jsonpath_rw import parse
 from pygments import highlight
@@ -106,3 +109,22 @@ class JsonPathFinder:
 def prettify_json(data):
     json_str = json.dumps(data, indent=4)
     return highlight(json_str, JsonLexer(), TerminalFormatter())
+
+
+def yaml_dump(data, stream=None, Dumper=yaml.SafeDumper, **kwds):
+    """
+    https://stackoverflow.com/questions/5121931/in-python-how-can-you-load-yaml-mappings-as-ordereddicts
+    """
+
+    kwds["default_flow_style"] = False
+
+    class OrderedDumper(Dumper):
+        pass
+
+    def _dict_representer(dumper, data):
+        return dumper.represent_mapping(
+            yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+            data.items())
+
+    OrderedDumper.add_representer(OrderedDict, _dict_representer)
+    return yaml.dump(data, stream, OrderedDumper, **kwds)

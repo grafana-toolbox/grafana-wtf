@@ -9,6 +9,7 @@ requires = [
 
     # Core
     'six',
+    'dataclasses; python_version<"3.7"',
     'docopt>=0.6.2,<0.7',
     'munch>=2.5.0,<3',
     'tqdm>=4.37.0,<5',
@@ -25,6 +26,7 @@ requires = [
     'tabulate>=0.8.5,<0.9',
     'colored>=1.4.3,<2',
     'Pygments>=2.7.4,<3',
+    'PyYAML>=5,<6',
 
 ]
 

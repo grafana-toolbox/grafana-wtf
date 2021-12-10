@@ -6,6 +6,7 @@ import sys
 
 import docopt
 import pytest
+import yaml
 
 import grafana_wtf.commands
 
@@ -173,3 +174,27 @@ def test_log_tabular_success(docker_grafana, capsys, caplog):
         first_item_raw = str.splitlines(captured.out)[-1]
         first_item_normalized = re.sub("(.*)Date: .+|(.*)", r"\1Date: xxxx-xx-xxTxx:xx:xxZ      |\2", first_item_raw, 1)
         assert first_item_normalized == reference
+
+
+def test_datasource_breakdown(docker_grafana, create_datasource, capsys, caplog):
+
+    # Create a datasource, which is not used by any dashboard.
+    create_datasource(name="foo", type="foo", access="foo")
+    create_datasource(name="bar", type="bar", access="bar")
+
+    # Compute breakdown.
+    set_command("datasource-breakdown", "--format=yaml")
+
+    # Proof the output is correct.
+    with caplog.at_level(logging.DEBUG):
+        grafana_wtf.commands.run()
+        assert "Found 2 unused data source(s)" in caplog.messages
+
+    captured = capsys.readouterr()
+    data = yaml.load(captured.out)
+
+    assert len(data["used"]) >= 1
+    assert len(data["unused"]) >= 2
+
+    assert data["unused"][0]["datasource"]["name"] == "bar"
+    assert data["unused"][1]["datasource"]["name"] == "foo"

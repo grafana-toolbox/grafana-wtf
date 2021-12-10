@@ -3,6 +3,9 @@ import sys
 from pathlib import Path
 
 import pytest
+from grafana_api.grafana_api import GrafanaClientError
+
+from grafana_wtf.core import GrafanaSearch
 
 
 def clean_environment():
@@ -35,6 +38,21 @@ def docker_grafana(docker_services):
     public_port = docker_services.wait_for_service("grafana", 3000)
     url = "http://{docker_services.docker_ip}:{public_port}".format(**locals())
     return url
+
+
+@pytest.fixture
+def create_datasource(docker_grafana):
+    # https://docs.pytest.org/en/4.6.x/fixture.html#factories-as-fixtures
+    def _create_datasource(name: str, type: str, access: str):
+        grafana = GrafanaSearch.grafana_client_factory(docker_grafana)
+        # TODO: Add fixture which completely resets everything in Grafana before running the test harness.
+        #       Move to a different port than 3000 then!
+        try:
+            grafana.datasource.create_datasource(dict(name=name, type=type, access=access))
+        except GrafanaClientError as ex:
+            if "Client Error 409: data source with the same name already exists" not in str(ex):
+                raise
+    return _create_datasource
 
 
 clean_environment()

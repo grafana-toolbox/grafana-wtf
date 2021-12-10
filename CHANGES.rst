@@ -5,9 +5,14 @@ grafana-wtf changelog
 
 in progress
 ===========
-- Upgrade to ``colored==1.4.3``
+
+2021-12-10 0.11.0
+=================
+- Upgrade to ``colored==1.4.3``. Thanks, @dslackw!
 - Tests: Use ``.env`` file for propagating environment variables to Docker Compose
 - CI/GHA test matrix: Use Grafana 7.5.11 and 8.3.1 and add Python 3.10
+- Add feature to display datasource breakdown, specifically for finding unused
+  data sources. Thanks, @chenlujjj!
 
 2021-10-01 0.10.0
 =================

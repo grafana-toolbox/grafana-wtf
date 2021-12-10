@@ -14,7 +14,7 @@ from grafana_wtf import __appname__, __version__
 from grafana_wtf.core import GrafanaSearch
 from grafana_wtf.report import WtfReport
 from grafana_wtf.tabular_report import TabularReport
-from grafana_wtf.util import normalize_options, setup_logging, configure_http_logging, read_list
+from grafana_wtf.util import normalize_options, setup_logging, configure_http_logging, read_list, yaml_dump
 
 log = logging.getLogger(__name__)
 
@@ -25,6 +25,7 @@ def run():
       grafana-wtf [options] find [<search-expression>]
       grafana-wtf [options] replace <search-expression> <replacement>
       grafana-wtf [options] log [<dashboard_uid>] [--number=<count>]
+      grafana-wtf [options] datasource-breakdown
       grafana-wtf --version
       grafana-wtf (-h | --help)
 
@@ -92,6 +93,13 @@ def run():
       # Output full history table in Grid format
       grafana-wtf log --format=tabular:grid
 
+    Breakdown examples:
+
+      # Display all data sources and the dashboards using them, as well as unused data sources.
+      grafana-wtf datasource-breakdown --format=yaml
+
+      # Display names of unused datasources as a flat list.
+      grafana-wtf datasource-breakdown --format=json | jq -r '.unused[].datasource.name'
 
     """
 
@@ -180,6 +188,24 @@ def run():
             table_format = get_table_format(output_format)
             entries = compact_table(to_table(entries), output_format)
             output = tabulate(entries, headers="keys", tablefmt=table_format)
+
+        else:
+            raise ValueError(f"Unknown output format \"{output_format}\"")
+
+        print(output)
+
+    if options.datasource_breakdown:
+        results = engine.datasource_breakdown()
+
+        unused_count = len(results["unused"])
+        if unused_count:
+            log.warning(f"Found {unused_count} unused data source(s)")
+
+        if output_format == "json":
+            output = json.dumps(results, indent=4)
+
+        elif output_format == "yaml":
+            output = yaml_dump(results)
 
         else:
             raise ValueError(f"Unknown output format \"{output_format}\"")
