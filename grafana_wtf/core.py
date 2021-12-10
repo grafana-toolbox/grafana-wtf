@@ -2,6 +2,8 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU Affero General Public License, Version 3
 import json
+from pprint import pprint
+
 import colored
 import logging
 import asyncio
@@ -13,6 +15,7 @@ from collections import OrderedDict
 from urllib.parse import urlparse, urljoin
 from concurrent.futures.thread import ThreadPoolExecutor
 
+from grafana_wtf.model import DatasourceBreakdownItem
 from grafana_wtf.monkey import monkeypatch_grafana_api
 # Apply monkeypatch to grafana-api
 # https://github.com/m0nhawk/grafana_api/pull/85/files
@@ -61,12 +64,13 @@ class GrafanaSearch:
     def enable_concurrency(self, concurrency):
         self.concurrency = concurrency
 
-    def setup(self):
-        url = urlparse(self.grafana_url)
+    @staticmethod
+    def grafana_client_factory(grafana_url, grafana_token=None):
+        url = urlparse(grafana_url)
 
         # Grafana API Key auth
-        if self.grafana_token:
-            auth = self.grafana_token
+        if grafana_token:
+            auth = grafana_token
 
         # HTTP basic auth
         else:
@@ -74,9 +78,15 @@ class GrafanaSearch:
             password = url.password or 'admin'
             auth = (username, password)
 
-        self.grafana = GrafanaFace(
+        grafana = GrafanaFace(
             auth, protocol=url.scheme,
             host=url.hostname, port=url.port, url_path_prefix=url.path.lstrip('/'))
+
+        return grafana
+
+    def setup(self):
+
+        self.grafana = self.grafana_client_factory(self.grafana_url, grafana_token=self.grafana_token)
 
         # Configure a larger HTTP request pool.
         # Todo: Review the pool settings and eventually adjust according to concurrency level or other parameters.
@@ -175,6 +185,7 @@ class GrafanaSearch:
         try:
             self.data.datasources = munchify(self.grafana.datasource.list_datasources())
             log.info('Found {} data sources'.format(len(self.data.datasources)))
+            return self.data.datasources
         except GrafanaClientError as ex:
             message = '{name}: {ex}'.format(name=ex.__class__.__name__, ex=ex)
             log.error(self.get_red_message(message))
@@ -217,6 +228,8 @@ class GrafanaSearch:
 
         if self.progressbar:
             self.taqadum.close()
+
+        return self.data.dashboards
 
     def handle_grafana_error(self, ex):
         message = '{name}: {ex}'.format(name=ex.__class__.__name__, ex=ex)
@@ -272,3 +285,93 @@ class GrafanaSearch:
         get_dashboard_versions_path = '/dashboards/id/%s/versions' % dashboard_id
         r = self.grafana.dashboard.api.GET(get_dashboard_versions_path)
         return r
+
+    def datasource_breakdown(self):
+
+        # Prepare indexes, mapping dashboards by uid, datasources by name
+        # as well as dashboards to datasources and vice versa.
+        ix = Indexer(engine=self)
+
+        # Compute list of breakdown items, associating datasources with the dashboards that use them.
+        results_used = []
+        results_unused = []
+        for name in sorted(ix.datasource_by_name):
+            datasource = ix.datasource_by_name[name]
+            dashboard_uids = ix.datasource_dashboard_index.get(name, [])
+            dashboards = list(map(ix.dashboard_by_uid.get, dashboard_uids))
+            item = DatasourceBreakdownItem(datasource=datasource, used_in=dashboards, grafana_url=self.grafana_url)
+
+            # Format results in a more compact form, using only a subset of all the attributes.
+            result = item.format_compact()
+
+            if dashboard_uids:
+                results_used.append(result)
+            else:
+                results_unused.append(result)
+
+        response = OrderedDict(
+            used=results_used,
+            unused=results_unused,
+        )
+
+        return response
+
+
+class Indexer:
+
+    def __init__(self, engine: GrafanaSearch):
+        self.engine = engine
+
+        # Prepare index data structures.
+        self.dashboard_by_uid = {}
+        self.datasource_by_name = {}
+        self.dashboard_datasource_index = {}
+        self.datasource_dashboard_index = {}
+
+        # Gather all data.
+        self.dashboards = self.engine.scan_dashboards()
+        self.datasources = self.engine.scan_datasources()
+
+        # Invoke indexer.
+        self.index()
+
+    def index(self):
+        self.index_dashboards()
+        self.index_datasources()
+
+    @staticmethod
+    def collect_datasource_names(root):
+        return list(set([item.datasource for item in root if item.datasource]))
+
+    def index_dashboards(self):
+
+        self.dashboard_by_uid = {}
+        self.dashboard_datasource_index = {}
+
+        for dashboard in self.dashboards:
+            if dashboard.meta.isFolder:
+                continue
+
+            # Index by uid.
+            uid = dashboard.dashboard.uid
+            self.dashboard_by_uid[uid] = dashboard
+
+            # Map to data source names.
+            ds_panels = self.collect_datasource_names(dashboard.dashboard.panels)
+            ds_annotations = self.collect_datasource_names(dashboard.dashboard.annotations.list)
+            ds_templating = self.collect_datasource_names(dashboard.dashboard.templating.list)
+            self.dashboard_datasource_index[uid] = list(sorted(set(ds_panels + ds_annotations + ds_templating)))
+
+    def index_datasources(self):
+
+        self.datasource_by_name = {}
+        self.datasource_dashboard_index = {}
+
+        for datasource in self.datasources:
+            name = datasource.name
+            self.datasource_by_name[name] = datasource
+
+        for dashboard_uid, datasource_names in self.dashboard_datasource_index.items():
+            for datasource_name in datasource_names:
+                self.datasource_dashboard_index.setdefault(datasource_name, [])
+                self.datasource_dashboard_index[datasource_name].append(dashboard_uid)
