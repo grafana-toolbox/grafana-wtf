@@ -6,6 +6,10 @@ grafana-wtf changelog
 in progress
 ===========
 
+2021-12-10 0.11.1
+=================
+- Be more graceful when decoding Grafana dashboard data structures. Thanks, @jangaraj!
+
 2021-12-10 0.11.0
 =================
 - Upgrade to ``colored==1.4.3``. Thanks, @dslackw!

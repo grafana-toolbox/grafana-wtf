@@ -340,8 +340,12 @@ class Indexer:
         self.index_datasources()
 
     @staticmethod
-    def collect_datasource_names(root):
-        return list(set([item.datasource for item in root if item.datasource]))
+    def collect_datasource_names(element):
+        names = []
+        for node in element:
+            if "datasource" in node and node["datasource"]:
+                names.append(node.datasource)
+        return list(sorted(set(names)))
 
     def index_dashboards(self):
 
@@ -357,9 +361,10 @@ class Indexer:
             self.dashboard_by_uid[uid] = dashboard
 
             # Map to data source names.
-            ds_panels = self.collect_datasource_names(dashboard.dashboard.panels)
-            ds_annotations = self.collect_datasource_names(dashboard.dashboard.annotations.list)
-            ds_templating = self.collect_datasource_names(dashboard.dashboard.templating.list)
+            dbdata = dashboard.dashboard
+            ds_panels = self.collect_datasource_names(dbdata.get("panels", []))
+            ds_annotations = self.collect_datasource_names(dbdata.get("annotations", {}).get("list", []))
+            ds_templating = self.collect_datasource_names(dbdata.get("templating", {}).get("list", []))
             self.dashboard_datasource_index[uid] = list(sorted(set(ds_panels + ds_annotations + ds_templating)))
 
     def index_datasources(self):
