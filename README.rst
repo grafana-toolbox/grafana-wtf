@@ -134,6 +134,19 @@ Watching out for recent editing activity on any dashboards?::
     grafana-wtf log --number=50
 
 
+Explore data sources
+====================
+
+How to find unused data sources?::
+
+    # Display all data sources and the dashboards using them, as well as unused data sources.
+    grafana-wtf datasource-breakdown --format=yaml
+
+    # Display names of unused datasources as a flat list.
+    grafana-wtf datasource-breakdown --format=json | jq -r '.unused[].datasource.name'
+
+
+
 ********
 Examples
 ********

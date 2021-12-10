@@ -6,6 +6,21 @@ grafana-wtf backlog
 ******
 Prio 1
 ******
+- [o] AttributeError: https://github.com/panodata/grafana-wtf/issues/17
+- [o] Repair ``log`` subcommand
+- [o] Add subcommand ``dashboard-breakdown``
+- [o] Number of dashboards, users, and playlists
+      -- via: https://grafana.com/docs/grafana/latest/administration/view-server/internal-metrics/
+- [o] Dockerize
+- [o] Statistics reports for data sources and panels: https://github.com/panodata/grafana-wtf/issues/18
+- [o] Finding invalid data sources: https://github.com/panodata/grafana-wtf/issues/19
+
+
+********
+Prio 1.5
+********
+- [o] Add test fixture which completely resets everything in Grafana before running the test harness.
+      Move to a different port than 3000 then!
 - [o] Improve output format handling and error cases
 - [o] Introduce paging to reach beyond the 5000 results limit,
   see https://grafana.com/docs/http_api/folder_dashboard_search/
