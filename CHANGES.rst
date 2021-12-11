@@ -8,6 +8,7 @@ in progress
 - Rename subcommand ``datasource-breakdown`` to ``explore datasources``
 - Add subcommand ``explore dashboards``, e.g. for discovering dashboards using
   missing data sources.
+- CI/GHA test matrix: Use Grafana 7.5.12 and 8.3.2
 
 2021-12-10 0.11.1
 =================
