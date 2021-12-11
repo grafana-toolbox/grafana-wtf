@@ -14,6 +14,7 @@ in progress
 - Add example how to print the Grafana version using the ``info`` subcommand
 - Add more information about dashboard entities to ``info`` subcommand
 - Blackify code base
+- Add ``Dockerfile`` and GHA recipe to publish container images to GHCR
 
 2021-12-10 0.11.1
 =================

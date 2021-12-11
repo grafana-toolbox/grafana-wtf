@@ -6,7 +6,6 @@ grafana-wtf backlog
 ******
 Prio 1
 ******
-- [o] Dockerize
 - [o] Statistics reports for data sources and panels: https://github.com/panodata/grafana-wtf/issues/18
 - [o] Finding invalid data sources: https://github.com/panodata/grafana-wtf/issues/19
 - [o] Add test fixture for adding dashboards at runtime from branch ``amo/test-dashboard-runtime``
@@ -57,3 +56,4 @@ Done
     - Display Grafana version: https://grafana.com/docs/grafana/latest/http_api/other/#health-api
     - Display number of dashboards, folders, users, and playlists
 - [x] Blackify
+- [x] Dockerize

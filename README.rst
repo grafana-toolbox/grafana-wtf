@@ -53,6 +53,14 @@ Display 50 most recent changes across all dashboards.
 
     grafana-wtf log --number=50
 
+Run with Docker::
+
+    # Access Grafana instance on localhost, without authentication.
+    docker run --rm -it --env GRAFANA_URL="http://host.docker.internal:3000" ghcr.io/panodata/grafana-wtf grafana-wtf info
+
+    # Access Grafana instance with authentication.
+    docker run --rm -it --env GRAFANA_URL="https://daq.grafana.org/grafana" --env GRAFANA_TOKEN="eyJrIjoiWHg...dGJpZCI6MX0=" ghcr.io/panodata/grafana-wtf grafana-wtf info
+
 
 ***********
 Screenshots
