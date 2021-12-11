@@ -42,18 +42,37 @@ def docker_grafana(docker_services):
 
 @pytest.fixture
 def create_datasource(docker_grafana):
-    # https://docs.pytest.org/en/4.6.x/fixture.html#factories-as-fixtures
+    """
+    Create a Grafana data source from a test case.
+    After the test case finished, it will remove the data source again.
+
+    https://docs.pytest.org/en/4.6.x/fixture.html#factories-as-fixtures
+    """
+
+    # Reference to `grafana-client`.
+    grafana = GrafanaWtf.grafana_client_factory(docker_grafana)
+
+    # Keep track of the datasource ids in order to delete them afterwards.
+    datasource_ids = []
+
     def _create_datasource(name: str, type: str, access: str):
-        grafana = GrafanaWtf.grafana_client_factory(docker_grafana)
-        # TODO: Add fixture which completely resets everything in Grafana before running the test harness.
-        #       Move to a different port than 3000 then!
         try:
-            grafana.datasource.create_datasource(dict(name=name, type=type, access=access))
+            response = grafana.datasource.create_datasource(dict(name=name, type=type, access=access))
+            datasource_id = response["datasource"]["id"]
+            datasource_ids.append(datasource_id)
         except GrafanaClientError as ex:
-            if not re.match("Client Error 409: Data source with (the )?same name already exists", str(ex), re.IGNORECASE):
+            # TODO: Mimic the original response `{'datasource': {'id': 5, 'uid': 'u9wNRyEnk', 'orgId': 1, ...`.
+            #       in order to make the removal work.
+            if not re.match(
+                "Client Error 409: Data source with (the )?same name already exists", str(ex), re.IGNORECASE
+            ):
                 raise
 
-    return _create_datasource
+    yield _create_datasource
+
+    if datasource_ids:
+        for datasource_id in datasource_ids:
+            grafana.datasource.delete_datasource_by_id(datasource_id)
 
 
 clean_environment()
