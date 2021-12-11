@@ -1,5 +1,6 @@
 # https://github.com/m0nhawk/grafana_api/pull/85/files
 
+
 def update_dashboard(self, dashboard):
     """
     :param dashboard:
@@ -20,4 +21,5 @@ def update_dashboard(self, dashboard):
 
 def monkeypatch_grafana_api():
     import grafana_api.api.dashboard as dashboard
+
     dashboard.Dashboard.update_dashboard = update_dashboard

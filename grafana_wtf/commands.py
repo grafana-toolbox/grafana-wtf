@@ -1,22 +1,28 @@
 # -*- coding: utf-8 -*-
-# (c) 2019 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2021 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU Affero General Public License, Version 3
-import os
 import json
 import logging
+import os
+from collections import OrderedDict
 from functools import partial
+from operator import itemgetter
 from typing import List
 
+from docopt import DocoptExit, docopt
 from tabulate import tabulate
-from operator import itemgetter
-from collections import OrderedDict
-from docopt import docopt, DocoptExit
 
 from grafana_wtf import __appname__, __version__
 from grafana_wtf.core import GrafanaWtf
 from grafana_wtf.report import WtfReport
 from grafana_wtf.tabular_report import TabularReport
-from grafana_wtf.util import normalize_options, setup_logging, configure_http_logging, read_list, yaml_dump
+from grafana_wtf.util import (
+    configure_http_logging,
+    normalize_options,
+    read_list,
+    setup_logging,
+    yaml_dump,
+)
 
 log = logging.getLogger(__name__)
 
@@ -126,39 +132,41 @@ def run():
     """
 
     # Parse command line arguments
-    options = normalize_options(docopt(run.__doc__, version=__appname__ + ' ' + __version__))
+    options = normalize_options(docopt(run.__doc__, version=f"{__appname__} {__version__}"))
 
     # Setup logging
-    debug = options.get('debug')
+    debug = options.get("debug")
     log_level = logging.INFO
     if debug:
         log_level = logging.DEBUG
     setup_logging(log_level)
 
     # Debugging
-    log.debug('Options: {}'.format(json.dumps(options, indent=4)))
+    log.debug("Options: {}".format(json.dumps(options, indent=4)))
 
     configure_http_logging(options)
 
-    grafana_url = options['grafana-url'] or os.getenv('GRAFANA_URL')
-    grafana_token = options['grafana-token'] or os.getenv('GRAFANA_TOKEN')
+    grafana_url = options["grafana-url"] or os.getenv("GRAFANA_URL")
+    grafana_token = options["grafana-token"] or os.getenv("GRAFANA_TOKEN")
 
     # Compute cache expiration time.
     try:
-        cache_ttl = int(options['cache-ttl'])
+        cache_ttl = int(options["cache-ttl"])
     except:
-        if not options['cache-ttl'] or 'infinite'.startswith(options['cache-ttl'].lower()):
+        if not options["cache-ttl"] or "infinite".startswith(options["cache-ttl"].lower()):
             cache_ttl = None
         else:
             raise
 
     # Sanity checks
     if grafana_url is None:
-        raise DocoptExit('No Grafana URL given. Please use "--grafana-url" option or environment variable "GRAFANA_URL".')
+        raise DocoptExit(
+            'No Grafana URL given. Please use "--grafana-url" option or environment variable "GRAFANA_URL".'
+        )
 
     engine = GrafanaWtf(grafana_url, grafana_token)
-    engine.enable_cache(expire_after=cache_ttl, drop_cache=options['drop-cache'])
-    engine.enable_concurrency(int(options['concurrency']))
+    engine.enable_cache(expire_after=cache_ttl, drop_cache=options["drop-cache"])
+    engine.enable_concurrency(int(options["concurrency"]))
     engine.setup()
 
     if options.replace:
@@ -195,7 +203,7 @@ def run():
     if options.log:
         engine.scan_dashboards()
         entries = engine.log(dashboard_uid=options.dashboard_uid)
-        entries = sorted(entries, key=itemgetter('datetime'), reverse=True)
+        entries = sorted(entries, key=itemgetter("datetime"), reverse=True)
 
         if options.number is not None:
             count = int(options.number)
@@ -212,7 +220,7 @@ def run():
             output = tabulate(entries, headers="keys", tablefmt=table_format)
 
         else:
-            raise ValueError(f"Unknown output format \"{output_format}\"")
+            raise ValueError(f'Unknown output format "{output_format}"')
 
         print(output)
 
@@ -242,7 +250,7 @@ def output_results(output_format: str, results: List):
         output = yaml_dump(results)
 
     else:
-        raise ValueError(f"Unknown output format \"{output_format}\"")
+        raise ValueError(f'Unknown output format "{output_format}"')
 
     print(output)
 
@@ -261,33 +269,37 @@ def get_table_format(output_format):
 def to_table(entries):
     for entry in entries:
         item = entry
-        name = item['title']
-        if item['folder']:
-            name = item['folder'].strip() + ' » ' + name.strip()
-        item['name'] = name.strip(' 🤓')
-        #del item['url']
-        del item['folder']
-        del item['title']
-        del item['version']
+        name = item["title"]
+        if item["folder"]:
+            name = item["folder"].strip() + " » " + name.strip()
+        item["name"] = name.strip(" 🤓")
+        # del item['url']
+        del item["folder"]
+        del item["title"]
+        del item["version"]
         yield item
 
 
 def compact_table(entries, format):
-    seperator = '\n'
-    if format.endswith('pipe'):
-        seperator = '<br/>'
+    seperator = "\n"
+    if format.endswith("pipe"):
+        seperator = "<br/>"
     for entry in entries:
         item = OrderedDict()
-        if format.endswith('pipe'):
-            link = '[{}]({})'.format(entry['name'], entry['url'])
+        if format.endswith("pipe"):
+            link = "[{}]({})".format(entry["name"], entry["url"])
         else:
-            link = 'Name: {}\nURL: {}'.format(entry['name'], entry['url'])
-        item['Dashboard'] = seperator.join([
-            'Notes: {}'.format(entry['message'].capitalize() or 'n/a'),
-            link,
-        ])
-        item['Update'] = seperator.join([
-            'User: {}'.format(entry['user']),
-            'Date: {}'.format(entry['datetime']),
-        ])
+            link = "Name: {}\nURL: {}".format(entry["name"], entry["url"])
+        item["Dashboard"] = seperator.join(
+            [
+                "Notes: {}".format(entry["message"].capitalize() or "n/a"),
+                link,
+            ]
+        )
+        item["Update"] = seperator.join(
+            [
+                "User: {}".format(entry["user"]),
+                "Date: {}".format(entry["datetime"]),
+            ]
+        )
         yield item

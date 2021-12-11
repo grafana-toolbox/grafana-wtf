@@ -56,3 +56,4 @@ Done
 - [x] Add subcommand ``info``
     - Display Grafana version: https://grafana.com/docs/grafana/latest/http_api/other/#health-api
     - Display number of dashboards, folders, users, and playlists
+- [x] Blackify

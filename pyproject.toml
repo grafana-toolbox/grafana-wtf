@@ -1,0 +1,7 @@
+[tool.isort]
+profile = "black"
+src_paths = ["grafana_wtf", "tests"]
+
+[tool.black]
+line-length = 121
+src_paths = ["grafana_wtf", "tests"]
