@@ -5,6 +5,9 @@ grafana-wtf changelog
 
 in progress
 ===========
+
+2021-12-11 0.12.0
+=================
 - Rename subcommand ``datasource-breakdown`` to ``explore datasources``
 - Add subcommand ``explore dashboards``, e.g. for discovering dashboards using
   missing data sources.
