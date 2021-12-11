@@ -165,8 +165,11 @@ Display common information and statistics
 =========================================
 ::
 
-    grafana-wtf info
+    # Display a bunch of meta information and statistics.
+    grafana-wtf info --format=yaml
 
+    # Display Grafana version.
+    grafana-wtf info --format=json | jq -r '.grafana.version'
 
 
 ********

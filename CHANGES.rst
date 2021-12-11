@@ -11,6 +11,7 @@ in progress
 - CI/GHA test matrix: Use Grafana 7.5.12 and 8.3.2
 - Add subcommand ``info``, to display Grafana version and statistics about all entities
 - For ``info`` subcommand, add Grafana ``url`` attribute
+- Add example how to print the Grafana version using the ``info`` subcommand
 
 2021-12-10 0.11.1
 =================
