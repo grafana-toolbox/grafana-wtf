@@ -161,6 +161,14 @@ How to find dashboards which use non-existing data sources?
     grafana-wtf explore dashboards --format=json | jq '.[] | select( .datasources_missing ) | .dashboard + {ds_missing: .datasources_missing[] | [.name]}'
 
 
+Display common information and statistics
+=========================================
+::
+
+    grafana-wtf info
+
+
+
 ********
 Examples
 ********

@@ -13,7 +13,7 @@ from collections import OrderedDict
 from urllib.parse import urlparse, urljoin
 from concurrent.futures.thread import ThreadPoolExecutor
 
-from grafana_wtf.model import DatasourceExplorationItem, DashboardExplorationItem
+from grafana_wtf.model import DatasourceExplorationItem, DashboardExplorationItem, GrafanaDataModel
 from grafana_wtf.monkey import monkeypatch_grafana_api
 # Apply monkeypatch to grafana-api
 # https://github.com/m0nhawk/grafana_api/pull/85/files
@@ -27,14 +27,14 @@ from grafana_wtf.util import JsonPathFinder
 log = logging.getLogger(__name__)
 
 
-class GrafanaSearch:
+class GrafanaEngine:
 
     def __init__(self, grafana_url, grafana_token):
         self.grafana_url = grafana_url
         self.grafana_token = grafana_token
 
         self.grafana = None
-        self.data = Munch(datasources=[], dashboard_list=[], dashboards=[])
+        self.data = GrafanaDataModel()
 
         self.finder = JsonPathFinder()
 
@@ -100,83 +100,44 @@ class GrafanaSearch:
         if self.progressbar:
             self.taqadum = tqdm(total=total)
 
-    def search(self, expression):
-        log.info('Searching Grafana at "{}" for expression "{}"'.format(self.grafana_url, expression))
-
-        results = Munch(datasources=[], dashboard_list=[], dashboards=[])
-
-        # Check datasources
-        log.info('Searching data sources')
-        self.search_items(expression, self.data.datasources, results.datasources)
-
-        # Check dashboards
-        log.info('Searching dashboards')
-        self.search_items(expression, self.data.dashboards, results.dashboards)
-
-        return results
-
-    def replace(self, expression, replacement):
-        log.info(f'Replacing "{expression}" by "{replacement}" within Grafana at "{self.grafana_url}"')
-        for dashboard in self.data.dashboards:
-            payload_before = json.dumps(dashboard)
-            payload_after = payload_before.replace(expression, replacement)
-            if payload_before == payload_after:
-                log.info(f'No replacements for dashboard with uid "{dashboard.dashboard.uid}"')
-                continue
-            dashboard_new = json.loads(payload_after)
-            dashboard_new['message'] = f'grafana-wtf: Replaced "{expression}" by "{replacement}"'
-            self.grafana.dashboard.update_dashboard(dashboard=dashboard_new)
-
-    def log(self, dashboard_uid=None):
-        if dashboard_uid:
-            what = 'Grafana dashboard "{}"'.format(dashboard_uid)
-        else:
-            what = 'multiple Grafana dashboards'
-        log.info('Aggregating edit history for {what} at {url}'.format(what=what, url=self.grafana_url))
-
-        entries = []
-        for dashboard_meta in self.data.dashboard_list:
-            if dashboard_uid is not None and dashboard_meta['uid'] != dashboard_uid:
-                continue
-
-            #print(dashboard_meta)
-
-            dashboard_versions = self.get_dashboard_versions(dashboard_meta['id'])
-            for dashboard_revision in dashboard_versions:
-                entry = OrderedDict(
-                    datetime=dashboard_revision['created'],
-                    user=dashboard_revision['createdBy'],
-                    message=dashboard_revision['message'],
-                    folder=dashboard_meta.get('folderTitle'),
-                    title=dashboard_meta['title'],
-                    version=dashboard_revision['version'],
-                    url=urljoin(self.grafana_url, dashboard_meta['url'])
-                )
-                entries.append(entry)
-
-        return entries
-
-    def search_items(self, expression, items, results):
-        for item in items:
-            effective_item = None
-            if expression is None:
-                effective_item = munchify({'meta': {}, 'data': item})
-            else:
-                matches = self.finder.find(expression, item)
-                if matches:
-                    effective_item = munchify({'meta': {'matches': matches}, 'data': item})
-
-            if effective_item:
-                results.append(effective_item)
-
-    def scan(self):
-
-        # TODO: Folders?
-        # folders = self.grafana.folder.get_all_folders()
-        # print(folders)
-
-        self.scan_datasources()
+    def scan_common(self):
         self.scan_dashboards()
+        self.scan_datasources()
+
+    def scan_all(self):
+        self.scan_common()
+        self.scan_admin_stats()
+        self.scan_folders()
+        self.scan_organizations()
+        self.scan_users()
+        self.scan_teams()
+        self.scan_annotations()
+        self.scan_snapshots()
+        self.scan_notifications()
+
+    def scan_admin_stats(self):
+        self.data.admin_stats = self.grafana.admin.stats()
+
+    def scan_folders(self):
+        self.data.folders = self.grafana.folder.get_all_folders()
+
+    def scan_organizations(self):
+        self.data.organizations = self.grafana.organizations.list_organization()
+
+    def scan_users(self):
+        self.data.users = self.grafana.users.search_users()
+
+    def scan_teams(self):
+        self.data.teams = self.grafana.teams.search_teams()
+
+    def scan_annotations(self):
+        self.data.annotations = self.grafana.annotations.get_annotation()
+
+    def scan_snapshots(self):
+        self.data.snapshots = self.grafana.snapshots.get_dashboard_snapshots()
+
+    def scan_notifications(self):
+        self.data.notifications = self.grafana.notifications.lookup_channels()
 
     def scan_datasources(self):
         log.info('Scanning datasources')
@@ -190,10 +151,6 @@ class GrafanaSearch:
             if isinstance(ex, GrafanaUnauthorizedError):
                 log.error(self.get_red_message('Please use --grafana-token or GRAFANA_TOKEN '
                                                'for authenticating with Grafana'))
-
-    @staticmethod
-    def get_red_message(message):
-        return colored.stylize(message, colored.fg("red") + colored.attr("bold"))
 
     def scan_dashboards(self, dashboard_uids=None):
 
@@ -278,6 +235,121 @@ class GrafanaSearch:
             #for response in await asyncio.gather(*tasks):
             #    pass
 
+
+class GrafanaWtf(GrafanaEngine):
+
+    def info(self):
+
+        try:
+            health = self.grafana.api.GET("/health")
+        except Exception as ex:
+            log.error(f"Request to /health endpoint failed: {ex}")
+            health = {}
+
+        response = OrderedDict(
+            grafana=OrderedDict(
+                version=health.get("version"),
+            ),
+            statistics=OrderedDict(),
+            summary=OrderedDict(),
+        )
+
+        try:
+            self.scan_all()
+
+            response["statistics"] = self.data.admin_stats
+
+            # Compute dashboards without folders.
+            dashboards_wo_folders = [db for db in self.data.dashboards if not db.meta.isFolder]
+
+            # Add summary information.
+            response["summary"]["annotations"] = len(self.data.annotations)
+            response["summary"]["dashboards"] = len(dashboards_wo_folders)
+            response["summary"]["datasources"] = len(self.data.datasources)
+            response["summary"]["folders"] = len(self.data.folders)
+            response["summary"]["notifications"] = len(self.data.notifications)
+            response["summary"]["organizations"] = len(self.data.organizations)
+            response["summary"]["snapshots"] = len(self.data.snapshots)
+            response["summary"]["teams"] = len(self.data.teams)
+            response["summary"]["users"] = len(self.data.users)
+        except Exception as ex:
+            log.error(f"Scanning resources failed: {ex}")
+
+        return response
+
+    def search(self, expression):
+        log.info('Searching Grafana at "{}" for expression "{}"'.format(self.grafana_url, expression))
+
+        results = Munch(datasources=[], dashboard_list=[], dashboards=[])
+
+        # Check datasources
+        log.info('Searching data sources')
+        self.search_items(expression, self.data.datasources, results.datasources)
+
+        # Check dashboards
+        log.info('Searching dashboards')
+        self.search_items(expression, self.data.dashboards, results.dashboards)
+
+        return results
+
+    def replace(self, expression, replacement):
+        log.info(f'Replacing "{expression}" by "{replacement}" within Grafana at "{self.grafana_url}"')
+        for dashboard in self.data.dashboards:
+            payload_before = json.dumps(dashboard)
+            payload_after = payload_before.replace(expression, replacement)
+            if payload_before == payload_after:
+                log.info(f'No replacements for dashboard with uid "{dashboard.dashboard.uid}"')
+                continue
+            dashboard_new = json.loads(payload_after)
+            dashboard_new['message'] = f'grafana-wtf: Replaced "{expression}" by "{replacement}"'
+            self.grafana.dashboard.update_dashboard(dashboard=dashboard_new)
+
+    def log(self, dashboard_uid=None):
+        if dashboard_uid:
+            what = 'Grafana dashboard "{}"'.format(dashboard_uid)
+        else:
+            what = 'multiple Grafana dashboards'
+        log.info('Aggregating edit history for {what} at {url}'.format(what=what, url=self.grafana_url))
+
+        entries = []
+        for dashboard_meta in self.data.dashboard_list:
+            if dashboard_uid is not None and dashboard_meta['uid'] != dashboard_uid:
+                continue
+
+            #print(dashboard_meta)
+
+            dashboard_versions = self.get_dashboard_versions(dashboard_meta['id'])
+            for dashboard_revision in dashboard_versions:
+                entry = OrderedDict(
+                    datetime=dashboard_revision['created'],
+                    user=dashboard_revision['createdBy'],
+                    message=dashboard_revision['message'],
+                    folder=dashboard_meta.get('folderTitle'),
+                    title=dashboard_meta['title'],
+                    version=dashboard_revision['version'],
+                    url=urljoin(self.grafana_url, dashboard_meta['url'])
+                )
+                entries.append(entry)
+
+        return entries
+
+    def search_items(self, expression, items, results):
+        for item in items:
+            effective_item = None
+            if expression is None:
+                effective_item = munchify({'meta': {}, 'data': item})
+            else:
+                matches = self.finder.find(expression, item)
+                if matches:
+                    effective_item = munchify({'meta': {'matches': matches}, 'data': item})
+
+            if effective_item:
+                results.append(effective_item)
+
+    @staticmethod
+    def get_red_message(message):
+        return colored.stylize(message, colored.fg("red") + colored.attr("bold"))
+
     def get_dashboard_versions(self, dashboard_id):
         # https://grafana.com/docs/http_api/dashboard_versions/
         get_dashboard_versions_path = '/dashboards/id/%s/versions' % dashboard_id
@@ -353,7 +425,7 @@ class GrafanaSearch:
 
 class Indexer:
 
-    def __init__(self, engine: GrafanaSearch):
+    def __init__(self, engine: GrafanaWtf):
         self.engine = engine
 
         # Prepare index data structures.

@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from grafana_api.grafana_api import GrafanaClientError
 
-from grafana_wtf.core import GrafanaSearch
+from grafana_wtf.core import GrafanaWtf
 
 
 def clean_environment():
@@ -44,7 +44,7 @@ def docker_grafana(docker_services):
 def create_datasource(docker_grafana):
     # https://docs.pytest.org/en/4.6.x/fixture.html#factories-as-fixtures
     def _create_datasource(name: str, type: str, access: str):
-        grafana = GrafanaSearch.grafana_client_factory(docker_grafana)
+        grafana = GrafanaWtf.grafana_client_factory(docker_grafana)
         # TODO: Add fixture which completely resets everything in Grafana before running the test harness.
         #       Move to a different port than 3000 then!
         try:

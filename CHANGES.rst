@@ -9,6 +9,7 @@ in progress
 - Add subcommand ``explore dashboards``, e.g. for discovering dashboards using
   missing data sources.
 - CI/GHA test matrix: Use Grafana 7.5.12 and 8.3.2
+- Add subcommand ``info``, to display Grafana version and statistics about all entities
 
 2021-12-10 0.11.1
 =================
