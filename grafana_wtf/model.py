@@ -1,9 +1,24 @@
 import dataclasses
-from typing import List
+from typing import List, Optional, Dict
 
 from munch import Munch
 from collections import OrderedDict
 from urllib.parse import urljoin
+
+
+@dataclasses.dataclass
+class GrafanaDataModel:
+    admin_stats: Optional[Dict] = dataclasses.field(default_factory=dict)
+    dashboards: Optional[List[Munch]] = dataclasses.field(default_factory=list)
+    dashboard_list: Optional[List[Munch]] = dataclasses.field(default_factory=list)
+    datasources: Optional[List[Munch]] = dataclasses.field(default_factory=list)
+    folders: Optional[List[Munch]] = dataclasses.field(default_factory=list)
+    organizations: Optional[List[Munch]] = dataclasses.field(default_factory=list)
+    users: Optional[List[Munch]] = dataclasses.field(default_factory=list)
+    teams: Optional[List[Munch]] = dataclasses.field(default_factory=list)
+    annotations: Optional[List[Munch]] = dataclasses.field(default_factory=list)
+    snapshots: Optional[List[Munch]] = dataclasses.field(default_factory=list)
+    notifications: Optional[List[Munch]] = dataclasses.field(default_factory=list)
 
 
 @dataclasses.dataclass

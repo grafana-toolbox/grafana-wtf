@@ -13,7 +13,7 @@ from collections import OrderedDict
 from docopt import docopt, DocoptExit
 
 from grafana_wtf import __appname__, __version__
-from grafana_wtf.core import GrafanaSearch
+from grafana_wtf.core import GrafanaWtf
 from grafana_wtf.report import WtfReport
 from grafana_wtf.tabular_report import TabularReport
 from grafana_wtf.util import normalize_options, setup_logging, configure_http_logging, read_list, yaml_dump
@@ -24,11 +24,12 @@ log = logging.getLogger(__name__)
 def run():
     """
     Usage:
+      grafana-wtf [options] info
+      grafana-wtf [options] explore datasources
+      grafana-wtf [options] explore dashboards
       grafana-wtf [options] find [<search-expression>]
       grafana-wtf [options] replace <search-expression> <replacement>
       grafana-wtf [options] log [<dashboard_uid>] [--number=<count>]
-      grafana-wtf [options] explore datasources
-      grafana-wtf [options] explore dashboards
       grafana-wtf --version
       grafana-wtf (-h | --help)
 
@@ -145,7 +146,7 @@ def run():
     if grafana_url is None:
         raise DocoptExit('No Grafana URL given. Please use "--grafana-url" option or environment variable "GRAFANA_URL".')
 
-    engine = GrafanaSearch(grafana_url, grafana_token)
+    engine = GrafanaWtf(grafana_url, grafana_token)
     engine.enable_cache(expire_after=cache_ttl, drop_cache=options['drop-cache'])
     engine.enable_concurrency(int(options['concurrency']))
     engine.setup()
@@ -164,7 +165,7 @@ def run():
 
         else:
             # Scan everything.
-            engine.scan()
+            engine.scan_common()
 
         result = engine.search(options.search_expression or None)
 
@@ -217,6 +218,10 @@ def run():
     if options.explore and options.dashboards:
         results = engine.explore_dashboards()
         output_results(output_format, results)
+
+    if options.info:
+        response = engine.info()
+        output_results(output_format, response)
 
 
 def output_results(output_format: str, results: List):

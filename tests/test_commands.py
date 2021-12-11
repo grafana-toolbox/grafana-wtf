@@ -226,3 +226,18 @@ def find_all_missing_datasources(data):
         if "datasources_missing" in item:
             missing_names += map(operator.itemgetter("name"), item["datasources_missing"])
     return missing_names
+
+
+def test_info(docker_grafana, capsys, caplog):
+
+    # Which subcommand to test?
+    set_command("info", "--format=yaml")
+
+    # Run command and capture YAML output.
+    with caplog.at_level(logging.DEBUG):
+        grafana_wtf.commands.run()
+    captured = capsys.readouterr()
+    data = yaml.safe_load(captured.out)
+
+    # Proof the output is correct.
+    assert list(data.keys()) == ["grafana", "statistics", "summary"]
