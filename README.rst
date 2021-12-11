@@ -128,7 +128,8 @@ UID ``_JJ22OZZk``::
 Displaying changes / revision logs
 ==================================
 
-Watching out for recent editing activity on any dashboards?::
+Watching out for recent editing activity on any dashboards?
+::
 
     # Display 50 most recent changes across all dashboards.
     grafana-wtf log --number=50
@@ -137,13 +138,14 @@ Watching out for recent editing activity on any dashboards?::
 Explore data sources
 ====================
 
-How to find unused data sources?::
+How to find unused data sources?
+::
 
     # Display all data sources and the dashboards using them, as well as unused data sources.
-    grafana-wtf datasource-breakdown --format=yaml
+    grafana-wtf explore datasources --format=yaml
 
     # Display names of unused datasources as a flat list.
-    grafana-wtf datasource-breakdown --format=json | jq -r '.unused[].datasource.name'
+    grafana-wtf explore datasources --format=json | jq -r '.unused[].datasource.name'
 
 
 

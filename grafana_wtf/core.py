@@ -15,7 +15,7 @@ from collections import OrderedDict
 from urllib.parse import urlparse, urljoin
 from concurrent.futures.thread import ThreadPoolExecutor
 
-from grafana_wtf.model import DatasourceBreakdownItem
+from grafana_wtf.model import DatasourceExplorationItem
 from grafana_wtf.monkey import monkeypatch_grafana_api
 # Apply monkeypatch to grafana-api
 # https://github.com/m0nhawk/grafana_api/pull/85/files
@@ -286,20 +286,20 @@ class GrafanaSearch:
         r = self.grafana.dashboard.api.GET(get_dashboard_versions_path)
         return r
 
-    def datasource_breakdown(self):
+    def explore_datasources(self):
 
         # Prepare indexes, mapping dashboards by uid, datasources by name
         # as well as dashboards to datasources and vice versa.
         ix = Indexer(engine=self)
 
-        # Compute list of breakdown items, associating datasources with the dashboards that use them.
+        # Compute list of exploration items, associating datasources with the dashboards that use them.
         results_used = []
         results_unused = []
         for name in sorted(ix.datasource_by_name):
             datasource = ix.datasource_by_name[name]
             dashboard_uids = ix.datasource_dashboard_index.get(name, [])
             dashboards = list(map(ix.dashboard_by_uid.get, dashboard_uids))
-            item = DatasourceBreakdownItem(datasource=datasource, used_in=dashboards, grafana_url=self.grafana_url)
+            item = DatasourceExplorationItem(datasource=datasource, used_in=dashboards, grafana_url=self.grafana_url)
 
             # Format results in a more compact form, using only a subset of all the attributes.
             result = item.format_compact()

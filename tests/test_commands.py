@@ -176,14 +176,14 @@ def test_log_tabular_success(docker_grafana, capsys, caplog):
         assert first_item_normalized == reference
 
 
-def test_datasource_breakdown(docker_grafana, create_datasource, capsys, caplog):
+def test_explore_datasources(docker_grafana, create_datasource, capsys, caplog):
 
     # Create a datasource, which is not used by any dashboard.
     create_datasource(name="foo", type="foo", access="foo")
     create_datasource(name="bar", type="bar", access="bar")
 
-    # Compute breakdown.
-    set_command("datasource-breakdown", "--format=yaml")
+    # Compute exploration.
+    set_command("explore datasources", "--format=yaml")
 
     # Proof the output is correct.
     with caplog.at_level(logging.DEBUG):
