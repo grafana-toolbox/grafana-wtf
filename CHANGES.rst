@@ -12,6 +12,7 @@ in progress
 - Add subcommand ``info``, to display Grafana version and statistics about all entities
 - For ``info`` subcommand, add Grafana ``url`` attribute
 - Add example how to print the Grafana version using the ``info`` subcommand
+- Add more information about dashboard entities to ``info`` subcommand
 
 2021-12-10 0.11.1
 =================

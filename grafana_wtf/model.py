@@ -22,6 +22,24 @@ class GrafanaDataModel:
 
 
 @dataclasses.dataclass
+class DashboardDetails:
+
+    dashboard: Dict
+
+    @property
+    def panels(self) -> List:
+        return self.dashboard.dashboard.get("panels", [])
+
+    @property
+    def annotations(self) -> List:
+        return self.dashboard.dashboard.get("annotations", {}).get("list", [])
+
+    @property
+    def templating(self) -> List:
+        return self.dashboard.dashboard.get("templating", {}).get("list", [])
+
+
+@dataclasses.dataclass
 class DatasourceExplorationItem:
     datasource: Munch
     used_in: List[Munch]

@@ -241,3 +241,12 @@ def test_info(docker_grafana, capsys, caplog):
 
     # Proof the output is correct.
     assert list(data.keys()) == ["grafana", "statistics", "summary"]
+
+    assert "version" in data["grafana"]
+    assert "url" in data["grafana"]
+
+    assert "dashboards" in data["summary"]
+    assert "datasources" in data["summary"]
+    assert "dashboard_panels" in data["summary"]
+    assert "dashboard_annotations" in data["summary"]
+    assert "dashboard_templating" in data["summary"]
