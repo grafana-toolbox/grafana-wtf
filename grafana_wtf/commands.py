@@ -5,6 +5,8 @@ import os
 import json
 import logging
 from functools import partial
+from typing import List
+
 from tabulate import tabulate
 from operator import itemgetter
 from collections import OrderedDict
@@ -26,6 +28,7 @@ def run():
       grafana-wtf [options] replace <search-expression> <replacement>
       grafana-wtf [options] log [<dashboard_uid>] [--number=<count>]
       grafana-wtf [options] explore datasources
+      grafana-wtf [options] explore dashboards
       grafana-wtf --version
       grafana-wtf (-h | --help)
 
@@ -87,19 +90,27 @@ def run():
       # Display 5 most recent changes for specific dashboard.
       grafana-wtf log NP0wTOtmk --number=5
 
-      # Output full history table in Markdown format
-      grafana-wtf log --format=tabular:pipe
-
       # Output full history table in Grid format
       grafana-wtf log --format=tabular:grid
 
-    Exploration examples:
+      # Output full history table in Markdown format
+      grafana-wtf log --format=tabular:pipe
+
+    Explore data sources:
 
       # Display all data sources and the dashboards using them, as well as unused data sources.
       grafana-wtf explore datasources --format=yaml
 
       # Display names of unused datasources as a flat list.
       grafana-wtf explore datasources --format=json | jq -r '.unused[].datasource.name'
+
+    Explore dashboards:
+
+      # Display some details of all dashboards, including names of missing data sources.
+      grafana-wtf explore dashboards --format=yaml
+
+      # Display only dashboards which have missing data sources, along with their names.
+      grafana-wtf explore dashboards --format=json | jq '.[] | select( .datasources_missing ) | .dashboard + {ds_missing: .datasources_missing[] | [.name]}'
 
     """
 
@@ -201,16 +212,24 @@ def run():
         if unused_count:
             log.warning(f"Found {unused_count} unused data source(s)")
 
-        if output_format == "json":
-            output = json.dumps(results, indent=4)
+        output_results(output_format, results)
 
-        elif output_format == "yaml":
-            output = yaml_dump(results)
+    if options.explore and options.dashboards:
+        results = engine.explore_dashboards()
+        output_results(output_format, results)
 
-        else:
-            raise ValueError(f"Unknown output format \"{output_format}\"")
 
-        print(output)
+def output_results(output_format: str, results: List):
+    if output_format == "json":
+        output = json.dumps(results, indent=4)
+
+    elif output_format == "yaml":
+        output = yaml_dump(results)
+
+    else:
+        raise ValueError(f"Unknown output format \"{output_format}\"")
+
+    print(output)
 
 
 def get_table_format(output_format):
