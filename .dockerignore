@@ -1,0 +1,11 @@
+*
+
+!*.py
+!*.rst
+!*.txt
+!*.cfg
+!*.toml
+!LICENSE
+!MANIFEST.in
+
+!grafana_wtf
