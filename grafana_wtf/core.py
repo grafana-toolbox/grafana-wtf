@@ -249,6 +249,7 @@ class GrafanaWtf(GrafanaEngine):
         response = OrderedDict(
             grafana=OrderedDict(
                 version=health.get("version"),
+                url=self.grafana_url,
             ),
             statistics=OrderedDict(),
             summary=OrderedDict(),
