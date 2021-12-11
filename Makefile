@@ -42,6 +42,15 @@ test-coverage: install-tests
 		--cov-report html:.pytest_results/htmlcov \
 		--cov-report xml:.pytest_results/coverage.xml
 
+
+# ----------
+# Formatting
+# ----------
+format: install-releasetools
+	isort .
+	black .
+
+
 # -------
 # Release
 # -------

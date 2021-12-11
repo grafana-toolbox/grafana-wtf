@@ -1,27 +1,24 @@
 # -*- coding: utf-8 -*-
-# (c) 2019 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2021 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU Affero General Public License, Version 3
-import sys
 import json
 import logging
+import sys
 from collections import OrderedDict
 
 import yaml
-from munch import munchify
 from jsonpath_rw import parse
+from munch import munchify
 from pygments import highlight
-from pygments.lexers import JsonLexer
 from pygments.formatters import TerminalFormatter
+from pygments.lexers import JsonLexer
 
 log = logging.getLogger(__name__)
 
 
 def setup_logging(level=logging.INFO):
-    log_format = '%(asctime)-15s [%(name)-22s] %(levelname)-7s: %(message)s'
-    logging.basicConfig(
-        format=log_format,
-        stream=sys.stderr,
-        level=level)
+    log_format = "%(asctime)-15s [%(name)-22s] %(levelname)-7s: %(message)s"
+    logging.basicConfig(format=log_format, stream=sys.stderr, level=level)
 
 
 def configure_http_logging(options):
@@ -32,10 +29,10 @@ def configure_http_logging(options):
     else:
         log_level = logging.WARNING
 
-    requests_log = logging.getLogger('requests')
+    requests_log = logging.getLogger("requests")
     requests_log.setLevel(log_level)
 
-    requests_log = logging.getLogger('urllib3.connectionpool')
+    requests_log = logging.getLogger("urllib3.connectionpool")
     requests_log.setLevel(log_level)
 
 
@@ -44,17 +41,17 @@ def normalize_options(options):
     for key, value in options.items():
 
         # Add primary variant.
-        key = key.strip('--<>')
+        key = key.strip("--<>")
         normalized[key] = value
 
         # Add secondary variant.
-        key = key.replace('-', '_')
+        key = key.replace("-", "_")
         normalized[key] = value
 
     return munchify(normalized)
 
 
-def read_list(data, separator=u','):
+def read_list(data, separator=","):
     if data is None:
         return []
     result = list(map(lambda x: x.strip(), data.split(separator)))
@@ -64,10 +61,9 @@ def read_list(data, separator=u','):
 
 
 class JsonPathFinder:
-
     def __init__(self):
-        self.jsonpath_expr = parse('$..*')
-        self.non_leaf_nodes = ('rows', 'panels', 'targets', 'tags', 'groupBy', 'list', 'links')
+        self.jsonpath_expr = parse("$..*")
+        self.non_leaf_nodes = ("rows", "panels", "targets", "tags", "groupBy", "list", "links")
         self.scalars = (str, int, float, list)
 
     def find(self, needle, haystack):
@@ -100,8 +96,10 @@ class JsonPathFinder:
 
             else:
                 if not isinstance(node.value, dict):
-                    log.warning(f'Ignored data type {type(node.value)} when matching.\n'
-                                f'Node was "{node.path}", value was "{node.value}".')
+                    log.warning(
+                        f"Ignored data type {type(node.value)} when matching.\n"
+                        f'Node was "{node.path}", value was "{node.value}".'
+                    )
 
         return matches
 
@@ -122,9 +120,7 @@ def yaml_dump(data, stream=None, Dumper=yaml.SafeDumper, **kwds):
         pass
 
     def _dict_representer(dumper, data):
-        return dumper.represent_mapping(
-            yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
-            data.items())
+        return dumper.represent_mapping(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, data.items())
 
     OrderedDumper.add_representer(OrderedDict, _dict_representer)
     return yaml.dump(data, stream, OrderedDumper, **kwds)

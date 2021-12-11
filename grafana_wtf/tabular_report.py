@@ -1,8 +1,10 @@
 import os
 from collections import OrderedDict
-from grafana_wtf.report import WtfReport
-from tabulate import tabulate
+
 from jsonpath_rw import parse
+from tabulate import tabulate
+
+from grafana_wtf.report import WtfReport
 
 
 class TabularReport(WtfReport):

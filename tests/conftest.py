@@ -24,17 +24,17 @@ def docker_compose_files(pytestconfig):
     return [Path(__file__).parent / "docker-compose.yml"]
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def docker_services_project_name(pytestconfig):
     return "pytest_grafana-wtf"
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def docker_grafana(docker_services):
     """
     Start Grafana service.
     """
-    docker_services.start('grafana')
+    docker_services.start("grafana")
     public_port = docker_services.wait_for_service("grafana", 3000)
     url = "http://{docker_services.docker_ip}:{public_port}".format(**locals())
     return url
@@ -52,6 +52,7 @@ def create_datasource(docker_grafana):
         except GrafanaClientError as ex:
             if "Client Error 409: data source with the same name already exists" not in str(ex):
                 raise
+
     return _create_datasource
 
 

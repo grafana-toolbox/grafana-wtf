@@ -1,9 +1,12 @@
+# -*- coding: utf-8 -*-
+# (c) 2021 Andreas Motl <andreas@hiveeyes.org>
+# License: GNU Affero General Public License, Version 3
 import dataclasses
-from typing import List, Optional, Dict
+from collections import OrderedDict
+from typing import Dict, List, Optional
+from urllib.parse import urljoin
 
 from munch import Munch
-from collections import OrderedDict
-from urllib.parse import urljoin
 
 
 @dataclasses.dataclass
