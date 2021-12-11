@@ -29,3 +29,28 @@ class DatasourceExplorationItem:
             )
             item["dashboards"].append(dbshort)
         return item
+
+
+@dataclasses.dataclass
+class DashboardExplorationItem:
+    dashboard: Munch
+    datasources: List[Munch]
+    grafana_url: str
+
+    def format_compact(self):
+        dbshort = OrderedDict(
+            title=self.dashboard.dashboard.title,
+            uid=self.dashboard.dashboard.uid,
+            path=self.dashboard.meta.url,
+            url=urljoin(self.grafana_url, self.dashboard.meta.url),
+        )
+        item = OrderedDict(dashboard=dbshort)
+        for datasource in self.datasources:
+            item.setdefault("datasources", [])
+            dsshort = OrderedDict(
+                name=datasource.name,
+                type=datasource.type,
+                url=datasource.url,
+            )
+            item["datasources"].append(dsshort)
+        return item

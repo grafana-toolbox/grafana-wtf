@@ -148,6 +148,18 @@ How to find unused data sources?
     grafana-wtf explore datasources --format=json | jq -r '.unused[].datasource.name'
 
 
+Explore dashboards
+==================
+
+How to find dashboards which use non-existing data sources?
+::
+
+    # Display some details of all dashboards, including names of missing data sources.
+    grafana-wtf explore dashboards --format=yaml
+
+    # Display only dashboards which have missing data sources, along with their names.
+    grafana-wtf explore dashboards --format=json | jq '.[] | select( .datasources_missing ) | .dashboard + {ds_missing: .datasources_missing[] | [.name]}'
+
 
 ********
 Examples

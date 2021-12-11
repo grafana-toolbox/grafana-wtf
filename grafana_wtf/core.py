@@ -2,8 +2,6 @@
 # (c) 2019 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU Affero General Public License, Version 3
 import json
-from pprint import pprint
-
 import colored
 import logging
 import asyncio
@@ -15,7 +13,7 @@ from collections import OrderedDict
 from urllib.parse import urlparse, urljoin
 from concurrent.futures.thread import ThreadPoolExecutor
 
-from grafana_wtf.model import DatasourceExplorationItem
+from grafana_wtf.model import DatasourceExplorationItem, DashboardExplorationItem
 from grafana_wtf.monkey import monkeypatch_grafana_api
 # Apply monkeypatch to grafana-api
 # https://github.com/m0nhawk/grafana_api/pull/85/files
@@ -315,6 +313,42 @@ class GrafanaSearch:
         )
 
         return response
+
+    def explore_dashboards(self):
+
+        # Prepare indexes, mapping dashboards by uid, datasources by name
+        # as well as dashboards to datasources and vice versa.
+        ix = Indexer(engine=self)
+
+        # Compute list of exploration items, looking for dashboards with missing data sources.
+        results = []
+        for uid in sorted(ix.dashboard_by_uid):
+
+            dashboard = ix.dashboard_by_uid[uid]
+            datasource_names = ix.dashboard_datasource_index[uid]
+
+            datasources_existing = []
+            datasource_names_missing = []
+            for datasource_name in datasource_names:
+                if datasource_name == "-- Grafana --":
+                    continue
+                datasource = ix.datasource_by_name.get(datasource_name)
+                if datasource:
+                    datasources_existing.append(datasource)
+                else:
+                    datasource_names_missing.append({"name": datasource_name})
+            item = DashboardExplorationItem(dashboard=dashboard, datasources=datasources_existing, grafana_url=self.grafana_url)
+
+            # Format results in a more compact form, using only a subset of all the attributes.
+            result = item.format_compact()
+
+            # Add information about missing data sources.
+            if datasource_names_missing:
+                result["datasources_missing"] = datasource_names_missing
+
+            results.append(result)
+
+        return results
 
 
 class Indexer:

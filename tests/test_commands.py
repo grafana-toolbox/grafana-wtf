@@ -1,8 +1,10 @@
 import json
 import logging
+import operator
 import re
 import shlex
 import sys
+from operator import attrgetter
 
 import docopt
 import pytest
@@ -191,10 +193,36 @@ def test_explore_datasources(docker_grafana, create_datasource, capsys, caplog):
         assert "Found 2 unused data source(s)" in caplog.messages
 
     captured = capsys.readouterr()
-    data = yaml.load(captured.out)
+    data = yaml.safe_load(captured.out)
 
     assert len(data["used"]) >= 1
     assert len(data["unused"]) >= 2
 
     assert data["unused"][0]["datasource"]["name"] == "bar"
     assert data["unused"][1]["datasource"]["name"] == "foo"
+
+
+def test_explore_dashboards(docker_grafana, create_datasource, capsys, caplog):
+
+    # Compute exploration.
+    set_command("explore dashboards", "--format=yaml")
+
+    # Run command and capture YAML output.
+    with caplog.at_level(logging.DEBUG):
+        grafana_wtf.commands.run()
+    captured = capsys.readouterr()
+    data = yaml.safe_load(captured.out)
+
+    # Proof the output is correct.
+    assert len(data) >= 1
+
+    missing = find_all_missing_datasources(data)
+    assert missing == ["weatherbase"]
+
+
+def find_all_missing_datasources(data):
+    missing_names = []
+    for item in data:
+        if "datasources_missing" in item:
+            missing_names += map(operator.itemgetter("name"), item["datasources_missing"])
+    return missing_names
