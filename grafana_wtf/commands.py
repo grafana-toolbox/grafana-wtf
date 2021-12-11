@@ -25,7 +25,7 @@ def run():
       grafana-wtf [options] find [<search-expression>]
       grafana-wtf [options] replace <search-expression> <replacement>
       grafana-wtf [options] log [<dashboard_uid>] [--number=<count>]
-      grafana-wtf [options] datasource-breakdown
+      grafana-wtf [options] explore datasources
       grafana-wtf --version
       grafana-wtf (-h | --help)
 
@@ -93,13 +93,13 @@ def run():
       # Output full history table in Grid format
       grafana-wtf log --format=tabular:grid
 
-    Breakdown examples:
+    Exploration examples:
 
       # Display all data sources and the dashboards using them, as well as unused data sources.
-      grafana-wtf datasource-breakdown --format=yaml
+      grafana-wtf explore datasources --format=yaml
 
       # Display names of unused datasources as a flat list.
-      grafana-wtf datasource-breakdown --format=json | jq -r '.unused[].datasource.name'
+      grafana-wtf explore datasources --format=json | jq -r '.unused[].datasource.name'
 
     """
 
@@ -194,8 +194,8 @@ def run():
 
         print(output)
 
-    if options.datasource_breakdown:
-        results = engine.datasource_breakdown()
+    if options.explore and options.datasources:
+        results = engine.explore_datasources()
 
         unused_count = len(results["unused"])
         if unused_count:

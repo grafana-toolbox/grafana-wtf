@@ -7,7 +7,7 @@ from urllib.parse import urljoin
 
 
 @dataclasses.dataclass
-class DatasourceBreakdownItem:
+class DatasourceExplorationItem:
     datasource: Munch
     used_in: List[Munch]
     grafana_url: str

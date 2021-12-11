@@ -6,9 +6,7 @@ grafana-wtf backlog
 ******
 Prio 1
 ******
-- [o] AttributeError: https://github.com/panodata/grafana-wtf/issues/17
-- [o] Repair ``log`` subcommand
-- [o] Add subcommand ``dashboard-breakdown``
+- [o] Add subcommand ``explore dashboards``
 - [o] Number of dashboards, users, and playlists
       -- via: https://grafana.com/docs/grafana/latest/administration/view-server/internal-metrics/
 - [o] Dockerize
@@ -50,3 +48,5 @@ Done
   see https://github.com/kennethreitz/grequests
 - [x] Add software tests
 - [x] Document "replace" feature in README
+- [x] AttributeError: https://github.com/panodata/grafana-wtf/issues/17
+- [/] Repair ``log`` subcommand
