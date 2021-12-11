@@ -6,6 +6,7 @@ grafana-wtf changelog
 in progress
 ===========
 - Use ``grafana-client-2.1.0``, remove monkeypatch
+- Tests: Improve fixture ``create_datasource`` to clean up afterwards
 
 
 2022-02-03 0.13.1
