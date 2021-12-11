@@ -13,7 +13,7 @@ from collections import OrderedDict
 from urllib.parse import urlparse, urljoin
 from concurrent.futures.thread import ThreadPoolExecutor
 
-from grafana_wtf.model import DatasourceExplorationItem, DashboardExplorationItem, GrafanaDataModel
+from grafana_wtf.model import DatasourceExplorationItem, DashboardExplorationItem, GrafanaDataModel, DashboardDetails
 from grafana_wtf.monkey import monkeypatch_grafana_api
 # Apply monkeypatch to grafana-api
 # https://github.com/m0nhawk/grafana_api/pull/85/files
@@ -255,6 +255,7 @@ class GrafanaWtf(GrafanaEngine):
             summary=OrderedDict(),
         )
 
+        # Count numbers of first-level entities.
         try:
             self.scan_all()
 
@@ -273,10 +274,27 @@ class GrafanaWtf(GrafanaEngine):
             response["summary"]["snapshots"] = len(self.data.snapshots)
             response["summary"]["teams"] = len(self.data.teams)
             response["summary"]["users"] = len(self.data.users)
+
         except Exception as ex:
-            log.error(f"Scanning resources failed: {ex}")
+            log.error(f"Computing basic statistics failed: {ex}")
+
+        # Count numbers of panels, annotations and variables for all dashboards.
+        try:
+            dashboard_summary = OrderedDict(dashboard_panels=0, dashboard_annotations=0, dashboard_templating=0)
+            for dbdetails in self.dashboard_details():
+                # TODO: Should there any deduplication be applied when counting those entities?
+                dashboard_summary["dashboard_panels"] += len(dbdetails.panels)
+                dashboard_summary["dashboard_annotations"] += len(dbdetails.annotations)
+                dashboard_summary["dashboard_templating"] += len(dbdetails.templating)
+            response["summary"].update(dashboard_summary)
+        except Exception as ex:
+            log.error(f"Computing nested statistics failed: {ex}")
 
         return response
+
+    def dashboard_details(self):
+        for dashboard in self.data.dashboards:
+            yield DashboardDetails(dashboard=dashboard)
 
     def search(self, expression):
         log.info('Searching Grafana at "{}" for expression "{}"'.format(self.grafana_url, expression))
@@ -316,8 +334,6 @@ class GrafanaWtf(GrafanaEngine):
         for dashboard_meta in self.data.dashboard_list:
             if dashboard_uid is not None and dashboard_meta['uid'] != dashboard_uid:
                 continue
-
-            #print(dashboard_meta)
 
             dashboard_versions = self.get_dashboard_versions(dashboard_meta['id'])
             for dashboard_revision in dashboard_versions:
@@ -459,7 +475,10 @@ class Indexer:
         self.dashboard_by_uid = {}
         self.dashboard_datasource_index = {}
 
-        for dashboard in self.dashboards:
+        for dbdetails in self.engine.dashboard_details():
+
+            dashboard = dbdetails.dashboard
+
             if dashboard.meta.isFolder:
                 continue
 
@@ -468,10 +487,9 @@ class Indexer:
             self.dashboard_by_uid[uid] = dashboard
 
             # Map to data source names.
-            dbdata = dashboard.dashboard
-            ds_panels = self.collect_datasource_names(dbdata.get("panels", []))
-            ds_annotations = self.collect_datasource_names(dbdata.get("annotations", {}).get("list", []))
-            ds_templating = self.collect_datasource_names(dbdata.get("templating", {}).get("list", []))
+            ds_panels = self.collect_datasource_names(dbdetails.panels)
+            ds_annotations = self.collect_datasource_names(dbdetails.annotations)
+            ds_templating = self.collect_datasource_names(dbdetails.templating)
             self.dashboard_datasource_index[uid] = list(sorted(set(ds_panels + ds_annotations + ds_templating)))
 
     def index_datasources(self):
