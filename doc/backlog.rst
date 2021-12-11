@@ -9,14 +9,13 @@ Prio 1
 - [o] Dockerize
 - [o] Statistics reports for data sources and panels: https://github.com/panodata/grafana-wtf/issues/18
 - [o] Finding invalid data sources: https://github.com/panodata/grafana-wtf/issues/19
+- [o] Add test fixture for adding dashboards at runtime from branch ``amo/test-dashboard-runtime``
 
 
 ********
 Prio 1.5
 ********
-- [o] Check if we can collect metrics from Grafana
-      - https://grafana.com/docs/grafana/latest/administration/view-server/internal-metrics/
-      - https://grafana.com/docs/grafana/latest/developers/plugins/backend/#collect-metrics
+- [o] Search through more Grafana entities (users, organizations, teams)
 - [o] Add test fixture which completely resets everything in Grafana before running the test harness.
       Move to a different port than 3000 then!
 - [o] Improve output format handling and error cases
@@ -37,6 +36,9 @@ Prio 2
 - [o] grafana-wtf log --tail | discourse
 - [o] grafana-wtf log --tail | wtee
 - [o] grafana-wtf export/import
+- [o] Check if we can collect metrics from Grafana
+      - https://grafana.com/docs/grafana/latest/administration/view-server/internal-metrics/
+      - https://grafana.com/docs/grafana/latest/developers/plugins/backend/#collect-metrics
 
 
 ****

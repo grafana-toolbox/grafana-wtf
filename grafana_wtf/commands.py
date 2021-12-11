@@ -56,7 +56,33 @@ def run():
       Likewise, use "GRAFANA_TOKEN" instead of "--grafana-token"
       for propagating the Grafana API Key.
 
-    Search examples:
+
+    General information:
+
+      # Display a bunch of meta information and statistics.
+      grafana-wtf info --format=yaml
+
+      # Display Grafana version.
+      grafana-wtf info --format=json | jq -r '.grafana.version'
+
+    Explore data sources:
+
+      # Display all data sources and the dashboards using them, as well as unused data sources.
+      grafana-wtf explore datasources --format=yaml
+
+      # Display names of unused datasources as a flat list.
+      grafana-wtf explore datasources --format=json | jq -r '.unused[].datasource.name'
+
+    Explore dashboards:
+
+      # Display some details of all dashboards, including names of missing data sources.
+      grafana-wtf explore dashboards --format=yaml
+
+      # Display only dashboards which have missing data sources, along with their names.
+      grafana-wtf explore dashboards --format=json | jq '.[] | select( .datasources_missing ) | .dashboard + {ds_missing: .datasources_missing[] | [.name]}'
+
+
+    Find dashboards and data sources:
 
       # Search through all Grafana entities for string "ldi_readings".
       grafana-wtf --grafana-url=https://daq.example.org/grafana/ --grafana-token=eyJrIjoiWHg...dGJpZCI6MX0= find ldi_readings
@@ -78,12 +104,12 @@ def run():
       # Output search results in tabular format.
       grafana-wtf find luftdaten --format=tabular:psql
 
-    Replace examples:
+    Replace labels within dashboards:
 
       # Replace string within specific dashboard.
       grafana-wtf --select-dashboard=_JJ22OZZk replace grafana-worldmap-panel grafana-map-panel
 
-    History examples:
+    Display edit history:
 
       # Display 50 most recent changes across all dashboards.
       grafana-wtf log --number=50
@@ -96,22 +122,6 @@ def run():
 
       # Output full history table in Markdown format
       grafana-wtf log --format=tabular:pipe
-
-    Explore data sources:
-
-      # Display all data sources and the dashboards using them, as well as unused data sources.
-      grafana-wtf explore datasources --format=yaml
-
-      # Display names of unused datasources as a flat list.
-      grafana-wtf explore datasources --format=json | jq -r '.unused[].datasource.name'
-
-    Explore dashboards:
-
-      # Display some details of all dashboards, including names of missing data sources.
-      grafana-wtf explore dashboards --format=yaml
-
-      # Display only dashboards which have missing data sources, along with their names.
-      grafana-wtf explore dashboards --format=json | jq '.[] | select( .datasources_missing ) | .dashboard + {ds_missing: .datasources_missing[] | [.name]}'
 
     """
 

@@ -103,36 +103,16 @@ Before running ``grafana-wtf``, define URL and access token of your Grafana inst
     export GRAFANA_TOKEN=eyJrIjoiWHg...dGJpZCI6MX0=
 
 
-Searching for strings
-=====================
+General information
+===================
 
-Find the string ``weatherbase`` throughout all dashboards and data sources::
-
-    grafana-wtf find weatherbase
-
-.. note::
-
-    ``grafana-wtf`` will cache HTTP responses for 300 seconds by default.
-    When running it with the ``--drop-cache`` option, it will drop its cache upfront.
-
-
-Replacing strings
-=================
-
-Replace all occurrences of ``ldi_v2`` with ``ldi_v3`` within dashboard with
-UID ``_JJ22OZZk``::
-
-    grafana-wtf --select-dashboard=_JJ22OZZk replace ldi_v2 ldi_v3
-
-
-Displaying changes / revision logs
-==================================
-
-Watching out for recent editing activity on any dashboards?
 ::
 
-    # Display 50 most recent changes across all dashboards.
-    grafana-wtf log --number=50
+    # Display a bunch of meta information and statistics.
+    grafana-wtf info --format=yaml
+
+    # Display Grafana version.
+    grafana-wtf info --format=json | jq -r '.grafana.version'
 
 
 Explore data sources
@@ -161,15 +141,37 @@ How to find dashboards which use non-existing data sources?
     grafana-wtf explore dashboards --format=json | jq '.[] | select( .datasources_missing ) | .dashboard + {ds_missing: .datasources_missing[] | [.name]}'
 
 
-Display common information and statistics
-=========================================
+Searching for strings
+=====================
+
+Find the string ``weatherbase`` throughout all dashboards and data sources::
+
+    grafana-wtf find weatherbase
+
+.. note::
+
+    ``grafana-wtf`` will cache HTTP responses for 300 seconds by default.
+    When running it with the ``--drop-cache`` option, it will drop its cache upfront.
+
+
+Replacing strings
+=================
+
+Replace all occurrences of ``ldi_v2`` with ``ldi_v3`` within dashboard with
+UID ``_JJ22OZZk``::
+
+    grafana-wtf --select-dashboard=_JJ22OZZk replace ldi_v2 ldi_v3
+
+
+Display edit history
+====================
+
+Watching out for recent editing activity on any dashboards?
 ::
 
-    # Display a bunch of meta information and statistics.
-    grafana-wtf info --format=yaml
+    # Display 50 most recent changes across all dashboards.
+    grafana-wtf log --number=50
 
-    # Display Grafana version.
-    grafana-wtf info --format=json | jq -r '.grafana.version'
 
 
 ********
