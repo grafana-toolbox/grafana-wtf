@@ -87,6 +87,12 @@ def run():
       # Display only dashboards which have missing data sources, along with their names.
       grafana-wtf explore dashboards --format=json | jq '.[] | select( .datasources_missing ) | .dashboard + {ds_missing: .datasources_missing[] | [.name]}'
 
+      # Display all dashboards which use a specific data source, filtered by data source name.
+      grafana-wtf explore dashboards --format=json | jq 'select( .[] | .datasources | .[].name=="<datasource_name>" )'
+
+      # Display all dashboards using data sources with a specific type. Here: InfluxDB.
+      grafana-wtf explore dashboards --format=json | jq 'select( .[] | .datasources | .[].type=="influxdb" )'
+
 
     Find dashboards and data sources:
 
