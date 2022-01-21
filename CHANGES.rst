@@ -6,6 +6,7 @@ grafana-wtf changelog
 in progress
 ===========
 - Prepare test suite for testing two different dashboard schema versions, v27 and v33
+- Improve determinism by returning stable sort order of dashboard results
 
 2021-12-11 0.12.0
 =================

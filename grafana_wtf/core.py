@@ -193,6 +193,9 @@ class GrafanaEngine:
         if self.progressbar:
             self.taqadum.close()
 
+        # Improve determinism by returning stable sort order.
+        self.data.dashboards = munchify(sorted(self.data.dashboards, key=lambda x: x["dashboard"]["uid"]))
+
         return self.data.dashboards
 
     def handle_grafana_error(self, ex):
@@ -207,7 +210,7 @@ class GrafanaEngine:
     def fetch_dashboard(self, dashboard_info):
         log.debug(f'Fetching dashboard "{dashboard_info["title"]}" ({dashboard_info["uid"]})')
         dashboard = self.grafana.dashboard.get_dashboard(dashboard_info["uid"])
-        self.data.dashboards.append(munchify(dashboard))
+        self.data.dashboards.append(dashboard)
         if self.taqadum is not None:
             self.taqadum.update(1)
 
