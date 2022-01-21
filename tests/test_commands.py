@@ -67,7 +67,7 @@ def test_find_textual_dashboard_success(docker_grafana, capsys):
     assert "dashboard.panels.[7].panels.[0].targets.[0].measurement: ldi_readings" in captured.out
 
 
-def test_find_textual_datasource_dashboard_success(docker_grafana, capsys):
+def test_find_textual_datasource_success(docker_grafana, capsys):
     set_command("find ldi_v2")
     grafana_wtf.commands.run()
     captured = capsys.readouterr()
@@ -77,7 +77,7 @@ def test_find_textual_datasource_dashboard_success(docker_grafana, capsys):
     assert "name: ldi_v2" in captured.out
     assert "database: ldi_v2" in captured.out
 
-    assert "Dashboards: 2 hits" in captured.out
+    assert "Dashboards: 1 hits" in captured.out
     assert "luftdaten-info-generic-trend" in captured.out
     assert "dashboard.panels.[1].datasource: ldi_v2" in captured.out
     assert "dashboard.panels.[7].panels.[0].datasource: ldi_v2" in captured.out
@@ -91,13 +91,13 @@ def test_find_tabular_dashboard_success(docker_grafana, capsys):
     assert 'Searching for expression "ldi_readings" at Grafana instance http://localhost:3000' in captured.out
 
     reference_table = """
-| type       | name                             | Title                            | Folder    | UID       | Creation date        | created by   | last update date     | datasources                      | URL                                                                |
-|:-----------|:---------------------------------|:---------------------------------|:----------|:----------|:---------------------|:-------------|:---------------------|:---------------------------------|:-------------------------------------------------------------------|
-| Dashboards | luftdaten-info-generic-trend-v27 | luftdaten.info generic trend v27 | Testdrive | ioUrPwQiz | xxxx-xx-xxTxx:xx:xxZ | Anonymous    | xxxx-xx-xxTxx:xx:xxZ | -- Grafana --,ldi_v2,weatherbase | http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend-v27 |
-| Dashboards | luftdaten-info-generic-trend-v33 | luftdaten.info generic trend v33 | Testdrive | jpVsQxRja | xxxx-xx-xxTxx:xx:xxZ | Anonymous    | xxxx-xx-xxTxx:xx:xxZ | -- Grafana --,ldi_v2,weatherbase | http://localhost:3000/d/jpVsQxRja/luftdaten-info-generic-trend-v33 |
+| Type       | Name                             | Title                            | Folder    | UID       | Created              | Updated              | Created by   | Datasources                                                                           | URL                                                                |
+|:-----------|:---------------------------------|:---------------------------------|:----------|:----------|:---------------------|:---------------------|:-------------|:--------------------------------------------------------------------------------------|:-------------------------------------------------------------------|
+| Dashboards | luftdaten-info-generic-trend-v27 | luftdaten.info generic trend v27 | Testdrive | ioUrPwQiz | xxxx-xx-xxTxx:xx:xxZ | xxxx-xx-xxTxx:xx:xxZ | Anonymous    | -- Grafana --,ldi_v2,weatherbase                                                      | http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend-v27 |
+| Dashboards | luftdaten-info-generic-trend-v33 | luftdaten.info generic trend v33 | Testdrive | jpVsQxRja | xxxx-xx-xxTxx:xx:xxZ | xxxx-xx-xxTxx:xx:xxZ | Anonymous    | -- Grafana --,{'type': 'influxdb', 'uid': 'PDF2762CDFF14A314'},{'uid': 'weatherbase'} | http://localhost:3000/d/jpVsQxRja/luftdaten-info-generic-trend-v33 |
     """.strip()
 
-    output_table = captured.out[captured.out.find("| type") :]
+    output_table = captured.out[captured.out.find("| Type") :]
     output_table_normalized = re.sub(
         r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ", r"xxxx-xx-xxTxx:xx:xxZ", output_table
     ).strip()
@@ -123,8 +123,8 @@ def test_replace_dashboard_success(docker_grafana, capsys):
     # assert "name: ldi_v2" in captured.out
     # assert "database: ldi_v2" in captured.out
 
-    assert "Dashboards: 2 hits" in captured.out
-    assert "luftdaten-info-generic-trend" in captured.out
+    assert "Dashboards: 1 hits" in captured.out
+    assert "luftdaten-info-generic-trend-v27" in captured.out
     assert "Folder Testdrive" in captured.out
     assert "dashboard.panels.[1].datasource: ldi_v3" in captured.out
     assert "dashboard.panels.[7].panels.[0].datasource: ldi_v3" in captured.out
@@ -222,15 +222,18 @@ def test_explore_dashboards(docker_grafana, create_datasource, capsys, caplog):
     assert len(data) >= 1
 
     missing = find_all_missing_datasources(data)
-    assert missing == ["weatherbase"]
+
+    # Those are bogus!
+    assert missing[0]["name"] == "weatherbase"
+    assert missing[1]["uid"] == "weatherbase"
 
 
 def find_all_missing_datasources(data):
-    missing_names = []
+    missing_items = []
     for item in data:
         if "datasources_missing" in item:
-            missing_names += map(operator.itemgetter("name"), item["datasources_missing"])
-    return sorted(set(missing_names))
+            missing_items += item["datasources_missing"]
+    return sorted(missing_items, key=lambda x: x["uid"] or x["name"])
 
 
 def test_info(docker_grafana, capsys, caplog):

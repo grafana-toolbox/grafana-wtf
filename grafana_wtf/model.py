@@ -43,6 +43,24 @@ class DashboardDetails:
 
 
 @dataclasses.dataclass
+class DatasourceItem:
+    uid: Optional[str] = None
+    name: Optional[str] = None
+    type: Optional[str] = None
+    url: Optional[str] = None
+
+    @classmethod
+    def from_payload(cls, payload: any):
+        if isinstance(payload, Munch):
+            payload = dict(payload)
+        if isinstance(payload, dict):
+            return cls(**payload)
+        if isinstance(payload, str):
+            return cls(name=payload)
+        raise TypeError(f"Unknown payload type for DatasourceItem: {type(payload)}")
+
+
+@dataclasses.dataclass
 class DatasourceExplorationItem:
     datasource: Munch
     used_in: List[Munch]
@@ -50,6 +68,7 @@ class DatasourceExplorationItem:
 
     def format_compact(self):
         dsshort = OrderedDict(
+            uid=self.datasource.uid,
             name=self.datasource.name,
             type=self.datasource.type,
             url=self.datasource.url,
@@ -84,6 +103,7 @@ class DashboardExplorationItem:
         for datasource in self.datasources:
             item.setdefault("datasources", [])
             dsshort = OrderedDict(
+                uid=datasource.uid,
                 name=datasource.name,
                 type=datasource.type,
                 url=datasource.url,
