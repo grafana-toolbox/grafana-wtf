@@ -29,6 +29,9 @@ test:
 	@test -e $(pytest) || $(MAKE) install-tests
 	@$(pytest) --keepalive tests --show-capture=all -vvv
 
+test-teardown:
+	docker rm grafana-wtf-test --force
+
 test-refresh: install-tests test
 
 test-junit: install-tests
