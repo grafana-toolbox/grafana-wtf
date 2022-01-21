@@ -2,6 +2,7 @@
 # (c) 2019-2021 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU Affero General Public License, Version 3
 import asyncio
+import dataclasses
 import json
 import logging
 from collections import OrderedDict
@@ -18,6 +19,7 @@ from grafana_wtf.model import (
     DashboardDetails,
     DashboardExplorationItem,
     DatasourceExplorationItem,
+    DatasourceItem,
     GrafanaDataModel,
 )
 from grafana_wtf.monkey import monkeypatch_grafana_api
@@ -390,9 +392,10 @@ class GrafanaWtf(GrafanaEngine):
         # Compute list of exploration items, associating datasources with the dashboards that use them.
         results_used = []
         results_unused = []
-        for name in sorted(ix.datasource_by_name):
-            datasource = ix.datasource_by_name[name]
-            dashboard_uids = ix.datasource_dashboard_index.get(name, [])
+        for ds_identifier in sorted(ix.datasource_by_ident):
+
+            datasource = ix.datasource_by_ident[ds_identifier]
+            dashboard_uids = ix.datasource_dashboard_index.get(ds_identifier, [])
             dashboards = list(map(ix.dashboard_by_uid.get, dashboard_uids))
             item = DatasourceExplorationItem(datasource=datasource, used_in=dashboards, grafana_url=self.grafana_url)
 
@@ -403,6 +406,9 @@ class GrafanaWtf(GrafanaEngine):
                 results_used.append(result)
             else:
                 results_unused.append(result)
+
+        results_used = sorted(results_used, key=lambda x: x["datasource"]["uid"] or x["datasource"]["name"])
+        results_unused = sorted(results_unused, key=lambda x: x["datasource"]["uid"] or x["datasource"]["name"])
 
         response = OrderedDict(
             used=results_used,
@@ -422,18 +428,20 @@ class GrafanaWtf(GrafanaEngine):
         for uid in sorted(ix.dashboard_by_uid):
 
             dashboard = ix.dashboard_by_uid[uid]
-            datasource_names = ix.dashboard_datasource_index[uid]
+            datasource_items = ix.dashboard_datasource_index[uid]
 
             datasources_existing = []
-            datasource_names_missing = []
-            for datasource_name in datasource_names:
-                if datasource_name == "-- Grafana --":
+            datasources_missing = []
+            for datasource_item in datasource_items:
+                if datasource_item.name == "-- Grafana --":
                     continue
-                datasource = ix.datasource_by_name.get(datasource_name)
+                datasource_by_uid = ix.datasource_by_uid.get(datasource_item.uid)
+                datasource_by_name = ix.datasource_by_name.get(datasource_item.name)
+                datasource = datasource_by_uid or datasource_by_name
                 if datasource:
                     datasources_existing.append(datasource)
                 else:
-                    datasource_names_missing.append({"name": datasource_name})
+                    datasources_missing.append(dataclasses.asdict(datasource_item))
             item = DashboardExplorationItem(
                 dashboard=dashboard, datasources=datasources_existing, grafana_url=self.grafana_url
             )
@@ -442,8 +450,8 @@ class GrafanaWtf(GrafanaEngine):
             result = item.format_compact()
 
             # Add information about missing data sources.
-            if datasource_names_missing:
-                result["datasources_missing"] = datasource_names_missing
+            if datasources_missing:
+                result["datasources_missing"] = datasources_missing
 
             results.append(result)
 
@@ -456,6 +464,8 @@ class Indexer:
 
         # Prepare index data structures.
         self.dashboard_by_uid = {}
+        self.datasource_by_ident = {}
+        self.datasource_by_uid = {}
         self.datasource_by_name = {}
         self.dashboard_datasource_index = {}
         self.datasource_dashboard_index = {}
@@ -472,12 +482,16 @@ class Indexer:
         self.index_datasources()
 
     @staticmethod
-    def collect_datasource_names(element):
-        names = []
+    def collect_datasource_items(element):
+        items = []
         for node in element:
             if "datasource" in node and node["datasource"]:
-                names.append(node.datasource)
-        return list(sorted(set(names)))
+                ds = node.datasource
+                if isinstance(ds, Munch):
+                    ds = dict(ds)
+                if ds not in items:
+                    items.append(ds)
+        return sorted(items)
 
     def index_dashboards(self):
 
@@ -496,21 +510,36 @@ class Indexer:
             self.dashboard_by_uid[uid] = dashboard
 
             # Map to data source names.
-            ds_panels = self.collect_datasource_names(dbdetails.panels)
-            ds_annotations = self.collect_datasource_names(dbdetails.annotations)
-            ds_templating = self.collect_datasource_names(dbdetails.templating)
-            self.dashboard_datasource_index[uid] = list(sorted(set(ds_panels + ds_annotations + ds_templating)))
+            ds_panels = self.collect_datasource_items(dbdetails.panels)
+            ds_annotations = self.collect_datasource_items(dbdetails.annotations)
+            ds_templating = self.collect_datasource_items(dbdetails.templating)
+
+            results = []
+            for bucket in ds_panels, ds_annotations, ds_templating:
+                for item in bucket:
+                    item = DatasourceItem.from_payload(item)
+                    if item not in results:
+                        results.append(item)
+            self.dashboard_datasource_index[uid] = results
 
     def index_datasources(self):
 
+        self.datasource_by_ident = {}
+        self.datasource_by_uid = {}
         self.datasource_by_name = {}
         self.datasource_dashboard_index = {}
 
         for datasource in self.datasources:
-            name = datasource.name
-            self.datasource_by_name[name] = datasource
+            datasource_name_or_uid = datasource.uid or datasource.name
+            self.datasource_by_ident[datasource_name_or_uid] = datasource
+            self.datasource_by_uid[datasource.uid] = datasource
+            self.datasource_by_name[datasource.name] = datasource
 
-        for dashboard_uid, datasource_names in self.dashboard_datasource_index.items():
-            for datasource_name in datasource_names:
-                self.datasource_dashboard_index.setdefault(datasource_name, [])
-                self.datasource_dashboard_index[datasource_name].append(dashboard_uid)
+        for dashboard_uid, datasource_items in self.dashboard_datasource_index.items():
+            datasource_item: DatasourceItem
+            for datasource_item in datasource_items:
+                datasource_name_or_uid = datasource_item.uid or datasource_item.name
+                if datasource_name_or_uid in self.datasource_by_name:
+                    datasource_name_or_uid = self.datasource_by_name[datasource_name_or_uid].uid
+                self.datasource_dashboard_index.setdefault(datasource_name_or_uid, [])
+                self.datasource_dashboard_index[datasource_name_or_uid].append(dashboard_uid)

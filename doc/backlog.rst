@@ -6,6 +6,12 @@ grafana-wtf backlog
 ******
 Prio 1
 ******
+- [o] With Grafana >8.3, resolve datasource name and add to ``{'type': 'influxdb', 'uid': 'PDF2762CDFF14A314'}``
+
+
+*********
+Prio 1.25
+*********
 - [o] Statistics reports for data sources and panels: https://github.com/panodata/grafana-wtf/issues/18
 - [o] Finding invalid data sources: https://github.com/panodata/grafana-wtf/issues/19
 - [o] Add test fixture for adding dashboards at runtime from branch ``amo/test-dashboard-runtime``
