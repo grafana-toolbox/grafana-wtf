@@ -1,0 +1,1737 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "$$hashKey": "object:24",
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "iteration": 1632507348685,
+  "links": [
+    {
+      "icon": "external link",
+      "tags": [],
+      "targetBlank": true,
+      "title": "Luftdatenpumpe @ GitHub",
+      "type": "link",
+      "url": "https://github.com/hiveeyes/luftdatenpumpe"
+    },
+    {
+      "icon": "external link",
+      "tags": [],
+      "targetBlank": true,
+      "title": "Luftdatenpumpe @ Hiveeyes",
+      "type": "link",
+      "url": "https://community.hiveeyes.org/t/erneuerung-der-luftdatenpumpe/1199"
+    },
+    {
+      "icon": "external link",
+      "tags": [],
+      "targetBlank": true,
+      "title": "Luftdatenpumpe @ Kotori",
+      "type": "link",
+      "url": "https://getkotori.org/docs/applications/luftdaten.info/"
+    },
+    {
+      "icon": "external link",
+      "tags": [],
+      "targetBlank": true,
+      "title": "luftdaten.info",
+      "type": "link",
+      "url": "http://luftdaten.info/"
+    },
+    {
+      "icon": "external link",
+      "tags": [],
+      "targetBlank": true,
+      "title": "luftdaten.info map",
+      "type": "link",
+      "url": "http://deutschland.maps.luftdaten.info/"
+    },
+    {
+      "icon": "external link",
+      "tags": [],
+      "targetBlank": true,
+      "title": "luftdaten.info archive",
+      "type": "link",
+      "url": "http://archive.luftdaten.info/"
+    }
+  ],
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 20,
+      "panels": [],
+      "repeat": "ldi_station_id",
+      "scopedVars": {
+        "ldi_station_id": {
+          "selected": true,
+          "text": "طريق الخيل, Al Marqadh, دبي, AE (#17006)",
+          "value": "17006"
+        }
+      },
+      "title": "Measurements for $ldi_station_id",
+      "type": "row"
+    },
+    {
+      "aliasColors": {
+        "P10": "#AEA2E0",
+        "P10 in 15 min": "#705DA0",
+        "P2,5": "#BF1B00",
+        "P2.5": "#BF1B00",
+        "P2.5 in 15min": "#890F02",
+        "humidity": "#82B5D8"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "ldi_v2",
+      "decimals": 1,
+      "editable": true,
+      "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 0,
+      "fillGradient": 0,
+      "grid": {},
+      "gridPos": {
+        "h": 13,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "height": "500",
+      "hiddenSeries": false,
+      "id": 18,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": false,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.4.3",
+      "pointradius": 1,
+      "points": false,
+      "renderer": "flot",
+      "scopedVars": {
+        "ldi_station_id": {
+          "selected": true,
+          "text": "طريق الخيل, Al Marqadh, دبي, AE (#17006)",
+          "value": "17006"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "P10 in 15 min",
+          "fill": 1,
+          "linewidth": 3,
+          "yaxis": 1
+        },
+        {
+          "alias": "P2.5 in 15min",
+          "fill": 1,
+          "linewidth": 3,
+          "yaxis": 1
+        },
+        {
+          "alias": "P10",
+          "lines": false,
+          "pointradius": 1,
+          "points": true
+        },
+        {
+          "alias": "P2.5",
+          "lines": false,
+          "pointradius": 1,
+          "points": true
+        },
+        {
+          "alias": "humidity",
+          "linewidth": 2,
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "P2.5",
+          "dsType": "influxdb",
+          "fields": [
+            {
+              "func": "mean",
+              "name": "P1"
+            }
+          ],
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "groupByTags": [],
+          "measurement": "ldi_readings",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": null,
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "P2"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "station_id",
+              "operator": "=~",
+              "value": "/^$ldi_station_id$/"
+            }
+          ]
+        },
+        {
+          "alias": "P2.5 in 15min",
+          "dsType": "influxdb",
+          "fields": [
+            {
+              "func": "mean",
+              "name": "P2"
+            }
+          ],
+          "groupBy": [
+            {
+              "params": [
+                "15m"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "groupByTags": [],
+          "hide": true,
+          "measurement": "ldi_readings",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": null,
+          "rawQuery": false,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "P2"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "station_id",
+              "operator": "=~",
+              "value": "/^$ldi_station_id$/"
+            }
+          ]
+        },
+        {
+          "alias": "P10",
+          "dsType": "influxdb",
+          "fields": [
+            {
+              "func": "mean",
+              "name": "P1"
+            }
+          ],
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "groupByTags": [],
+          "measurement": "ldi_readings",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": null,
+          "rawQuery": false,
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "P1"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "station_id",
+              "operator": "=~",
+              "value": "/^$ldi_station_id$/"
+            }
+          ]
+        },
+        {
+          "alias": "P10 in 15 min",
+          "dsType": "influxdb",
+          "fields": [
+            {
+              "func": "mean",
+              "name": "P1"
+            }
+          ],
+          "groupBy": [
+            {
+              "params": [
+                "15m"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "groupByTags": [],
+          "hide": true,
+          "measurement": "ldi_readings",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": null,
+          "rawQuery": false,
+          "refId": "D",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "P1"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "station_id",
+              "operator": "=~",
+              "value": "/^$ldi_station_id$/"
+            }
+          ]
+        },
+        {
+          "alias": "humidity",
+          "dsType": "influxdb",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "ldi_readings",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": null,
+          "rawQuery": false,
+          "refId": "E",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "humidity"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "station_id",
+              "operator": "=~",
+              "value": "/^$ldi_station_id$/"
+            }
+          ]
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": false,
+          "line": true,
+          "op": "gt",
+          "value": 40
+        },
+        {
+          "colorMode": "warning",
+          "fill": false,
+          "line": true,
+          "op": "gt",
+          "value": 25
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "P10, P2.5 and humidity",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "none",
+          "label": "μm/m³",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "humidity",
+          "label": "",
+          "logBase": 1,
+          "max": "100",
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "id": 21,
+      "panels": [],
+      "repeat": "ldi_station_id",
+      "scopedVars": {
+        "ldi_station_id": {
+          "selected": true,
+          "text": "طريق الخيل, Al Marqadh, دبي, AE (#17006)",
+          "value": "17006"
+        }
+      },
+      "title": "EU Limits for particulates @ $ldi_station_id",
+      "type": "row"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "ldi_v2",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [
+            {
+              "$$hashKey": "object:883",
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "max": 400,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgba(104, 247, 247, 0.97)",
+                "value": null
+              },
+              {
+                "color": "super-light-green",
+                "value": 20
+              },
+              {
+                "color": "super-light-yellow",
+                "value": 40
+              },
+              {
+                "color": "light-red",
+                "value": 50
+              },
+              {
+                "color": "dark-red",
+                "value": 100
+              },
+              {
+                "color": "dark-purple",
+                "value": 150
+              }
+            ]
+          },
+          "unit": "conμgm3"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 15
+      },
+      "id": 15,
+      "links": [],
+      "options": {
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "7.4.3",
+      "scopedVars": {
+        "ldi_station_id": {
+          "selected": true,
+          "text": "طريق الخيل, Al Marqadh, دبي, AE (#17006)",
+          "value": "17006"
+        }
+      },
+      "targets": [
+        {
+          "alias": "",
+          "dsType": "influxdb",
+          "groupBy": [],
+          "measurement": "ldi_readings",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": null,
+          "rawQuery": false,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "P1"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "station_id",
+              "operator": "=~",
+              "value": "/^$ldi_station_id$/"
+            }
+          ]
+        }
+      ],
+      "timeFrom": "24h",
+      "title": "P10",
+      "type": "gauge"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "ldi_v2",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": [],
+          "mappings": [
+            {
+              "$$hashKey": "object:549",
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "max": 200,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgba(77, 237, 237, 0.97)",
+                "value": null
+              },
+              {
+                "color": "super-light-green",
+                "value": 10
+              },
+              {
+                "color": "super-light-yellow",
+                "value": 20
+              },
+              {
+                "color": "light-red",
+                "value": 25
+              },
+              {
+                "color": "dark-red",
+                "value": 50
+              },
+              {
+                "color": "dark-purple",
+                "value": 75
+              }
+            ]
+          },
+          "unit": "conμgm3"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 6,
+        "y": 15
+      },
+      "id": 14,
+      "links": [],
+      "options": {
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "7.4.3",
+      "scopedVars": {
+        "ldi_station_id": {
+          "selected": true,
+          "text": "طريق الخيل, Al Marqadh, دبي, AE (#17006)",
+          "value": "17006"
+        }
+      },
+      "targets": [
+        {
+          "alias": "",
+          "dsType": "influxdb",
+          "groupBy": [],
+          "measurement": "ldi_readings",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": null,
+          "rawQuery": false,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "P2"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "station_id",
+              "operator": "=~",
+              "value": "/^$ldi_station_id$/"
+            }
+          ]
+        }
+      ],
+      "timeFrom": "24h",
+      "title": "P2.5",
+      "type": "gauge"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "ldi_v2",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [
+            {
+              "$$hashKey": "object:994",
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "max": 400,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgba(60, 224, 214, 0.97)",
+                "value": null
+              },
+              {
+                "color": "super-light-green",
+                "value": 20
+              },
+              {
+                "color": "super-light-yellow",
+                "value": 40
+              },
+              {
+                "color": "light-red",
+                "value": 50
+              },
+              {
+                "color": "dark-red",
+                "value": 100
+              },
+              {
+                "color": "dark-purple",
+                "value": 150
+              }
+            ]
+          },
+          "unit": "conμgm3"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 12,
+        "y": 15
+      },
+      "id": 16,
+      "links": [],
+      "options": {
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "7.4.3",
+      "scopedVars": {
+        "ldi_station_id": {
+          "selected": true,
+          "text": "طريق الخيل, Al Marqadh, دبي, AE (#17006)",
+          "value": "17006"
+        }
+      },
+      "targets": [
+        {
+          "alias": "",
+          "dsType": "influxdb",
+          "groupBy": [],
+          "measurement": "ldi_readings",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": null,
+          "rawQuery": false,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "P1"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "station_id",
+              "operator": "=~",
+              "value": "/^$ldi_station_id$/"
+            }
+          ]
+        }
+      ],
+      "timeFrom": "1y",
+      "title": "P10",
+      "type": "gauge"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "ldi_v2",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [
+            {
+              "$$hashKey": "object:1073",
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "max": 200,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgba(69, 230, 209, 0.97)",
+                "value": null
+              },
+              {
+                "color": "super-light-green",
+                "value": 10
+              },
+              {
+                "color": "super-light-yellow",
+                "value": 20
+              },
+              {
+                "color": "light-red",
+                "value": 25
+              },
+              {
+                "color": "dark-red",
+                "value": 50
+              },
+              {
+                "color": "dark-purple",
+                "value": 75
+              }
+            ]
+          },
+          "unit": "conμgm3"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 18,
+        "y": 15
+      },
+      "id": 17,
+      "links": [],
+      "options": {
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "7.4.3",
+      "scopedVars": {
+        "ldi_station_id": {
+          "selected": true,
+          "text": "طريق الخيل, Al Marqadh, دبي, AE (#17006)",
+          "value": "17006"
+        }
+      },
+      "targets": [
+        {
+          "dsType": "influxdb",
+          "groupBy": [],
+          "measurement": "ldi_readings",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": null,
+          "rawQuery": false,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "P2"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "station_id",
+              "operator": "=~",
+              "value": "/^$ldi_station_id$/"
+            }
+          ]
+        }
+      ],
+      "timeFrom": "1y",
+      "title": "P2.5",
+      "type": "gauge"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 22,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "ldi_v2",
+          "decimals": 1,
+          "editable": true,
+          "error": false,
+          "fill": 0,
+          "grid": {},
+          "gridPos": {
+            "h": 10,
+            "w": 14,
+            "x": 0,
+            "y": 3
+          },
+          "height": "",
+          "id": 1,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": false,
+            "hideEmpty": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 1,
+          "points": true,
+          "renderer": "flot",
+          "scopedVars": {
+            "ldi_station_id": {
+              "selected": true,
+              "text": "طريق الخيل, Al Marqadh, دبي, AE (#17006)",
+              "value": "17006"
+            }
+          },
+          "seriesOverrides": [
+            {
+              "alias": "P10",
+              "color": "#F9D9F9",
+              "linewidth": 4,
+              "yaxis": 1
+            },
+            {
+              "alias": "P2,5",
+              "color": "#806EB7",
+              "linewidth": 4,
+              "yaxis": 1
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "P10",
+              "dsType": "influxdb",
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "P1"
+                }
+              ],
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "ldi_readings",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": null,
+              "rawQuery": false,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "P1"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "station_id",
+                  "operator": "=~",
+                  "value": "/^$ldi_station_id$/"
+                }
+              ]
+            },
+            {
+              "alias": "P2.5",
+              "dsType": "influxdb",
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "P2"
+                }
+              ],
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "ldi_readings",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": null,
+              "rawQuery": false,
+              "refId": "B",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "P2"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "station_id",
+                  "operator": "=~",
+                  "value": "/^$ldi_station_id$/"
+                }
+              ]
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "critical",
+              "fill": true,
+              "line": true,
+              "op": "gt",
+              "value": 40
+            }
+          ],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Particles @ $ldi_station_id",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "none",
+              "label": "μm/m³",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "none",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "ldi_v2",
+          "decimals": 1,
+          "editable": true,
+          "error": false,
+          "fill": 0,
+          "grid": {},
+          "gridPos": {
+            "h": 10,
+            "w": 10,
+            "x": 14,
+            "y": 3
+          },
+          "height": "",
+          "id": 12,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": false,
+            "hideEmpty": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 1,
+          "points": true,
+          "renderer": "flot",
+          "scopedVars": {
+            "ldi_station_id": {
+              "selected": true,
+              "text": "طريق الخيل, Al Marqadh, دبي, AE (#17006)",
+              "value": "17006"
+            }
+          },
+          "seriesOverrides": [
+            {
+              "alias": "humidity",
+              "yaxis": 2
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "temperature",
+              "dsType": "influxdb",
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "P2"
+                }
+              ],
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "groupByTags": [],
+              "measurement": "ldi_readings",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": null,
+              "rawQuery": false,
+              "refId": "C",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "temperature"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "station_id",
+                  "operator": "=~",
+                  "value": "/^$ldi_station_id$/"
+                }
+              ]
+            },
+            {
+              "alias": "humidity",
+              "dsType": "influxdb",
+              "fields": [
+                {
+                  "func": "mean",
+                  "name": "P2"
+                }
+              ],
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "groupByTags": [],
+              "hide": false,
+              "measurement": "ldi_readings",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": null,
+              "rawQuery": false,
+              "refId": "D",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "humidity"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "station_id",
+                  "operator": "=~",
+                  "value": "/^$ldi_station_id$/"
+                }
+              ]
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "critical",
+              "fill": true,
+              "line": true,
+              "op": "gt",
+              "value": 40
+            }
+          ],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Weather @ $ldi_station_id",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "celsius",
+              "label": "°C",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "humidity",
+              "label": "%H",
+              "logBase": 1,
+              "max": "100",
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
+      "repeat": "ldi_station_id",
+      "scopedVars": {
+        "ldi_station_id": {
+          "selected": true,
+          "text": "طريق الخيل, Al Marqadh, دبي, AE (#17006)",
+          "value": "17006"
+        }
+      },
+      "title": "Particulates and weather for $ldi_station_id",
+      "type": "row"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 23,
+      "panels": [],
+      "repeat": null,
+      "title": "Info",
+      "type": "row"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 19,
+        "w": 12,
+        "x": 0,
+        "y": 23
+      },
+      "id": 6,
+      "links": [],
+      "options": {
+        "content": "# Particulates\n\nAtmospheric particulate matter – also known as particulate matter (PM) or particulates – are microscopic solid or liquid matter suspended in the Earth's atmosphere. The term aerosol commonly refers to the particulate/air mixture, as opposed to the particulate matter alone. Sources of particulate matter can be man-made or natural. They have impacts on climate and precipitation that adversely affect human health.\n\nSubtypes of atmospheric particulate matter include suspended particulate matter (SPM), thoracic and respirable particles, inhalable coarse particles, which are particles with a diameter between 2.5 and 10 micrometres (μm), fine particles with a diameter of 2.5 μm or less PM2.5 , PM10 ultrafine particles, and soot\n\nThe IARC and WHO designate airborne particulates a Group 1 carcinogen. Particulates are the deadliest form of air pollution[citation needed] due to their ability to penetrate deep into the lungs and blood streams unfiltered, causing permanent DNA mutations, heart attacks, and premature death. In 2013, a study involving 312,944 people in nine European countries revealed that there was no safe level of particulates and that for every increase of 10 μg/m3 in PM10, the lung cancer rate rose 22%. The smaller PM2.5 were particularly deadly, with a 36% increase in lung cancer per 10 μg/m3 as it can penetrate deeper into the lungs.\n\nThe European Union has established these limits for particulates in air\n\n|                                        | **PM10 since 1 January 2005** | **PM2.5 since 1 January 2015** |\n|----------------------------------------|--------------------------|----------------------------|\n| **Yearly average**                         | 40 µg/m3                 | 25 µg/m3                   |\n| **Daily average (24-hour)**                | 50 µg/m3                 | None                       |\n| **Allowed number of exceedences per year** | 35                       | None                       |\n\n(*[Source: Wikipedia](https://en.wikipedia.org/wiki/Particulates)*)",
+        "mode": "markdown"
+      },
+      "pluginVersion": "7.4.3",
+      "title": "About Atmospheric particulate matter",
+      "type": "text"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 19,
+        "w": 12,
+        "x": 12,
+        "y": 23
+      },
+      "id": 7,
+      "links": [],
+      "options": {
+        "content": "# What is luftdaten.info\n\n## About\n[luftdaten.info] is a community project from Stuttgart, Germany. Due to its geographical location \nand microclimatic situation, Stuttgart has high particulate matter (PM) levels on a regular basis.\nPeople at [OK Lab Stuttgart], a project supported by [Code for Germany] of [Open Knowledge Foundation] fame \nconstructed cost-effective particulate sensors easily to rebuild by everyone to provide an alternative to \nmonitoring systems from governmental agencies.\n\nThe sensor readings from [DIY fine dust sensors] are acquired by the backend application [feinstaub-api], \ndisplayed on the [luftdaten.info map] and archived at the [luftdaten.info archive].\n\n## Growth\nThe project is a classical civic-tech with a crowdsourcing approach, it is growing steadily and is \ngetting more and more even international attention. \n\n- [2016] luftdaten.info is in the process of installing low cost, crowdfunded sensor nodes across many \ncities in Germany to measure PM levels.\n\n- [2018] In the meanwhile, there are more than 6,000 sensor nodes online. Mainly located around\nEurope, they start to spread across the whole world.\n\n## Quotes\n> There is certainly growing awareness of the issue among Stuttgart residents. \n  Luftdaten is in the process of installing low cost, crowdfunded sensors across \n  the city to measure PM levels [...].\n\n> “I wanted to build cost-effective sensors, given the less than reliable government \n  data and coverage regarding air pollution,” explains Jan Lutz, a social entrepreneur \n  who runs Luftdaten’s website.\n\n> “But I think in five years Stuttgart will be like Detroit or something, because there \n  is simply no innovation” he adds. “The automobile industry continues to produce more cars, \n  which is basically two tonnes of steel transporting a 70kg human. It’s an overkill, \n  and not sustainable in the long run.”\n\n> -- *[Source: The Guardian, 2017]*\n\n\n[luftdaten.info]: http://luftdaten.info\n[OK Lab Stuttgart]: https://codefor.de/stuttgart/\n[Code for Germany]: https://codefor.de/\n[Open Knowledge Foundation]: https://okfn.de/\n[feinstaub-api]: https://github.com/opendata-stuttgart/feinstaub-api\n[luftdaten.info map]: http://deutschland.maps.luftdaten.info/\n[luftdaten.info archive]: http://archive.luftdaten.info\n[Source: The Guardian, 2017]: https://www.theguardian.com/cities/2017/mar/02/stuttgart-residents-sue-mayor-bodily-harm-air-pollution\n[Grafana]: https://grafana.com\n[DIY fine dust sensors]: https://luftdaten.info/en/construction-manual/\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "7.4.3",
+      "title": "About luftdaten.info",
+      "type": "text"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 27,
+  "style": "light",
+  "tags": [
+    "luftdaten.info",
+    "trend"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": "weatherbase",
+        "definition": "",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "Country",
+        "multi": true,
+        "name": "ldi_station_countrycode",
+        "options": [],
+        "query": "SELECT osm_country_code AS __value, country_and_countrycode AS __text FROM ldi_network ORDER BY osm_country_code",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": "weatherbase",
+        "definition": "",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "State",
+        "multi": true,
+        "name": "ldi_station_state",
+        "options": [],
+        "query": "SELECT osm_state AS __value, state_and_country AS __text FROM ldi_network WHERE osm_country_code IN ($ldi_station_countrycode) ORDER BY osm_country_code, osm_state",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": "weatherbase",
+        "definition": "",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "City",
+        "multi": true,
+        "name": "ldi_station_city",
+        "options": [],
+        "query": "SELECT osm_city AS __value, city_and_state_and_country AS __text FROM ldi_network WHERE osm_country_code IN ($ldi_station_countrycode) AND osm_state IN ($ldi_station_state) AND osm_city != '' ORDER BY osm_country_code, osm_state, osm_city",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": "weatherbase",
+        "definition": "SELECT sensor_type_name AS __value, concat( sensor_type_name, '    |', CAST(COUNT(sensor_type_name) AS text), '|' ) AS __text FROM ldi_sensors GROUP BY sensor_type_name, sensor_type ORDER BY sensor_type",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "Sensor type",
+        "multi": true,
+        "name": "ldi_station_sensortype",
+        "options": [],
+        "query": "SELECT sensor_type_name AS __value, concat( sensor_type_name, '    |', CAST(COUNT(sensor_type_name) AS text), '|' ) AS __text FROM ldi_sensors GROUP BY sensor_type_name, sensor_type ORDER BY sensor_type",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": [
+            "طريق الخيل, Al Marqadh, دبي, AE (#17006)"
+          ],
+          "value": [
+            "17006"
+          ]
+        },
+        "datasource": "weatherbase",
+        "definition": "SELECT station_id AS __value, name_and_id AS __text FROM ldi_network WHERE osm_country_code IN ($ldi_station_countrycode) AND osm_state IN ($ldi_station_state) AND osm_city IN ($ldi_station_city) AND sensor_type_name IN ($ldi_station_sensortype) ORDER BY osm_country_code, osm_state, osm_city, osm_road",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Choose multiple stations",
+        "multi": true,
+        "name": "ldi_station_id",
+        "options": [],
+        "query": "SELECT station_id AS __value, name_and_id AS __text FROM ldi_network WHERE osm_country_code IN ($ldi_station_countrycode) AND osm_state IN ($ldi_station_state) AND osm_city IN ($ldi_station_city) AND sensor_type_name IN ($ldi_station_sensortype) ORDER BY osm_country_code, osm_state, osm_city, osm_road",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "timepicker": {
+    "collapse": false,
+    "enable": true,
+    "hidden": false,
+    "notice": false,
+    "now": true,
+    "refresh_intervals": [
+      "5m",
+      "10m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "status": "Stable",
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ],
+    "type": "timepicker"
+  },
+  "timezone": "browser",
+  "title": "luftdaten.info generic trend v27",
+  "uid": "ioUrPwQiz",
+  "version": 19
+}
