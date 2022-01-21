@@ -57,7 +57,7 @@ def test_find_textual_dashboard_success(docker_grafana, capsys):
     grafana_wtf.commands.run()
     captured = capsys.readouterr()
     assert 'Searching for expression "ldi_readings" at Grafana instance http://localhost:3000' in captured.out
-    assert "Dashboards: 1 hits" in captured.out
+    assert "Dashboards: 2 hits" in captured.out
     assert "luftdaten-info-generic-trend" in captured.out
     assert "Title luftdaten.info generic trend" in captured.out
     assert "Folder Testdrive" in captured.out
@@ -77,7 +77,7 @@ def test_find_textual_datasource_dashboard_success(docker_grafana, capsys):
     assert "name: ldi_v2" in captured.out
     assert "database: ldi_v2" in captured.out
 
-    assert "Dashboards: 1 hits" in captured.out
+    assert "Dashboards: 2 hits" in captured.out
     assert "luftdaten-info-generic-trend" in captured.out
     assert "dashboard.panels.[1].datasource: ldi_v2" in captured.out
     assert "dashboard.panels.[7].panels.[0].datasource: ldi_v2" in captured.out
@@ -91,9 +91,10 @@ def test_find_tabular_dashboard_success(docker_grafana, capsys):
     assert 'Searching for expression "ldi_readings" at Grafana instance http://localhost:3000' in captured.out
 
     reference_table = """
-| type       | name                         | Title                        | Folder    | UID       | Creation date        | created by   | last update date     | datasources                      | URL                                                            |
-|:-----------|:-----------------------------|:-----------------------------|:----------|:----------|:---------------------|:-------------|:---------------------|:---------------------------------|:---------------------------------------------------------------|
-| Dashboards | luftdaten-info-generic-trend | luftdaten.info generic trend | Testdrive | ioUrPwQiz | xxxx-xx-xxTxx:xx:xxZ | Anonymous    | xxxx-xx-xxTxx:xx:xxZ | -- Grafana --,ldi_v2,weatherbase | http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend |
+| type       | name                             | Title                            | Folder    | UID       | Creation date        | created by   | last update date     | datasources                      | URL                                                                |
+|:-----------|:---------------------------------|:---------------------------------|:----------|:----------|:---------------------|:-------------|:---------------------|:---------------------------------|:-------------------------------------------------------------------|
+| Dashboards | luftdaten-info-generic-trend-v27 | luftdaten.info generic trend v27 | Testdrive | ioUrPwQiz | xxxx-xx-xxTxx:xx:xxZ | Anonymous    | xxxx-xx-xxTxx:xx:xxZ | -- Grafana --,ldi_v2,weatherbase | http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend-v27 |
+| Dashboards | luftdaten-info-generic-trend-v33 | luftdaten.info generic trend v33 | Testdrive | jpVsQxRja | xxxx-xx-xxTxx:xx:xxZ | Anonymous    | xxxx-xx-xxTxx:xx:xxZ | -- Grafana --,ldi_v2,weatherbase | http://localhost:3000/d/jpVsQxRja/luftdaten-info-generic-trend-v33 |
     """.strip()
 
     output_table = captured.out[captured.out.find("| type") :]
@@ -122,7 +123,7 @@ def test_replace_dashboard_success(docker_grafana, capsys):
     # assert "name: ldi_v2" in captured.out
     # assert "database: ldi_v2" in captured.out
 
-    assert "Dashboards: 1 hits" in captured.out
+    assert "Dashboards: 2 hits" in captured.out
     assert "luftdaten-info-generic-trend" in captured.out
     assert "Folder Testdrive" in captured.out
     assert "dashboard.panels.[1].datasource: ldi_v3" in captured.out
@@ -154,9 +155,9 @@ def test_log_json_success(docker_grafana, capsys, caplog):
             "user": "",
             "message": "",
             "folder": "Testdrive",
-            "title": "luftdaten.info generic trend",
+            "title": "luftdaten.info generic trend v27",
             "version": 1,
-            "url": "http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend",
+            "url": "http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend-v27",
         }
 
         history = json.loads(captured.out)
@@ -174,7 +175,7 @@ def test_log_tabular_success(docker_grafana, capsys, caplog):
         assert 'Aggregating edit history for Grafana dashboard "ioUrPwQiz" at http://localhost:3000' in caplog.text
 
         reference = """
-        | Notes: n/a<br/>[Testdrive » luftdaten.info generic trend](http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend)                                        | User: <br/>Date: xxxx-xx-xxTxx:xx:xxZ      |
+        | Notes: n/a<br/>[Testdrive » luftdaten.info generic trend v27](http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend-v27)                                        | User: <br/>Date: xxxx-xx-xxTxx:xx:xxZ      |
         """.strip()
 
         first_item_raw = str.splitlines(captured.out)[-1]
@@ -229,7 +230,7 @@ def find_all_missing_datasources(data):
     for item in data:
         if "datasources_missing" in item:
             missing_names += map(operator.itemgetter("name"), item["datasources_missing"])
-    return missing_names
+    return sorted(set(missing_names))
 
 
 def test_info(docker_grafana, capsys, caplog):

@@ -5,6 +5,7 @@ grafana-wtf changelog
 
 in progress
 ===========
+- Prepare test suite for testing two different dashboard schema versions, v27 and v33
 
 2021-12-11 0.12.0
 =================
