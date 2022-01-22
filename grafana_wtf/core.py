@@ -12,7 +12,7 @@ from urllib.parse import urljoin, urlparse
 import colored
 import requests
 import requests_cache
-from munch import Munch, munchify
+from munch import Munch, munchify, unmunchify
 from tqdm import tqdm
 
 from grafana_wtf.model import (
@@ -392,9 +392,8 @@ class GrafanaWtf(GrafanaEngine):
         # Compute list of exploration items, associating datasources with the dashboards that use them.
         results_used = []
         results_unused = []
-        for ds_identifier in sorted(ix.datasource_by_ident):
-
-            datasource = ix.datasource_by_ident[ds_identifier]
+        for datasource in ix.datasources:
+            ds_identifier = datasource.get("uid", datasource.get("name"))
             dashboard_uids = ix.datasource_dashboard_index.get(ds_identifier, [])
             dashboards = list(map(ix.dashboard_by_uid.get, dashboard_uids))
             item = DatasourceExplorationItem(datasource=datasource, used_in=dashboards, grafana_url=self.grafana_url)
@@ -405,7 +404,8 @@ class GrafanaWtf(GrafanaEngine):
             if dashboard_uids:
                 results_used.append(result)
             else:
-                results_unused.append(result)
+                if result not in results_unused:
+                    results_unused.append(result)
 
         results_used = sorted(results_used, key=lambda x: x["datasource"]["name"] or x["datasource"]["uid"])
         results_unused = sorted(results_unused, key=lambda x: x["datasource"]["name"] or x["datasource"]["uid"])
@@ -530,16 +530,18 @@ class Indexer:
         self.datasource_dashboard_index = {}
 
         for datasource in self.datasources:
-            datasource_name_or_uid = datasource.uid or datasource.name
-            self.datasource_by_ident[datasource_name_or_uid] = datasource
-            self.datasource_by_uid[datasource.uid] = datasource
+            self.datasource_by_ident[datasource.name] = datasource
             self.datasource_by_name[datasource.name] = datasource
+            if "uid" in datasource:
+                self.datasource_by_ident[datasource.uid] = datasource
+                self.datasource_by_uid[datasource.uid] = datasource
 
         for dashboard_uid, datasource_items in self.dashboard_datasource_index.items():
             datasource_item: DatasourceItem
             for datasource_item in datasource_items:
                 datasource_name_or_uid = datasource_item.uid or datasource_item.name
                 if datasource_name_or_uid in self.datasource_by_name:
-                    datasource_name_or_uid = self.datasource_by_name[datasource_name_or_uid].uid
+                    if "uid" in self.datasource_by_name[datasource_name_or_uid]:
+                        datasource_name_or_uid = self.datasource_by_name[datasource_name_or_uid].uid
                 self.datasource_dashboard_index.setdefault(datasource_name_or_uid, [])
                 self.datasource_dashboard_index[datasource_name_or_uid].append(dashboard_uid)

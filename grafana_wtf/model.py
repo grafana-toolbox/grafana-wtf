@@ -68,7 +68,7 @@ class DatasourceExplorationItem:
 
     def format_compact(self):
         dsshort = OrderedDict(
-            uid=self.datasource.uid,
+            uid=self.datasource.get("uid"),
             name=self.datasource.name,
             type=self.datasource.type,
             url=self.datasource.url,
@@ -103,7 +103,7 @@ class DashboardExplorationItem:
         for datasource in self.datasources:
             item.setdefault("datasources", [])
             dsshort = OrderedDict(
-                uid=datasource.uid,
+                uid=datasource.get("uid"),
                 name=datasource.name,
                 type=datasource.type,
                 url=datasource.url,

@@ -10,6 +10,7 @@ in progress
 - CI: Prepare test suite for testing two different dashboard schema versions, v27 and v33
 - Improve determinism by returning stable sort order of dashboard results
 - Improve compatibility with Grafana 8.3 by handling dashboard schema version 33 properly
+- Reestablish compatibility with Grafana 6
 
 2021-12-11 0.12.0
 =================
