@@ -11,6 +11,7 @@ in progress
 - Improve determinism by returning stable sort order of dashboard results
 - Improve compatibility with Grafana 8.3 by handling dashboard schema version 33 properly
 - Reestablish compatibility with Grafana 6
+- Confirm compatibility with Grafana 8.3.4
 
 2021-12-11 0.12.0
 =================
