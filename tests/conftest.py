@@ -1,5 +1,5 @@
 import os
-import sys
+import re
 from pathlib import Path
 
 import pytest
@@ -50,7 +50,7 @@ def create_datasource(docker_grafana):
         try:
             grafana.datasource.create_datasource(dict(name=name, type=type, access=access))
         except GrafanaClientError as ex:
-            if "Client Error 409: data source with the same name already exists" not in str(ex):
+            if not re.match("Client Error 409: Data source with (the )?same name already exists", str(ex), re.IGNORECASE):
                 raise
 
     return _create_datasource
