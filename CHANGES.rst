@@ -5,6 +5,9 @@ grafana-wtf changelog
 
 in progress
 ===========
+
+2022-01-22 0.13.0
+=================
 - CI: Use most recent Grafana 8.3.3
 - Add two more examples about using `explore dashboards` with `jq`
 - CI: Prepare test suite for testing two different dashboard schema versions, v27 and v33
