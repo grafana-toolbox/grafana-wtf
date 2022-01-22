@@ -407,8 +407,8 @@ class GrafanaWtf(GrafanaEngine):
             else:
                 results_unused.append(result)
 
-        results_used = sorted(results_used, key=lambda x: x["datasource"]["uid"] or x["datasource"]["name"])
-        results_unused = sorted(results_unused, key=lambda x: x["datasource"]["uid"] or x["datasource"]["name"])
+        results_used = sorted(results_used, key=lambda x: x["datasource"]["name"] or x["datasource"]["uid"])
+        results_unused = sorted(results_unused, key=lambda x: x["datasource"]["name"] or x["datasource"]["uid"])
 
         response = OrderedDict(
             used=results_used,

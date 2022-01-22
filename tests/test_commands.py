@@ -233,7 +233,7 @@ def find_all_missing_datasources(data):
     for item in data:
         if "datasources_missing" in item:
             missing_items += item["datasources_missing"]
-    return sorted(missing_items, key=lambda x: x["uid"] or x["name"])
+    return sorted(missing_items, key=lambda x: x["name"] or x["uid"])
 
 
 def test_info(docker_grafana, capsys, caplog):
