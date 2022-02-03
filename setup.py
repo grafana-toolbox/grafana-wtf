@@ -30,7 +30,7 @@ extras = {"test": ["pytest>=5,<7", "lovely-pytest-docker>=0.2.1,<3"]}
 
 setup(
     name="grafana-wtf",
-    version="0.13.0",
+    version="0.13.1",
     description="Grep through all Grafana entities in the spirit of git-wtf",
     long_description=README,
     license="AGPL 3, EUPL 1.2",
