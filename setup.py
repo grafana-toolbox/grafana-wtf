@@ -15,7 +15,7 @@ requires = [
     "tqdm>=4.37.0,<5",
     # Grafana
     "requests>=2.23.0,<3",
-    "grafana-api>=1.0.3,<2",
+    "grafana-client>=2,<3",
     "jsonpath-rw>=1.4.0,<2",
     # Caching
     "requests-cache>=0.5.2,<1",

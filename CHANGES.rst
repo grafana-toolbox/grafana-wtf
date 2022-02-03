@@ -6,6 +6,10 @@ grafana-wtf changelog
 in progress
 ===========
 
+2022-02-03 0.13.1
+=================
+- Switch to the ``grafana-client`` library fork
+
 2022-01-22 0.13.0
 =================
 - CI: Use most recent Grafana 8.3.3

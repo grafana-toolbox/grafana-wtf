@@ -12,7 +12,7 @@ from urllib.parse import urljoin, urlparse
 import colored
 import requests
 import requests_cache
-from munch import Munch, munchify, unmunchify
+from munch import Munch, munchify
 from tqdm import tqdm
 
 from grafana_wtf.model import (
@@ -22,14 +22,14 @@ from grafana_wtf.model import (
     DatasourceItem,
     GrafanaDataModel,
 )
-from grafana_wtf.monkey import monkeypatch_grafana_api
+from grafana_wtf.monkey import monkeypatch_grafana_client
 
-# Apply monkeypatch to grafana-api
+# Apply monkeypatch to `grafana-client`.
 # https://github.com/m0nhawk/grafana_api/pull/85/files
-monkeypatch_grafana_api()
+monkeypatch_grafana_client()
 
-from grafana_api.grafana_api import GrafanaClientError, GrafanaUnauthorizedError
-from grafana_api.grafana_face import GrafanaFace
+from grafana_client.api import GrafanaApi
+from grafana_client.client import GrafanaClientError, GrafanaUnauthorizedError
 
 from grafana_wtf.util import JsonPathFinder
 
@@ -84,7 +84,7 @@ class GrafanaEngine:
             password = url.password or "admin"
             auth = (username, password)
 
-        grafana = GrafanaFace(
+        grafana = GrafanaApi(
             auth, protocol=url.scheme, host=url.hostname, port=url.port, url_path_prefix=url.path.lstrip("/")
         )
 
@@ -99,8 +99,8 @@ class GrafanaEngine:
         # https://urllib3.readthedocs.io/en/latest/advanced-usage.html#customizing-pool-behavior
         # https://laike9m.com/blog/requests-secret-pool_connections-and-pool_maxsize,89/
         adapter = requests.adapters.HTTPAdapter(pool_connections=100, pool_maxsize=100, max_retries=5, pool_block=True)
-        self.grafana.api.s.mount("http://", adapter)
-        self.grafana.api.s.mount("https://", adapter)
+        self.grafana.client.s.mount("http://", adapter)
+        self.grafana.client.s.mount("https://", adapter)
 
         return self
 
@@ -251,7 +251,7 @@ class GrafanaWtf(GrafanaEngine):
     def info(self):
 
         try:
-            health = self.grafana.api.GET("/health")
+            health = self.grafana.client.GET("/health")
         except Exception as ex:
             log.error(f"Request to /health endpoint failed: {ex}")
             health = {}
@@ -380,7 +380,7 @@ class GrafanaWtf(GrafanaEngine):
     def get_dashboard_versions(self, dashboard_id):
         # https://grafana.com/docs/http_api/dashboard_versions/
         get_dashboard_versions_path = "/dashboards/id/%s/versions" % dashboard_id
-        r = self.grafana.dashboard.api.GET(get_dashboard_versions_path)
+        r = self.grafana.dashboard.client.GET(get_dashboard_versions_path)
         return r
 
     def explore_datasources(self):
