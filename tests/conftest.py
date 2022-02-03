@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 
 import pytest
-from grafana_api.grafana_api import GrafanaClientError
+from grafana_client.client import GrafanaClientError
 
 from grafana_wtf.core import GrafanaWtf
 

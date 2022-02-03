@@ -15,11 +15,11 @@ def update_dashboard(self, dashboard):
             dashboard["folderId"] = dashboard["meta"]["folderId"]
 
     put_dashboard_path = "/dashboards/db"
-    r = self.api.POST(put_dashboard_path, json=dashboard)
+    r = self.client.POST(put_dashboard_path, json=dashboard)
     return r
 
 
-def monkeypatch_grafana_api():
-    import grafana_api.api.dashboard as dashboard
+def monkeypatch_grafana_client():
+    import grafana_client.elements.dashboard as dashboard
 
     dashboard.Dashboard.update_dashboard = update_dashboard
