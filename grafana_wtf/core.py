@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# (c) 2019-2021 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2022 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU Affero General Public License, Version 3
 import asyncio
 import dataclasses
@@ -12,6 +12,8 @@ from urllib.parse import urljoin, urlparse
 import colored
 import requests
 import requests_cache
+from grafana_client.api import GrafanaApi
+from grafana_client.client import GrafanaClientError, GrafanaUnauthorizedError
 from munch import Munch, munchify
 from tqdm import tqdm
 
@@ -22,15 +24,6 @@ from grafana_wtf.model import (
     DatasourceItem,
     GrafanaDataModel,
 )
-from grafana_wtf.monkey import monkeypatch_grafana_client
-
-# Apply monkeypatch to `grafana-client`.
-# https://github.com/m0nhawk/grafana_api/pull/85/files
-monkeypatch_grafana_client()
-
-from grafana_client.api import GrafanaApi
-from grafana_client.client import GrafanaClientError, GrafanaUnauthorizedError
-
 from grafana_wtf.util import JsonPathFinder
 
 log = logging.getLogger(__name__)

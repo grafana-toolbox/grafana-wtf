@@ -5,6 +5,8 @@ grafana-wtf changelog
 
 in progress
 ===========
+- Use ``grafana-client-2.1.0``, remove monkeypatch
+
 
 2022-02-03 0.13.1
 =================
