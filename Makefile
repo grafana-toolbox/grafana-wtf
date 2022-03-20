@@ -14,6 +14,9 @@ $(eval pytest       := $(venvpath)/bin/pytest)
 $(eval bumpversion  := $(venvpath)/bin/bumpversion)
 $(eval twine        := $(venvpath)/bin/twine)
 $(eval sphinx       := $(venvpath)/bin/sphinx-build)
+$(eval black        := $(venvpath)/bin/black)
+$(eval isort        := $(venvpath)/bin/isort)
+
 
 # Setup Python virtualenv
 setup-virtualenv:
@@ -27,7 +30,7 @@ setup-virtualenv:
 # Run the main test suite
 test:
 	@test -e $(pytest) || $(MAKE) install-tests
-	@$(pytest) --keepalive tests --show-capture=all -vvv
+	@$(pytest) --keepalive --show-capture=all -vvv tests
 
 test-teardown:
 	docker rm grafana-wtf-test --force
@@ -50,8 +53,8 @@ test-coverage: install-tests
 # Formatting
 # ----------
 format: install-releasetools
-	isort .
-	black .
+	$(isort) .
+	$(black) .
 
 
 # -------

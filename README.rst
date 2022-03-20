@@ -198,7 +198,12 @@ Development
 
     git clone https://github.com/panodata/grafana-wtf
     cd grafana-wtf
+
+    # Run all tests.
     make test
+
+    # Run selected tests.
+    pytest --keepalive -vvv -k test_find_textual
 
 
 .. _grafana-wtf examples: https://github.com/panodata/grafana-wtf/blob/master/doc/examples.rst

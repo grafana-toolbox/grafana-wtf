@@ -1,6 +1,5 @@
 import json
 import logging
-import operator
 import re
 import shlex
 import sys
