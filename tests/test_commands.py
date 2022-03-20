@@ -183,9 +183,32 @@ def test_log_tabular_success(docker_grafana, capsys, caplog):
         assert first_item_normalized == reference
 
 
-def test_explore_datasources(docker_grafana, create_datasource, capsys, caplog):
+def test_explore_datasources_used(docker_grafana, create_datasource, create_dashboard, capsys, caplog):
 
-    # Create a datasource, which is not used by any dashboard.
+    # Create a datasource and a dashboard which uses it.
+    create_datasource(name="baz", type="baz", access="baz")
+    create_dashboard(title="baz", datasource="baz")
+
+    # Compute breakdown.
+    set_command("explore datasources", "--format=yaml")
+
+    # Proof the output is correct.
+    with caplog.at_level(logging.DEBUG):
+        grafana_wtf.commands.run()
+        # assert "Found 1 unused data source(s)" in caplog.messages
+
+    captured = capsys.readouterr()
+    data = yaml.safe_load(captured.out)
+
+    assert len(data["used"]) >= 1
+
+    assert data["used"][0]["datasource"]["name"] == "baz"
+    assert data["used"][0]["datasource"]["type"] == "baz"
+
+
+def test_explore_datasources_unused(docker_grafana, create_datasource, capsys, caplog):
+
+    # Create two datasources, which are not used by any dashboard.
     create_datasource(name="foo", type="foo", access="foo")
     create_datasource(name="bar", type="bar", access="bar")
 
