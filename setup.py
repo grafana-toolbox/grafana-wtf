@@ -26,7 +26,13 @@ requires = [
     "PyYAML>=5,<6",
 ]
 
-extras = {"test": ["pytest>=5,<7", "lovely-pytest-docker>=0.2.1,<3"]}
+extras = {
+    "test": [
+        "pytest>=5,<7",
+        "lovely-pytest-docker>=0.2.1,<3",
+        "grafanalib>=0.6,<0.7",
+    ]
+}
 
 setup(
     name="grafana-wtf",
