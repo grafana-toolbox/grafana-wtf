@@ -12,8 +12,11 @@ import yaml
 import grafana_wtf.commands
 
 
-def set_command(command, more_options=""):
-    command = f'grafana-wtf --grafana-url="http://localhost:3000" {more_options} {command}'
+def set_command(command, more_options="", cache=False):
+    cache_option = ""
+    if cache is False:
+        cache_option = "--cache-ttl=0"
+    command = f'grafana-wtf --grafana-url="http://localhost:3000" {cache_option} {more_options} {command}'
     sys.argv = shlex.split(command)
 
 
