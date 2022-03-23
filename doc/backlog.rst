@@ -7,7 +7,6 @@ grafana-wtf backlog
 Prio 1
 ******
 - [o] With Grafana >8.3, resolve datasource name and add to ``{'type': 'influxdb', 'uid': 'PDF2762CDFF14A314'}``
-- [o] Move test harness Grafana to a different port than 3000
 
 
 *********
@@ -64,3 +63,4 @@ Done
 - [x] Add test fixture for adding dashboards at runtime from branch ``amo/test-dashboard-runtime``
 - [x] Improve test suite wrt. test case isolation vs. Grafana resources
 - [x] Add test fixture which completely resets everything in Grafana before running the test harness.
+- [x] Move test harness Grafana to a different port than 3000

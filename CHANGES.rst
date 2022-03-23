@@ -10,6 +10,7 @@ in progress
 - Tests: Add fixture ``create_dashboard`` to create dashboards at runtime
 - Tests: Disable caching in test mode
 - Tests: Make test suite clean up its provisioned assets from Grafana
+- Tests: Run Grafana on non-standard port 33333
 
 
 2022-02-03 0.13.1
