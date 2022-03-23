@@ -9,6 +9,7 @@ import pytest
 import yaml
 
 import grafana_wtf.commands
+from tests.conftest import mkdashboard
 
 
 def set_command(command, more_options="", cache=False):
@@ -20,44 +21,58 @@ def set_command(command, more_options="", cache=False):
 
 
 def test_failure_grafana_url_missing():
+
+    # Run command and capture output.
     command = "grafana-wtf find foobar"
     sys.argv = shlex.split(command)
     with pytest.raises(docopt.DocoptExit) as ex:
         grafana_wtf.commands.run()
 
+    # Verify output.
     assert ex.match(
         re.escape('No Grafana URL given. Please use "--grafana-url" option or environment variable "GRAFANA_URL".')
     )
 
 
 def test_find_textual_empty(docker_grafana, capsys):
+
+    # Run command and capture output.
     set_command("find foobar")
     grafana_wtf.commands.run()
     captured = capsys.readouterr()
+
+    # Verify output.
     assert 'Searching for expression "foobar" at Grafana instance http://localhost:3000' in captured.out
     assert "Data Sources: 0 hits" in captured.out
     assert "Dashboards: 0 hits" in captured.out
 
 
 def test_find_textual_select_empty(docker_grafana, capsys, caplog):
+
+    # Run command and capture output.
     set_command("find foobar", "--select-dashboard=foo,bar")
     with caplog.at_level(logging.DEBUG):
         grafana_wtf.commands.run()
         captured = capsys.readouterr()
 
-        assert (
-            "GrafanaClientError: Client Error 404: Dashboard not found" in caplog.text
-            or 'GrafanaClientError: Client Error 404: {"message":"Dashboard not found"}' in caplog.text
-        )
+    # Verify output.
+    assert (
+        "GrafanaClientError: Client Error 404: Dashboard not found" in caplog.text
+        or 'GrafanaClientError: Client Error 404: {"message":"Dashboard not found"}' in caplog.text
+    )
 
-        assert "Data Sources: 0 hits" in captured.out
-        assert "Dashboards: 0 hits" in captured.out
+    assert "Data Sources: 0 hits" in captured.out
+    assert "Dashboards: 0 hits" in captured.out
 
 
-def test_find_textual_dashboard_success(docker_grafana, capsys):
+def test_find_textual_dashboard_success(ldi_resources, capsys):
+
+    # Run command and capture output.
     set_command("find ldi_readings")
     grafana_wtf.commands.run()
     captured = capsys.readouterr()
+
+    # Verify output.
     assert 'Searching for expression "ldi_readings" at Grafana instance http://localhost:3000' in captured.out
     assert "Dashboards: 2 hits" in captured.out
     assert "luftdaten-info-generic-trend" in captured.out
@@ -69,10 +84,14 @@ def test_find_textual_dashboard_success(docker_grafana, capsys):
     assert "dashboard.panels.[7].panels.[0].targets.[0].measurement: ldi_readings" in captured.out
 
 
-def test_find_textual_datasource_success(docker_grafana, capsys):
+def test_find_textual_datasource_success(ldi_resources, capsys):
+
+    # Run command and capture output.
     set_command("find ldi_v2")
     grafana_wtf.commands.run()
     captured = capsys.readouterr()
+
+    # Verify output.
     assert 'Searching for expression "ldi_v2" at Grafana instance http://localhost:3000' in captured.out
 
     assert "Data Sources: 1 hits" in captured.out
@@ -85,18 +104,21 @@ def test_find_textual_datasource_success(docker_grafana, capsys):
     assert "dashboard.panels.[7].panels.[0].datasource: ldi_v2" in captured.out
 
 
-def test_find_tabular_dashboard_success(docker_grafana, capsys):
+def test_find_tabular_dashboard_success(ldi_resources, capsys):
+
+    # Run command and capture output.
     set_command("find ldi_readings", "--format=tabular:pipe")
     grafana_wtf.commands.run()
     captured = capsys.readouterr()
 
+    # Verify output.
     assert 'Searching for expression "ldi_readings" at Grafana instance http://localhost:3000' in captured.out
 
     reference_table = """
 | Type       | Name                             | Title                            | Folder    | UID       | Created              | Updated              | Created by   | Datasources                                                                           | URL                                                                |
 |:-----------|:---------------------------------|:---------------------------------|:----------|:----------|:---------------------|:---------------------|:-------------|:--------------------------------------------------------------------------------------|:-------------------------------------------------------------------|
-| Dashboards | luftdaten-info-generic-trend-v27 | luftdaten.info generic trend v27 | Testdrive | ioUrPwQiz | xxxx-xx-xxTxx:xx:xxZ | xxxx-xx-xxTxx:xx:xxZ | Anonymous    | -- Grafana --,ldi_v2,weatherbase                                                      | http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend-v27 |
-| Dashboards | luftdaten-info-generic-trend-v33 | luftdaten.info generic trend v33 | Testdrive | jpVsQxRja | xxxx-xx-xxTxx:xx:xxZ | xxxx-xx-xxTxx:xx:xxZ | Anonymous    | -- Grafana --,{'type': 'influxdb', 'uid': 'PDF2762CDFF14A314'},{'uid': 'weatherbase'} | http://localhost:3000/d/jpVsQxRja/luftdaten-info-generic-trend-v33 |
+| Dashboards | luftdaten-info-generic-trend-v27 | luftdaten.info generic trend v27 | Testdrive | ioUrPwQiz | xxxx-xx-xxTxx:xx:xxZ | xxxx-xx-xxTxx:xx:xxZ | admin        | -- Grafana --,ldi_v2,weatherbase                                                      | http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend-v27 |
+| Dashboards | luftdaten-info-generic-trend-v33 | luftdaten.info generic trend v33 | Testdrive | jpVsQxRja | xxxx-xx-xxTxx:xx:xxZ | xxxx-xx-xxTxx:xx:xxZ | admin        | -- Grafana --,{'type': 'influxdb', 'uid': 'PDF2762CDFF14A314'},{'uid': 'weatherbase'} | http://localhost:3000/d/jpVsQxRja/luftdaten-info-generic-trend-v33 |
     """.strip()
 
     output_table = captured.out[captured.out.find("| Type") :]
@@ -107,7 +129,7 @@ def test_find_tabular_dashboard_success(docker_grafana, capsys):
     assert output_table_normalized == reference_table
 
 
-def test_replace_dashboard_success(docker_grafana, capsys):
+def test_replace_dashboard_success(ldi_resources, capsys):
 
     # Rename references from "ldi_v2" to "ldi_v3".
     set_command("replace ldi_v2 ldi_v3")
@@ -136,60 +158,72 @@ def test_replace_dashboard_success(docker_grafana, capsys):
     grafana_wtf.commands.run()
 
 
-def test_log_empty(docker_grafana, capsys, caplog):
+def test_log_empty(ldi_resources, capsys, caplog):
+
+    # Run command and capture output.
     set_command("log foobar")
     with caplog.at_level(logging.DEBUG):
         grafana_wtf.commands.run()
-        captured = capsys.readouterr()
-        assert 'Aggregating edit history for Grafana dashboard "foobar" at http://localhost:3000' in caplog.text
-        assert "[]" in captured.out
+    captured = capsys.readouterr()
+
+    # Verify output.
+    assert 'Aggregating edit history for Grafana dashboard "foobar" at http://localhost:3000' in caplog.text
+    assert "[]" in captured.out
 
 
-def test_log_json_success(docker_grafana, capsys, caplog):
+def test_log_json_success(ldi_resources, capsys, caplog):
+
+    # Run command and capture output.
     set_command("log ioUrPwQiz")
     with caplog.at_level(logging.DEBUG):
         grafana_wtf.commands.run()
-        captured = capsys.readouterr()
-        assert 'Aggregating edit history for Grafana dashboard "ioUrPwQiz" at http://localhost:3000' in caplog.text
+    captured = capsys.readouterr()
 
-        reference = {
-            # "datetime": "2021-09-29T17:32:23Z",
-            "user": "",
-            "message": "",
-            "folder": "Testdrive",
-            "title": "luftdaten.info generic trend v27",
-            "version": 1,
-            "url": "http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend-v27",
-        }
+    # Verify output.
+    assert 'Aggregating edit history for Grafana dashboard "ioUrPwQiz" at http://localhost:3000' in caplog.text
 
-        history = json.loads(captured.out)
-        item = history[-1]
-        del item["datetime"]
+    reference = {
+        # "datetime": "2021-09-29T17:32:23Z",
+        "user": "admin",
+        "message": "",
+        "folder": "Testdrive",
+        "title": "luftdaten.info generic trend v27",
+        "version": 1,
+        "url": "http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend-v27",
+    }
 
-        assert item == reference
+    history = json.loads(captured.out)
+    item = history[-1]
+    del item["datetime"]
+
+    assert item == reference
 
 
-def test_log_tabular_success(docker_grafana, capsys, caplog):
+def test_log_tabular_success(ldi_resources, capsys, caplog):
+
+    # Run command and capture output.
     set_command("log ioUrPwQiz", "--format=tabular:pipe")
     with caplog.at_level(logging.DEBUG):
         grafana_wtf.commands.run()
         captured = capsys.readouterr()
-        assert 'Aggregating edit history for Grafana dashboard "ioUrPwQiz" at http://localhost:3000' in caplog.text
 
-        reference = """
-        | Notes: n/a<br/>[Testdrive » luftdaten.info generic trend v27](http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend-v27)                                        | User: <br/>Date: xxxx-xx-xxTxx:xx:xxZ      |
-        """.strip()
+    # Verify output.
+    assert 'Aggregating edit history for Grafana dashboard "ioUrPwQiz" at http://localhost:3000' in caplog.text
 
-        first_item_raw = str.splitlines(captured.out)[-1]
-        first_item_normalized = re.sub("(.*)Date: .+|(.*)", r"\1Date: xxxx-xx-xxTxx:xx:xxZ      |\2", first_item_raw, 1)
-        assert first_item_normalized == reference
+    reference = """
+    | Notes: n/a<br/>[Testdrive » luftdaten.info generic trend v27](http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend-v27) | User: admin<br/>Date: xxxx-xx-xxTxx:xx:xxZ      |
+    """.strip()
+
+    first_item_raw = str.splitlines(captured.out)[-1]
+    first_item_normalized = re.sub("(.*)Date: .+|(.*)", r"\1Date: xxxx-xx-xxTxx:xx:xxZ      |\2", first_item_raw, 1)
+    assert first_item_normalized == reference
 
 
-def test_explore_datasources_used(docker_grafana, create_datasource, create_dashboard, capsys, caplog):
+def test_explore_datasources_used(create_datasource, create_dashboard, capsys, caplog):
 
     # Create a datasource and a dashboard which uses it.
     create_datasource(name="baz", type="baz", access="baz")
-    create_dashboard(title="baz", datasource="baz")
+    create_dashboard(mkdashboard(title="baz", datasource="baz"))
 
     # Compute breakdown.
     set_command("explore datasources", "--format=yaml")
@@ -197,18 +231,19 @@ def test_explore_datasources_used(docker_grafana, create_datasource, create_dash
     # Proof the output is correct.
     with caplog.at_level(logging.DEBUG):
         grafana_wtf.commands.run()
-        # assert "Found 1 unused data source(s)" in caplog.messages
+        assert "Found 1 data source(s)" in caplog.messages
 
     captured = capsys.readouterr()
     data = yaml.safe_load(captured.out)
 
-    assert len(data["used"]) >= 1
+    assert len(data["used"]) == 1
+    assert len(data["unused"]) == 0
 
     assert data["used"][0]["datasource"]["name"] == "baz"
     assert data["used"][0]["datasource"]["type"] == "baz"
 
 
-def test_explore_datasources_unused(docker_grafana, create_datasource, capsys, caplog):
+def test_explore_datasources_unused(create_datasource, capsys, caplog):
 
     # Create two datasources, which are not used by any dashboard.
     create_datasource(name="foo", type="foo", access="foo")
@@ -225,14 +260,14 @@ def test_explore_datasources_unused(docker_grafana, create_datasource, capsys, c
     captured = capsys.readouterr()
     data = yaml.safe_load(captured.out)
 
-    assert len(data["used"]) >= 1
-    assert len(data["unused"]) >= 2
+    assert len(data["used"]) == 0
+    assert len(data["unused"]) == 2
 
     assert data["unused"][0]["datasource"]["name"] == "bar"
     assert data["unused"][1]["datasource"]["name"] == "foo"
 
 
-def test_explore_dashboards(docker_grafana, create_datasource, capsys, caplog):
+def test_explore_dashboards(ldi_resources, capsys, caplog):
 
     # Compute exploration.
     set_command("explore dashboards", "--format=yaml")
@@ -244,7 +279,7 @@ def test_explore_dashboards(docker_grafana, create_datasource, capsys, caplog):
     data = yaml.safe_load(captured.out)
 
     # Proof the output is correct.
-    assert len(data) >= 1
+    assert len(data) == 2
 
     missing = find_all_missing_datasources(data)
 

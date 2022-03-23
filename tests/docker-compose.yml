@@ -4,12 +4,8 @@ services:
   grafana:
     container_name: grafana-wtf-test
     image: grafana/grafana:${GRAFANA_VERSION}
-    volumes:
-      - ./grafana/datasources:/etc/grafana/provisioning/datasources/
-      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards/
     ports:
       - "3000:3000"
     environment:
       GF_LOG_LEVEL: info
       #GF_LOG_LEVEL: debug
-      #GF_PATHS_PROVISIONING: /etc/grafana/provisioning
