@@ -5,7 +5,7 @@ services:
     container_name: grafana-wtf-test
     image: grafana/grafana:${GRAFANA_VERSION}
     ports:
-      - "3000:3000"
+      - "33333:3000"
     environment:
       GF_LOG_LEVEL: info
       #GF_LOG_LEVEL: debug

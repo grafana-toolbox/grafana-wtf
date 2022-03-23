@@ -16,7 +16,7 @@ def set_command(command, more_options="", cache=False):
     cache_option = ""
     if cache is False:
         cache_option = "--cache-ttl=0"
-    command = f'grafana-wtf --grafana-url="http://localhost:3000" {cache_option} {more_options} {command}'
+    command = f'grafana-wtf --grafana-url="http://localhost:33333" {cache_option} {more_options} {command}'
     sys.argv = shlex.split(command)
 
 
@@ -42,7 +42,7 @@ def test_find_textual_empty(docker_grafana, capsys):
     captured = capsys.readouterr()
 
     # Verify output.
-    assert 'Searching for expression "foobar" at Grafana instance http://localhost:3000' in captured.out
+    assert 'Searching for expression "foobar" at Grafana instance http://localhost:33333' in captured.out
     assert "Data Sources: 0 hits" in captured.out
     assert "Dashboards: 0 hits" in captured.out
 
@@ -73,13 +73,13 @@ def test_find_textual_dashboard_success(ldi_resources, capsys):
     captured = capsys.readouterr()
 
     # Verify output.
-    assert 'Searching for expression "ldi_readings" at Grafana instance http://localhost:3000' in captured.out
+    assert 'Searching for expression "ldi_readings" at Grafana instance http://localhost:33333' in captured.out
     assert "Dashboards: 2 hits" in captured.out
     assert "luftdaten-info-generic-trend" in captured.out
     assert "Title luftdaten.info generic trend" in captured.out
     assert "Folder Testdrive" in captured.out
     assert "UID ioUrPwQiz" in captured.out
-    assert "URL http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend" in captured.out
+    assert "URL http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend" in captured.out
     assert "dashboard.panels.[1].targets.[0].measurement: ldi_readings" in captured.out
     assert "dashboard.panels.[7].panels.[0].targets.[0].measurement: ldi_readings" in captured.out
 
@@ -92,7 +92,7 @@ def test_find_textual_datasource_success(ldi_resources, capsys):
     captured = capsys.readouterr()
 
     # Verify output.
-    assert 'Searching for expression "ldi_v2" at Grafana instance http://localhost:3000' in captured.out
+    assert 'Searching for expression "ldi_v2" at Grafana instance http://localhost:33333' in captured.out
 
     assert "Data Sources: 1 hits" in captured.out
     assert "name: ldi_v2" in captured.out
@@ -112,13 +112,13 @@ def test_find_tabular_dashboard_success(ldi_resources, capsys):
     captured = capsys.readouterr()
 
     # Verify output.
-    assert 'Searching for expression "ldi_readings" at Grafana instance http://localhost:3000' in captured.out
+    assert 'Searching for expression "ldi_readings" at Grafana instance http://localhost:33333' in captured.out
 
     reference_table = """
-| Type       | Name                             | Title                            | Folder    | UID       | Created              | Updated              | Created by   | Datasources                                                                           | URL                                                                |
-|:-----------|:---------------------------------|:---------------------------------|:----------|:----------|:---------------------|:---------------------|:-------------|:--------------------------------------------------------------------------------------|:-------------------------------------------------------------------|
-| Dashboards | luftdaten-info-generic-trend-v27 | luftdaten.info generic trend v27 | Testdrive | ioUrPwQiz | xxxx-xx-xxTxx:xx:xxZ | xxxx-xx-xxTxx:xx:xxZ | admin        | -- Grafana --,ldi_v2,weatherbase                                                      | http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend-v27 |
-| Dashboards | luftdaten-info-generic-trend-v33 | luftdaten.info generic trend v33 | Testdrive | jpVsQxRja | xxxx-xx-xxTxx:xx:xxZ | xxxx-xx-xxTxx:xx:xxZ | admin        | -- Grafana --,{'type': 'influxdb', 'uid': 'PDF2762CDFF14A314'},{'uid': 'weatherbase'} | http://localhost:3000/d/jpVsQxRja/luftdaten-info-generic-trend-v33 |
+| Type       | Name                             | Title                            | Folder    | UID       | Created              | Updated              | Created by   | Datasources                                                                           | URL                                                                 |
+|:-----------|:---------------------------------|:---------------------------------|:----------|:----------|:---------------------|:---------------------|:-------------|:--------------------------------------------------------------------------------------|:--------------------------------------------------------------------|
+| Dashboards | luftdaten-info-generic-trend-v27 | luftdaten.info generic trend v27 | Testdrive | ioUrPwQiz | xxxx-xx-xxTxx:xx:xxZ | xxxx-xx-xxTxx:xx:xxZ | admin        | -- Grafana --,ldi_v2,weatherbase                                                      | http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27 |
+| Dashboards | luftdaten-info-generic-trend-v33 | luftdaten.info generic trend v33 | Testdrive | jpVsQxRja | xxxx-xx-xxTxx:xx:xxZ | xxxx-xx-xxTxx:xx:xxZ | admin        | -- Grafana --,{'type': 'influxdb', 'uid': 'PDF2762CDFF14A314'},{'uid': 'weatherbase'} | http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33 |
     """.strip()
 
     output_table = captured.out[captured.out.find("| Type") :]
@@ -140,7 +140,7 @@ def test_replace_dashboard_success(ldi_resources, capsys):
     set_command("find ldi_v3")
     grafana_wtf.commands.run()
     captured = capsys.readouterr()
-    assert 'Searching for expression "ldi_v3" at Grafana instance http://localhost:3000' in captured.out
+    assert 'Searching for expression "ldi_v3" at Grafana instance http://localhost:33333' in captured.out
 
     # TODO: Expand renaming to data sources.
     assert "Data Sources: 0 hits" in captured.out
@@ -167,7 +167,7 @@ def test_log_empty(ldi_resources, capsys, caplog):
     captured = capsys.readouterr()
 
     # Verify output.
-    assert 'Aggregating edit history for Grafana dashboard "foobar" at http://localhost:3000' in caplog.text
+    assert 'Aggregating edit history for Grafana dashboard "foobar" at http://localhost:33333' in caplog.text
     assert "[]" in captured.out
 
 
@@ -180,7 +180,7 @@ def test_log_json_success(ldi_resources, capsys, caplog):
     captured = capsys.readouterr()
 
     # Verify output.
-    assert 'Aggregating edit history for Grafana dashboard "ioUrPwQiz" at http://localhost:3000' in caplog.text
+    assert 'Aggregating edit history for Grafana dashboard "ioUrPwQiz" at http://localhost:33333' in caplog.text
 
     reference = {
         # "datetime": "2021-09-29T17:32:23Z",
@@ -189,7 +189,7 @@ def test_log_json_success(ldi_resources, capsys, caplog):
         "folder": "Testdrive",
         "title": "luftdaten.info generic trend v27",
         "version": 1,
-        "url": "http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend-v27",
+        "url": "http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27",
     }
 
     history = json.loads(captured.out)
@@ -208,10 +208,10 @@ def test_log_tabular_success(ldi_resources, capsys, caplog):
         captured = capsys.readouterr()
 
     # Verify output.
-    assert 'Aggregating edit history for Grafana dashboard "ioUrPwQiz" at http://localhost:3000' in caplog.text
+    assert 'Aggregating edit history for Grafana dashboard "ioUrPwQiz" at http://localhost:33333' in caplog.text
 
     reference = """
-    | Notes: n/a<br/>[Testdrive » luftdaten.info generic trend v27](http://localhost:3000/d/ioUrPwQiz/luftdaten-info-generic-trend-v27) | User: admin<br/>Date: xxxx-xx-xxTxx:xx:xxZ      |
+    | Notes: n/a<br/>[Testdrive » luftdaten.info generic trend v27](http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27) | User: admin<br/>Date: xxxx-xx-xxTxx:xx:xxZ      |
     """.strip()
 
     first_item_raw = str.splitlines(captured.out)[-1]
