@@ -144,7 +144,7 @@ class GrafanaEngine:
         log.info("Scanning datasources")
         try:
             self.data.datasources = munchify(self.grafana.datasource.list_datasources())
-            log.info("Found {} data sources".format(len(self.data.datasources)))
+            log.info("Found {} data source(s)".format(len(self.data.datasources)))
             return self.data.datasources
         except GrafanaClientError as ex:
             message = "{name}: {ex}".format(name=ex.__class__.__name__, ex=ex)
@@ -171,7 +171,7 @@ class GrafanaEngine:
                         continue
             else:
                 self.data.dashboard_list = self.grafana.search.search_dashboards(limit=5000)
-            log.info("Found {} dashboards".format(len(self.data.dashboard_list)))
+            log.info("Found {} dashboard(s)".format(len(self.data.dashboard_list)))
 
         except GrafanaClientError as ex:
             self.handle_grafana_error(ex)
