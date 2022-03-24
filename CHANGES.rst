@@ -15,6 +15,7 @@ in progress
   all resources provisioned to Grafana.
 - Tests: Improve test quality, specifically for ``explore dashboards`` on
   Grafana 6 vs. Grafana >= 7
+- Tests: Make test case for `explore datasources` use _two_ data sources
 
 
 2022-02-03 0.13.1
