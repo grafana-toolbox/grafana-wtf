@@ -7,6 +7,8 @@ grafana-wtf backlog
 Prio 1
 ******
 - [o] With Grafana >8.3, resolve datasource name and add to ``{'type': 'influxdb', 'uid': 'PDF2762CDFF14A314'}``
+- [o] Add "folder name/uid" to "explore dashboards" response.
+- [o] Check if "datasources" is always present in responses to "explore dashboards".
 
 
 *********
@@ -27,6 +29,7 @@ Prio 1.5
 - [o] Show dependencies
 - [o] Optionally apply "replace" to data sources also
 - [o] Add software tests for authenticated access to Grafana (--grafana-token)
+- [o] Add output format RSS
 
 
 ******

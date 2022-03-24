@@ -148,7 +148,7 @@ def run():
     setup_logging(log_level)
 
     # Debugging
-    log.debug("Options: {}".format(json.dumps(options, indent=4)))
+    # log.debug("Options: {}".format(json.dumps(options, indent=4)))
 
     configure_http_logging(options)
 

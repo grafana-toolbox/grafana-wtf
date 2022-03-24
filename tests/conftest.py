@@ -3,6 +3,7 @@ import os
 import re
 from io import StringIO
 from pathlib import Path
+from typing import List, Union
 
 import grafanalib.core
 import pytest
@@ -12,6 +13,9 @@ from grafanalib._gen import write_dashboard
 from grafana_wtf.core import GrafanaWtf
 
 # Whether to clean up all resources provisioned to Grafana.
+# Note that the test suite will not complete successfully when toggling this
+# setting. It can be used when running individual test cases in order to
+# investigate the resources provisioned to Grafana.
 CLEANUP_RESOURCES = True
 
 
@@ -56,6 +60,38 @@ def create_datasource(docker_grafana):
 
     - https://grafana.com/docs/grafana/latest/http_api/data_source/
     - https://docs.pytest.org/en/4.6.x/fixture.html#factories-as-fixtures
+
+    The JSON response to `create_datasource` looks like this::
+
+        {
+          "datasource": {
+            "id": 3,
+            "uid": "PDF2762CDFF14A314",
+            "orgId": 1,
+            "name": "ldi_v2",
+            "type": "influxdb",
+            "typeLogoUrl": "",
+            "access": "proxy",
+            "url": "http://localhost:8086/",
+            "password": "root",
+            "user": "root",
+            "database": "ldi_v2",
+            "basicAuth": false,
+            "basicAuthUser": "",
+            "basicAuthPassword": "",
+            "withCredentials": false,
+            "isDefault": false,
+            "jsonData": {},
+            "secureJsonFields": {
+              "password": true
+            },
+            "version": 1,
+            "readOnly": false
+          },
+          "id": 3,
+          "message": "Datasource added",
+          "name": "ldi_v2"
+        }
     """
 
     # Reference to `grafana-client`.
@@ -64,7 +100,19 @@ def create_datasource(docker_grafana):
     # Keep track of the datasource ids in order to delete them afterwards.
     datasource_ids = []
 
-    def _create_datasource(name: str, type: str, access: str, **kwargs):
+    def _create_datasource(name: str, type: str = "testdata", access: str = "proxy", **kwargs):
+
+        # Reuse existing datasource.
+        try:
+            response = grafana.datasource.get_datasource_by_name(name)
+            datasource_id = response["id"]
+            datasource_ids.append(datasource_id)
+            return
+        except GrafanaClientError as ex:
+            if ex.status_code != 404:
+                raise
+
+        # Create new datasource.
         datasource = dict(name=name, type=type, access=access)
         datasource.update(kwargs)
         try:
@@ -91,60 +139,74 @@ def create_datasource(docker_grafana):
 def create_folder(docker_grafana):
     """
     Create a Grafana folder from a test case.
-    After the test case finished, it will remove the dashboard again.
+    After the test case finished, it will remove the folder again.
 
     - https://grafana.com/docs/grafana/latest/http_api/folder/
     - https://docs.pytest.org/en/4.6.x/fixture.html#factories-as-fixtures
+
+    The JSON response to `create_folder` looks like this::
+
+        {
+          "id": 44,
+          "uid": "iga1UrEnz",
+          "title": "Testdrive",
+          "url": "/dashboards/f/iga1UrEnz/testdrive",
+          "hasAcl": false,
+          "canSave": true,
+          "canEdit": true,
+          "canAdmin": true,
+          "createdBy": "admin",
+          "created": "2022-03-22T23:44:38Z",
+          "updatedBy": "admin",
+          "updated": "2022-03-22T23:44:38Z",
+          "version": 1
+        }
     """
 
     # Reference to `grafana-client`.
     grafana = GrafanaWtf.grafana_client_factory(docker_grafana)
 
-    # Keep track of the dashboard uids in order to delete them afterwards.
+    # Keep track of the folder uids in order to delete them afterwards.
     folder_uids = []
 
-    # https://docs.pytest.org/en/4.6.x/fixture.html#factories-as-fixtures
     def _create_folder(title: str, uid: str = None):
 
-        # Create dashboard in Grafana.
+        # Reuse folder when it already exists.
+        try:
+            response = grafana.folder.get_folder(uid=uid)
+            folder_id = response["id"]
+            folder_uid = response["uid"]
+            folder_uids.append(folder_uid)
+            return folder_id
+        except GrafanaClientError as ex:
+            if ex.status_code != 404:
+                raise
+
+        # Create folder.
         try:
             response = grafana.folder.create_folder(title=title, uid=uid)
             folder_id = response["id"]
             folder_uid = response["uid"]
-
-            # Response is like:
-            """
-            {
-              "id": 44,
-              "uid": "iga1UrEnz",
-              "title": "Testdrive",
-              "url": "/dashboards/f/iga1UrEnz/testdrive",
-              "hasAcl": false,
-              "canSave": true,
-              "canEdit": true,
-              "canAdmin": true,
-              "createdBy": "admin",
-              "created": "2022-03-22T23:44:38Z",
-              "updatedBy": "admin",
-              "updated": "2022-03-22T23:44:38Z",
-              "version": 1
-            }
-            """
-
             folder_uids.append(folder_uid)
             return folder_id
         except GrafanaClientError as ex:
             # TODO: Mimic the original response in order to make the removal work.
-            if not re.match(
+            error_exists = re.match(
                 "Client Error 409: a folder or dashboard in the general folder with the same name already exists",
                 str(ex),
                 re.IGNORECASE,
-            ):
+            )
+            error_modified = re.match(
+                "Client Error 412: The folder has been changed by someone else",
+                str(ex),
+                re.IGNORECASE,
+            )
+            if not (error_exists or error_modified):
                 raise
 
     yield _create_folder
 
-    # Delete dashboard again.
+    # Delete folder again.
     if CLEANUP_RESOURCES:
         if folder_uids:
             for folder_uid in folder_uids:
@@ -159,6 +221,17 @@ def create_dashboard(docker_grafana):
 
     - https://grafana.com/docs/grafana/latest/http_api/dashboard/
     - https://docs.pytest.org/en/4.6.x/fixture.html#factories-as-fixtures
+
+    The JSON response to `update_dashboard` looks like this::
+
+        {
+          "id": 2,
+          "slug": "luftdaten-info-generic-trend-v33",
+          "status": "success",
+          "uid": "jpVsQxRja",
+          "url": "/d/jpVsQxRja/luftdaten-info-generic-trend-v33",
+          "version": 1
+        }
     """
 
     # Reference to `grafana-client`.
@@ -177,10 +250,6 @@ def create_dashboard(docker_grafana):
         if folder_uid:
             payload["folderUid"] = folder_uid
         response = grafana.dashboard.update_dashboard(dashboard=payload)
-
-        # Response is like:
-        # {'id': 3, 'slug': 'foo', 'status': 'success', 'uid': 'iO0xgE2nk', 'url': '/d/iO0xgE2nk/foo', 'version': 1}
-
         dashboard_uid = response["uid"]
         dashboard_uids.append(dashboard_uid)
 
@@ -202,26 +271,46 @@ def ldi_resources(create_datasource, create_folder, create_dashboard):
     https://docs.pytest.org/en/4.6.x/fixture.html#factories-as-fixtures
     """
 
-    # Create LDI datasource.
-    create_datasource(
-        name="ldi_v2",
-        type="influxdb",
-        access="proxy",
-        url="http://localhost:8086/",
-        user="root",
-        password="root",
-        database="ldi_v2",
-        secureJsonData={"password": "root"},
-    )
+    def _ldi_resources(dashboards: List[Union[Path, str]] = None):
+        # Create LDI datasource.
+        create_datasource(
+            name="ldi_v2",
+            type="influxdb",
+            access="proxy",
+            uid="PDF2762CDFF14A314",
+            url="http://localhost:8086/",
+            user="root",
+            password="root",
+            database="ldi_v2",
+            secureJsonData={"password": "root"},
+        )
 
-    # Create folder.
-    folder_id = create_folder(title="Testdrive", uid="testdrive")
+        # Create folder.
+        folder_id = create_folder(title="Testdrive", uid="testdrive")
 
-    # Create LDI dashboards.
-    for file in Path("tests/grafana/dashboards").glob("*.json"):
-        with open(file, "r") as f:
-            dashboard = json.load(f)
-            create_dashboard(dashboard=dashboard, folder_id=folder_id)
+        # Create LDI dashboards.
+        if dashboards:
+            dashboard_files = dashboards
+        else:
+            dashboard_files = Path("tests/grafana/dashboards").glob("*.json")
+
+        for file in dashboard_files:
+            with open(file, "r") as f:
+                dashboard = json.load(f)
+                create_dashboard(dashboard=dashboard, folder_id=folder_id)
+
+    return _ldi_resources
+
+
+@pytest.fixture
+def grafana_version(docker_grafana):
+    """
+    Return Grafana version number.
+    """
+    engine = GrafanaWtf(grafana_url=docker_grafana, grafana_token=None)
+    engine.setup()
+    grafana_version = engine.version()
+    return grafana_version
 
 
 def mkdashboard(title: str, datasource: str):

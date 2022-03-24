@@ -13,6 +13,8 @@ in progress
 - Tests: Run Grafana on non-standard port 33333
 - Tests: Add flag ``CLEANUP_RESOURCES`` to determine whether to clean up
   all resources provisioned to Grafana.
+- Tests: Improve test quality, specifically for ``explore dashboards`` on
+  Grafana 6 vs. Grafana >= 7
 
 
 2022-02-03 0.13.1

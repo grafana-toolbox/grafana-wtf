@@ -295,6 +295,17 @@ class GrafanaWtf(GrafanaEngine):
 
         return response
 
+    def version(self):
+
+        try:
+            health = self.grafana.client.GET("/health")
+        except Exception as ex:
+            log.error(f"Request to /health endpoint failed: {ex}")
+            health = {}
+
+        version = health.get("version")
+        return version
+
     def dashboard_details(self):
         for dashboard in self.data.dashboards:
             yield DashboardDetails(dashboard=dashboard)
