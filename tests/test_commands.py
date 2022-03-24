@@ -1,3 +1,8 @@
+import warnings
+
+from packaging import version
+
+warnings.filterwarnings("ignore", category=DeprecationWarning, module=".*docopt.*")
 import json
 import logging
 import re
@@ -67,6 +72,9 @@ def test_find_textual_select_empty(docker_grafana, capsys, caplog):
 
 def test_find_textual_dashboard_success(ldi_resources, capsys):
 
+    # Only provision specific dashboard(s).
+    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+
     # Run command and capture output.
     set_command("find ldi_readings")
     grafana_wtf.commands.run()
@@ -85,6 +93,9 @@ def test_find_textual_dashboard_success(ldi_resources, capsys):
 
 
 def test_find_textual_datasource_success(ldi_resources, capsys):
+
+    # Only provision specific dashboard(s).
+    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
 
     # Run command and capture output.
     set_command("find ldi_v2")
@@ -105,6 +116,9 @@ def test_find_textual_datasource_success(ldi_resources, capsys):
 
 
 def test_find_tabular_dashboard_success(ldi_resources, capsys):
+
+    # Only provision specific dashboard(s).
+    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
 
     # Run command and capture output.
     set_command("find ldi_readings", "--format=tabular:pipe")
@@ -130,6 +144,9 @@ def test_find_tabular_dashboard_success(ldi_resources, capsys):
 
 
 def test_replace_dashboard_success(ldi_resources, capsys):
+
+    # Only provision specific dashboard(s).
+    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
 
     # Rename references from "ldi_v2" to "ldi_v3".
     set_command("replace ldi_v2 ldi_v3")
@@ -158,7 +175,7 @@ def test_replace_dashboard_success(ldi_resources, capsys):
     grafana_wtf.commands.run()
 
 
-def test_log_empty(ldi_resources, capsys, caplog):
+def test_log_empty(capsys, caplog):
 
     # Run command and capture output.
     set_command("log foobar")
@@ -172,6 +189,9 @@ def test_log_empty(ldi_resources, capsys, caplog):
 
 
 def test_log_json_success(ldi_resources, capsys, caplog):
+
+    # Only provision specific dashboard(s).
+    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
 
     # Run command and capture output.
     set_command("log ioUrPwQiz")
@@ -201,6 +221,9 @@ def test_log_json_success(ldi_resources, capsys, caplog):
 
 def test_log_tabular_success(ldi_resources, capsys, caplog):
 
+    # Only provision specific dashboard(s).
+    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+
     # Run command and capture output.
     set_command("log ioUrPwQiz", "--format=tabular:pipe")
     with caplog.at_level(logging.DEBUG):
@@ -222,8 +245,8 @@ def test_log_tabular_success(ldi_resources, capsys, caplog):
 def test_explore_datasources_used(create_datasource, create_dashboard, capsys, caplog):
 
     # Create a datasource and a dashboard which uses it.
-    create_datasource(name="baz", type="baz", access="baz")
-    create_dashboard(mkdashboard(title="baz", datasource="baz"))
+    create_datasource(name="foo")
+    create_dashboard(mkdashboard(title="baz", datasource="foo"))
 
     # Compute breakdown.
     set_command("explore datasources", "--format=yaml")
@@ -239,15 +262,15 @@ def test_explore_datasources_used(create_datasource, create_dashboard, capsys, c
     assert len(data["used"]) == 1
     assert len(data["unused"]) == 0
 
-    assert data["used"][0]["datasource"]["name"] == "baz"
-    assert data["used"][0]["datasource"]["type"] == "baz"
+    assert data["used"][0]["datasource"]["name"] == "foo"
+    assert data["used"][0]["datasource"]["type"] == "testdata"
 
 
 def test_explore_datasources_unused(create_datasource, capsys, caplog):
 
     # Create two datasources, which are not used by any dashboard.
-    create_datasource(name="foo", type="foo", access="foo")
-    create_datasource(name="bar", type="bar", access="bar")
+    create_datasource(name="foo")
+    create_datasource(name="bar")
 
     # Compute exploration.
     set_command("explore datasources", "--format=yaml")
@@ -267,7 +290,17 @@ def test_explore_datasources_unused(create_datasource, capsys, caplog):
     assert data["unused"][1]["datasource"]["name"] == "foo"
 
 
-def test_explore_dashboards(ldi_resources, capsys, caplog):
+def test_explore_dashboards_grafana6(grafana_version, ldi_resources, capsys, caplog):
+    """
+    Grafana 6 does not have UIDs for data sources.
+    """
+
+    # Only for Grafana 6.
+    if not grafana_version.startswith("6."):
+        raise pytest.skip(f"Grafana 6 only")
+
+    # Only provision specific dashboard.
+    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json"])
 
     # Compute exploration.
     set_command("explore dashboards", "--format=yaml")
@@ -279,13 +312,54 @@ def test_explore_dashboards(ldi_resources, capsys, caplog):
     data = yaml.safe_load(captured.out)
 
     # Proof the output is correct.
-    assert len(data) == 2
+    assert len(data) == 1
+    dashboard = data[0]
+    assert dashboard["dashboard"]["title"] == "luftdaten.info generic trend v27"
+    assert dashboard["dashboard"]["uid"] == "ioUrPwQiz"
+    assert dashboard["datasources"][0]["name"] == "ldi_v2"
+    # Grafana 6 does not have UIDs for data sources.
+    assert dashboard["datasources"][0]["uid"] is None
+    assert dashboard["datasources"][0]["type"] == "influxdb"
+    assert dashboard["datasources_missing"][0]["name"] == "weatherbase"
+    assert dashboard["datasources_missing"][0]["uid"] is None
+    assert dashboard["datasources_missing"][0]["type"] is None
 
-    missing = find_all_missing_datasources(data)
+
+def test_explore_dashboards_grafana7up(grafana_version, ldi_resources, capsys, caplog):
+    """
+    Grafana >= 7 has UIDs for data sources.
+    """
+
+    # Only for Grafana 7.
+    if version.parse(grafana_version) < version.parse("7"):
+        raise pytest.skip(f"Grafana >= 7 only")
+
+    # Only provision specific dashboard.
+    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v33.json"])
+
+    # Compute exploration.
+    set_command("explore dashboards", "--format=yaml")
+
+    # Run command and capture YAML output.
+    with caplog.at_level(logging.DEBUG):
+        grafana_wtf.commands.run()
+    captured = capsys.readouterr()
+    data = yaml.safe_load(captured.out)
+
+    # Proof the output is correct.
+    assert len(data) == 1
+    dashboard = data[0]
+    assert dashboard["dashboard"]["title"] == "luftdaten.info generic trend v33"
+    assert dashboard["dashboard"]["uid"] == "jpVsQxRja"
+    assert dashboard["datasources"][0]["name"] == "ldi_v2"
+    # Grafana 7 has UIDs for data sources.
+    assert dashboard["datasources"][0]["uid"] == "PDF2762CDFF14A314"
+    assert dashboard["datasources"][0]["type"] == "influxdb"
 
     # FIXME: Those are coming from a bogus migration from schema version 27 to 33.
-    assert missing[0]["name"] == "weatherbase"
-    # assert missing[1]["uid"] == "weatherbase"
+    assert dashboard["datasources_missing"][0]["name"] is None
+    assert dashboard["datasources_missing"][0]["uid"] == "weatherbase"
+    assert dashboard["datasources_missing"][0]["type"] is None
 
 
 def find_all_missing_datasources(data):
