@@ -9,6 +9,7 @@ import grafanalib.core
 import pytest
 from grafana_client.client import GrafanaClientError
 from grafanalib._gen import write_dashboard
+from packaging import version
 
 from grafana_wtf.core import GrafanaWtf
 
@@ -53,7 +54,7 @@ def docker_grafana(docker_services):
 
 
 @pytest.fixture
-def create_datasource(docker_grafana):
+def create_datasource(docker_grafana, grafana_version):
     """
     Create a Grafana data source from a test case.
     After the test case finished, it will remove the data source again.
@@ -100,6 +101,12 @@ def create_datasource(docker_grafana):
     # Keep track of the datasource ids in order to delete them afterwards.
     datasource_ids = []
 
+    def mkresponse(response):
+        if version.parse(grafana_version) < version.parse("8"):
+            return response["name"]
+        else:
+            return {"uid": response["uid"], "type": response["type"]}
+
     def _create_datasource(name: str, type: str = "testdata", access: str = "proxy", **kwargs):
 
         # Reuse existing datasource.
@@ -107,7 +114,7 @@ def create_datasource(docker_grafana):
             response = grafana.datasource.get_datasource_by_name(name)
             datasource_id = response["id"]
             datasource_ids.append(datasource_id)
-            return
+            return mkresponse(response)
         except GrafanaClientError as ex:
             if ex.status_code != 404:
                 raise
@@ -119,6 +126,7 @@ def create_datasource(docker_grafana):
             response = grafana.datasource.create_datasource(datasource)
             datasource_id = response["datasource"]["id"]
             datasource_ids.append(datasource_id)
+            return mkresponse(response["datasource"])
         except GrafanaClientError as ex:
             # TODO: Mimic the original response in order to make the removal work.
             # `{'datasource': {'id': 5, 'uid': 'u9wNRyEnk', 'orgId': 1, ...`.
