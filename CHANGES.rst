@@ -11,6 +11,8 @@ in progress
 - Tests: Disable caching in test mode
 - Tests: Make test suite clean up its provisioned assets from Grafana
 - Tests: Run Grafana on non-standard port 33333
+- Tests: Add flag ``CLEANUP_RESOURCES`` to determine whether to clean up
+  all resources provisioned to Grafana.
 
 
 2022-02-03 0.13.1
