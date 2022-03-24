@@ -313,15 +313,22 @@ def grafana_version(docker_grafana):
     return grafana_version
 
 
-def mkdashboard(title: str, datasource: str):
+def mkdashboard(title: str, datasources: List[str]):
     """
-    Build dashboard with single panel.
+    Build dashboard with multiple panels, each with a different data source.
     """
     # datasource = grafanalib.core.DataSourceInput(name="foo", label="foo", pluginId="foo", pluginName="foo")
-    panel_gl = grafanalib.core.Panel(dataSource=datasource, gridPos={"h": 1, "w": 24, "x": 0, "y": 0})
-    dashboard_gl = grafanalib.core.Dashboard(title=title, panels=[panel_gl.panel_json(overrides={})])
+
+    # Build dashboard object model.
+    panels = []
+    for datasource in datasources:
+        panel = grafanalib.core.Panel(dataSource=datasource, gridPos={"h": 1, "w": 24, "x": 0, "y": 0})
+        panels.append(panel.panel_json(overrides={}))
+    dashboard = grafanalib.core.Dashboard(title=title, panels=panels)
+
+    # Render dashboard to JSON.
     dashboard_json = StringIO()
-    write_dashboard(dashboard_gl, dashboard_json)
+    write_dashboard(dashboard, dashboard_json)
     dashboard_json.seek(0)
     dashboard = json.loads(dashboard_json.read())
     return dashboard

@@ -244,9 +244,10 @@ def test_log_tabular_success(ldi_resources, capsys, caplog):
 
 def test_explore_datasources_used(create_datasource, create_dashboard, capsys, caplog):
 
-    # Create a datasource and a dashboard which uses it.
+    # Create two data sources and a dashboard which uses them.
     create_datasource(name="foo")
-    create_dashboard(mkdashboard(title="baz", datasource="foo"))
+    create_datasource(name="bar")
+    create_dashboard(mkdashboard(title="baz", datasources=["foo", "bar"]))
 
     # Compute breakdown.
     set_command("explore datasources", "--format=yaml")
@@ -254,16 +255,19 @@ def test_explore_datasources_used(create_datasource, create_dashboard, capsys, c
     # Proof the output is correct.
     with caplog.at_level(logging.DEBUG):
         grafana_wtf.commands.run()
-        assert "Found 1 data source(s)" in caplog.messages
+        assert "Found 2 data source(s)" in caplog.messages
 
     captured = capsys.readouterr()
     data = yaml.safe_load(captured.out)
 
-    assert len(data["used"]) == 1
+    assert len(data["used"]) == 2
     assert len(data["unused"]) == 0
 
-    assert data["used"][0]["datasource"]["name"] == "foo"
+    # Results will be sorted by name, so `bar` comes first.
+    assert data["used"][0]["datasource"]["name"] == "bar"
     assert data["used"][0]["datasource"]["type"] == "testdata"
+    assert data["used"][1]["datasource"]["name"] == "foo"
+    assert data["used"][1]["datasource"]["type"] == "testdata"
 
 
 def test_explore_datasources_unused(create_datasource, capsys, caplog):
