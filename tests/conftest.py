@@ -11,6 +11,9 @@ from grafanalib._gen import write_dashboard
 
 from grafana_wtf.core import GrafanaWtf
 
+# Whether to clean up all resources provisioned to Grafana.
+CLEANUP_RESOURCES = True
+
 
 # Make sure development or production settings don't leak into the test suite.
 def clean_environment():
@@ -78,9 +81,10 @@ def create_datasource(docker_grafana):
 
     yield _create_datasource
 
-    if datasource_ids:
-        for datasource_id in datasource_ids:
-            grafana.datasource.delete_datasource_by_id(datasource_id)
+    if CLEANUP_RESOURCES:
+        if datasource_ids:
+            for datasource_id in datasource_ids:
+                grafana.datasource.delete_datasource_by_id(datasource_id)
 
 
 @pytest.fixture
@@ -141,9 +145,10 @@ def create_folder(docker_grafana):
     yield _create_folder
 
     # Delete dashboard again.
-    if folder_uids:
-        for folder_uid in folder_uids:
-            grafana.folder.delete_folder(uid=folder_uid)
+    if CLEANUP_RESOURCES:
+        if folder_uids:
+            for folder_uid in folder_uids:
+                grafana.folder.delete_folder(uid=folder_uid)
 
 
 @pytest.fixture
@@ -182,9 +187,10 @@ def create_dashboard(docker_grafana):
     yield _create_dashboard
 
     # Delete dashboard again.
-    if dashboard_uids:
-        for dashboard_uid in dashboard_uids:
-            grafana.dashboard.delete_dashboard(dashboard_uid=dashboard_uid)
+    if CLEANUP_RESOURCES:
+        if dashboard_uids:
+            for dashboard_uid in dashboard_uids:
+                grafana.dashboard.delete_dashboard(dashboard_uid=dashboard_uid)
 
 
 @pytest.fixture
