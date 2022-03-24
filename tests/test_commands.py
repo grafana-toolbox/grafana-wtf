@@ -245,9 +245,9 @@ def test_log_tabular_success(ldi_resources, capsys, caplog):
 def test_explore_datasources_used(create_datasource, create_dashboard, capsys, caplog):
 
     # Create two data sources and a dashboard which uses them.
-    create_datasource(name="foo")
-    create_datasource(name="bar")
-    create_dashboard(mkdashboard(title="baz", datasources=["foo", "bar"]))
+    ds_foo = create_datasource(name="foo")
+    ds_bar = create_datasource(name="bar")
+    create_dashboard(mkdashboard(title="baz", datasources=[ds_foo, ds_bar]))
 
     # Compute breakdown.
     set_command("explore datasources", "--format=yaml")

@@ -16,6 +16,8 @@ in progress
 - Tests: Improve test quality, specifically for ``explore dashboards`` on
   Grafana 6 vs. Grafana >= 7
 - Tests: Make test case for `explore datasources` use _two_ data sources
+- Tests: Mimic Grafana 7/8 on datasource references within dashboards, newer
+  versions have objects (uid, type) instead of bare names
 
 
 2022-02-03 0.13.1
