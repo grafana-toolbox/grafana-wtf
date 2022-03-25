@@ -15,12 +15,11 @@ in progress
   all resources provisioned to Grafana.
 - Tests: Improve test quality, specifically for ``explore dashboards`` on
   Grafana 6 vs. Grafana >= 7
-- Tests: Make test case for `explore datasources` use _two_ data sources
+- Tests: Make test case for ``explore datasources`` use _two_ data sources
 - Tests: Mimic Grafana 7/8 on datasource references within dashboards, newer
   versions have objects (uid, type) instead of bare names
 - Fix implementation flaw reported at #32. Thanks, @IgorOhrimenko and @carpenterbees!
 - CI: Use most recent Grafana 7.5.15 and 8.4.4
-
 
 2022-02-03 0.13.1
 =================
@@ -29,7 +28,7 @@ in progress
 2022-01-22 0.13.0
 =================
 - CI: Use most recent Grafana 8.3.3
-- Add two more examples about using `explore dashboards` with `jq`
+- Add two more examples about using ``explore dashboards`` with ``jq``
 - CI: Prepare test suite for testing two different dashboard schema versions, v27 and v33
 - Improve determinism by returning stable sort order of dashboard results
 - Improve compatibility with Grafana 8.3 by handling dashboard schema version 33 properly
