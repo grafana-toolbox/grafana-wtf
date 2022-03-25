@@ -5,6 +5,9 @@ grafana-wtf changelog
 
 in progress
 ===========
+
+2022-02-03 0.13.2
+=================
 - Use ``grafana-client-2.1.0``, remove monkeypatch
 - Tests: Improve fixture ``create_datasource`` to clean up afterwards
 - Tests: Add fixture ``create_dashboard`` to create dashboards at runtime
