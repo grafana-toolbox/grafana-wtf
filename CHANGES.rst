@@ -6,7 +6,11 @@ grafana-wtf changelog
 in progress
 ===========
 
-2022-02-03 0.13.2
+2022-03-25 0.13.3
+=================
+- Add option to ignore untrusted SSL certificates. Thanks, @billabongrob!
+
+2022-03-25 0.13.2
 =================
 - Use ``grafana-client-2.1.0``, remove monkeypatch
 - Tests: Improve fixture ``create_datasource`` to clean up afterwards
