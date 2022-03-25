@@ -18,6 +18,7 @@ in progress
 - Tests: Make test case for `explore datasources` use _two_ data sources
 - Tests: Mimic Grafana 7/8 on datasource references within dashboards, newer
   versions have objects (uid, type) instead of bare names
+- Fix implementation flaw reported at #32. Thanks, @IgorOhrimenko and @carpenterbees!
 
 
 2022-02-03 0.13.1
