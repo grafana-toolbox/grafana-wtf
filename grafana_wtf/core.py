@@ -495,7 +495,7 @@ class Indexer:
                     ds = dict(ds)
                 if ds not in items:
                     items.append(ds)
-        return sorted(items)
+        return items
 
     def index_dashboards(self):
 
