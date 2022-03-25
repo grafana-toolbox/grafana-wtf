@@ -16,6 +16,7 @@ Prio 1.25
 *********
 - [o] Statistics reports for data sources and panels: https://github.com/panodata/grafana-wtf/issues/18
 - [o] Finding invalid data sources: https://github.com/panodata/grafana-wtf/issues/19
+- [o] Add subcommand ``dump`` for dumping whole documents from the API, unmodified
 
 
 ********

@@ -5,9 +5,10 @@ import asyncio
 import dataclasses
 import json
 import logging
+import warnings
 from collections import OrderedDict
 from concurrent.futures.thread import ThreadPoolExecutor
-from urllib.parse import urljoin, urlparse
+from urllib.parse import parse_qs, urljoin, urlparse
 
 import colored
 import requests
@@ -16,6 +17,7 @@ from grafana_client.api import GrafanaApi
 from grafana_client.client import GrafanaClientError, GrafanaUnauthorizedError
 from munch import Munch, munchify
 from tqdm import tqdm
+from urllib3.exceptions import InsecureRequestWarning
 
 from grafana_wtf.model import (
     DashboardDetails,
@@ -24,7 +26,7 @@ from grafana_wtf.model import (
     DatasourceItem,
     GrafanaDataModel,
 )
-from grafana_wtf.util import JsonPathFinder
+from grafana_wtf.util import JsonPathFinder, as_bool
 
 log = logging.getLogger(__name__)
 
@@ -77,8 +79,16 @@ class GrafanaEngine:
             password = url.password or "admin"
             auth = (username, password)
 
+        verify = as_bool(parse_qs(url.query).get("verify", [True])[0])
+        if verify is False:
+            warnings.filterwarnings("ignore", category=InsecureRequestWarning)
         grafana = GrafanaApi(
-            auth, protocol=url.scheme, host=url.hostname, port=url.port, url_path_prefix=url.path.lstrip("/")
+            auth,
+            protocol=url.scheme,
+            host=url.hostname,
+            port=url.port,
+            url_path_prefix=url.path.lstrip("/"),
+            verify=verify,
         )
 
         return grafana

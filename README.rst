@@ -43,6 +43,7 @@ grafana-wtf - grep through all Grafana entities in the spirit of `git-wtf`_.
 ********
 Synopsis
 ********
+
 Search Grafana API for string "weatherbase".
 ::
 
@@ -109,6 +110,11 @@ Before running ``grafana-wtf``, define URL and access token of your Grafana inst
 
     export GRAFANA_URL=https://daq.example.org/grafana/
     export GRAFANA_TOKEN=eyJrIjoiWHg...dGJpZCI6MX0=
+
+In order to ignore untrusted SSL certificates, append the ``?verify=no`` query string
+to the ``GRAFANA_URL``::
+
+    export GRAFANA_URL=https://daq.example.org/grafana/?verify=no
 
 
 General information
