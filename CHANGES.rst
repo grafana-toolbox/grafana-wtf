@@ -5,6 +5,7 @@ grafana-wtf changelog
 
 in progress
 ===========
+- CI: Use most recent Grafana 7.5.16, 8.5.5, and 9.0.0-beta3
 
 2022-03-25 0.13.3
 =================
