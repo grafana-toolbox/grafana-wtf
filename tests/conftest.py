@@ -3,7 +3,7 @@ import os
 import re
 from io import StringIO
 from pathlib import Path
-from typing import List, Union
+from typing import List, Union, Optional
 
 import grafanalib.core
 import pytest
@@ -321,11 +321,13 @@ def grafana_version(docker_grafana):
     return grafana_version
 
 
-def mkdashboard(title: str, datasources: List[str]):
+def mkdashboard(title: str, datasources: Optional[List[str]] = None):
     """
     Build dashboard with multiple panels, each with a different data source.
     """
     # datasource = grafanalib.core.DataSourceInput(name="foo", label="foo", pluginId="foo", pluginName="foo")
+
+    datasources = datasources or []
 
     # Build dashboard object model.
     panels = []

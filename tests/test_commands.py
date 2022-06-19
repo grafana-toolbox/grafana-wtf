@@ -366,6 +366,33 @@ def test_explore_dashboards_grafana7up(grafana_version, ldi_resources, capsys, c
     assert dashboard["datasources_missing"][0]["type"] is None
 
 
+def test_explore_dashboards_empty_annotations(create_datasource, create_dashboard, capsys, caplog):
+
+    # Create a dashboard with an anomalous value in the "annotations" slot.
+    dashboard = mkdashboard(title="foo")
+    dashboard["annotations"]["list"] = None
+    create_dashboard(dashboard)
+
+    # Compute breakdown.
+    set_command("explore dashboards", "--format=yaml")
+
+    # Proof the output is correct.
+    with caplog.at_level(logging.DEBUG):
+        grafana_wtf.commands.run()
+        assert "Found 1 dashboard(s)" in caplog.messages
+
+    captured = capsys.readouterr()
+    data = yaml.safe_load(captured.out)
+
+    # Proof the output is correct.
+    assert len(data) == 1
+    dashboard = data[0]
+    assert dashboard["dashboard"]["title"] == "foo"
+    assert len(dashboard["dashboard"]["uid"]) == 9
+    assert "datasources" not in dashboard
+    assert "datasources_missing" not in dashboard
+
+
 def find_all_missing_datasources(data):
     missing_items = []
     for item in data:
