@@ -10,7 +10,7 @@
 .. image:: https://img.shields.io/pypi/v/grafana-wtf.svg
     :target: https://pypi.org/project/grafana-wtf/
 
-.. image:: https://img.shields.io/pypi/dm/grafana-wtf.svg
+.. image:: https://pepy.tech/badge/grafana-wtf/month
     :target: https://pypi.org/project/grafana-wtf/
 
 .. image:: https://img.shields.io/pypi/l/grafana-wtf.svg
