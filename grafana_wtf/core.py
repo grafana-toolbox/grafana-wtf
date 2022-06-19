@@ -497,6 +497,7 @@ class Indexer:
 
     @staticmethod
     def collect_datasource_items(element):
+        element = element or []
         items = []
         for node in element:
             if "datasource" in node and node["datasource"]:

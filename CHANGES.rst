@@ -6,6 +6,8 @@ grafana-wtf changelog
 in progress
 ===========
 - CI: Use most recent Grafana 7.5.16, 8.5.5, and 9.0.0-beta3
+- Fix dashboard exploration when the ``annotations.list`` slot is ``None``
+  instead of an empty list. Thanks, @TaylorMutch!
 
 2022-03-25 0.13.3
 =================
