@@ -37,21 +37,15 @@ jobs:
     steps:
 
       - name: Acquire sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
-
-      - name: Apply caching of dependencies
-        uses: actions/cache@v2
-        with:
-          path: ${{ matrix.path }}
-          key: ${{ runner.os }}-pip-py${{ matrix.python-version }}-${{ hashFiles('setup.py') }}
-          restore-keys: |
-           ${{ runner.os }}-pip-
+          cache: 'pip'
+          cache-dependency-path: 'setup.py'
 
       - name: Install program
         run: |
