@@ -15,9 +15,16 @@ on:
   push:
     tags:
       - '*.*.*'
-  workflow_dispatch:
   pull_request:
     branches: [ main ]
+
+  # Allow job to be triggered manually.
+  workflow_dispatch:
+
+# Cancel in-progress jobs when pushing to the same branch.
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
 
 env:
   GHCR_IMAGE_NAME: ghcr.io/panodata/grafana-wtf
