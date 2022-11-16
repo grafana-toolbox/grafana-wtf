@@ -12,4 +12,4 @@ COPY . /app
 
 # Install package
 WORKDIR /app
-RUN python setup.py install
+RUN pip install .

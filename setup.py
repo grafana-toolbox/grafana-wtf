@@ -28,9 +28,9 @@ requires = [
 
 extras = {
     "test": [
-        "pytest>=5,<8",
-        "lovely-pytest-docker>=0.2.1,<3",
-        "grafanalib>=0.6,<0.7",
+        "pytest<8",
+        "lovely-pytest-docker<1",
+        "grafanalib<0.7",
     ]
 }
 
