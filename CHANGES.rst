@@ -5,6 +5,7 @@ grafana-wtf changelog
 
 in progress
 ===========
+- CI: Update to Grafana 8.5.21 and 9.4.3
 
 2023-03-06 0.15.0
 =================
