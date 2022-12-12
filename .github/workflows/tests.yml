@@ -27,7 +27,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ] # , macos-latest, windows-latest ]
         python-version: [ "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12-dev" ]
-        grafana-version: [ "6.7.6", "7.5.17", "8.5.15", "9.2.4" ]
+        grafana-version: [ "6.7.6", "7.5.17", "8.5.15", "9.2.7" ]
         include:
         - os: ubuntu-latest
           path: ~/.cache/pip
