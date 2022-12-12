@@ -28,13 +28,6 @@ jobs:
         os: [ "ubuntu-20.04" ]
         python-version: [ "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12-dev" ]
         grafana-version: [ "6.7.6", "7.5.17", "8.5.15", "9.2.7" ]
-        include:
-        - os: ubuntu-latest
-          path: ~/.cache/pip
-        #- os: macos-latest
-        #  path: ~/Library/Caches/pip
-        #- os: windows-latest
-        #  path: ~\AppData\Local\pip\Cache
 
     env:
       OS_TYPE: ${{ matrix.os }}
