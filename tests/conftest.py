@@ -3,7 +3,7 @@ import os
 import re
 from io import StringIO
 from pathlib import Path
-from typing import List, Union, Optional
+from typing import List, Optional, Union
 
 import grafanalib.core
 import pytest
