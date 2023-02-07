@@ -7,6 +7,8 @@ in progress
 ===========
 - Add ``--dry-run`` option for ``replace`` subcommand. Thanks, @TaylorMutch.
 - Update dependencies to their most recent versions.
+- Add URLs to dashboard variables and panel view/edit pages to the output of
+  the ``find`` subcommand. Thanks, @oplehto.
 
 2022-06-19 0.13.4
 =================

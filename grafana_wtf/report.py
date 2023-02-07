@@ -2,13 +2,15 @@
 # (c) 2019-2021 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU Affero General Public License, Version 3
 import logging
+import textwrap
 from collections import OrderedDict
+from pprint import pprint
 from urllib.parse import urljoin
 
 import colored
 from six import StringIO
 
-from grafana_wtf.util import prettify_json
+from grafana_wtf.util import format_dict, prettify_json
 
 log = logging.getLogger(__name__)
 
@@ -20,14 +22,14 @@ class WtfReport:
 
     def display(self, expression, result):
         expression = expression or "*"
-        print('Searching for expression "{}" at Grafana instance {}'.format(_v(expression), self.grafana_url))
+        print('Searching for expression "{}" at Grafana instance {}'.format(_m(expression), self.grafana_url))
         self.output_items(_s("Data Sources"), result.datasources, self.compute_url_datasource)
         self.output_items(_s("Dashboards"), result.dashboards, self.compute_url_dashboard)
 
     def output_items(self, label, items, url_callback):
         # Output section name (data source vs. dashboard).
         print("=" * 42)
-        print("{label}: {hits} hits.".format(hits=_v(len(items)), label=label))
+        print("{label}: {hits} hits.".format(hits=_m(len(items)), label=label))
         print("=" * 42)
         print()
 
@@ -41,26 +43,70 @@ class WtfReport:
 
             # Output match title / entity name.
             name = self.get_item_name(item)
-            print(_v(name))
-            print("-" * len(name))
+            section = f"Dashboard »{name}«"
+            print(_ssb(section))
+            print("=" * len(section))
 
-            # Output URL
+            # Compute some URLs
             url = url_callback(item)
+            urls = {
+                "Dashboard": _v(url),
+                "Variables": _v(url + "?editview=templating"),
+            }
 
             # Output baseline bibliographic data.
             print()
-            bibdata_output = self.get_bibdata(item, URL=_vlow(url))
+            bibdata_output = self.get_bibdata_dashboard(item, **urls)
             if bibdata_output:
                 print(bibdata_output)
 
             # Output findings.
             if "matches" in item.meta:
                 # print(' ', self.format_where(item))
+                seen = {}
                 for match in item.meta.matches:
-                    print("- {path}: {value}".format(path=_k(match.full_path), value=_v(match.value)))
+                    panel = self.get_panel(match)
+                    if panel is not None and panel.id not in seen:
+                        seen[panel.id] = True
+                        print()
+
+                        title = panel.title
+                        subsection = f"Panel »{title}«"
+                        print(_ss(subsection))
+                        print("-" * len(subsection))
+
+                        print(self.get_bibdata_panel(panel, url))
+                        print("      Matches")
+                    match = "- {path}: {value}".format(path=_k(match.full_path), value=_m(str(match.value).strip()))
+                    print(textwrap.indent(match, " " * 14))
 
             print()
             print()
+
+    def get_panel(self, node):
+        """
+        Find panel from jsonpath node.
+        """
+        while node:
+            last_node = node
+            node = getattr(node, "context")
+            if node is None:
+                break
+            if str(node.path) == "panels":
+                return last_node.value
+
+    def get_bibdata_panel(self, panel, baseurl, **kwargs):
+        """
+        Summarize panel bibliographic data.
+        """
+        bibdata = OrderedDict()
+        bibdata["Id"] = _v(panel.id)
+        bibdata["Title"] = _v(panel.title)
+        bibdata["Description"] = _v(str(panel.get("description", "")).strip())
+        bibdata["View"] = _v(baseurl + f"?viewPanel={panel.id}")
+        bibdata["Edit"] = _v(baseurl + f"?editPanel={panel.id}")
+        bibdata.update(kwargs)
+        return format_dict(bibdata)
 
     def get_item_name(self, item):
         if "name" in item.data:
@@ -70,24 +116,23 @@ class WtfReport:
         else:
             return "unknown"
 
-    def get_bibdata(self, item, **kwargs):
+    def get_bibdata_dashboard(self, item, **kwargs):
+        """
+        Summarize dashboard bibliographic data.
+        """
+
         # Sanity checks.
         if "dashboard" not in item.data:
             return
 
         bibdata = OrderedDict()
-        bibdata["Title"] = item.data.dashboard.title
-        bibdata["Folder"] = item.data.meta.folderTitle
-        bibdata["UID"] = item.data.dashboard.uid
-        bibdata["Created"] = f"at {item.data.meta.created} by {item.data.meta.createdBy} "
-        bibdata["Updated"] = f"at {item.data.meta.updated} by {item.data.meta.updatedBy}"
+        bibdata["Title"] = _v(item.data.dashboard.title)
+        bibdata["Folder"] = _v(item.data.meta.folderTitle)
+        bibdata["UID"] = _v(item.data.dashboard.uid)
+        bibdata["Created"] = _v(f"at {item.data.meta.created} by {item.data.meta.createdBy} ")
+        bibdata["Updated"] = _v(f"at {item.data.meta.updated} by {item.data.meta.updatedBy}")
         bibdata.update(kwargs)
-        output = StringIO()
-        for key, value in bibdata.items():
-            entry = f" {key:>7} {value}\n"
-            output.write(entry)
-        output.seek(0)
-        return output.read()
+        return format_dict(bibdata)
 
     def format_where(self, item):
         keys = item.meta.where
@@ -115,22 +160,33 @@ class WtfReport:
         pass
 
 
-section_style = colored.fg("cyan") + colored.attr("bold")
-key_style = colored.fg("blue") + colored.attr("bold")
-value_style = colored.fg("yellow") + colored.attr("bold")
+bold_style = colored.attr("bold")
+section_style = colored.fg("cyan") + bold_style
+subsection_style = colored.fg("magenta")
+key_style = colored.fg("blue") + bold_style
+match_style = colored.fg("yellow") + bold_style
+value_style = colored.fg("white") + bold_style
 
 
 def _s(text):
     return colored.stylize(str(text), section_style)
 
 
+def _ss(text):
+    return colored.stylize(str(text), subsection_style)
+
+
+def _ssb(text):
+    return colored.stylize(str(text), subsection_style + bold_style)
+
+
 def _k(text):
     return colored.stylize(str(text), key_style)
 
 
+def _m(text):
+    return colored.stylize(str(text), match_style)
+
+
 def _v(text):
     return colored.stylize(str(text), value_style)
-
-
-def _vlow(text):
-    return colored.stylize(str(text), colored.fg("white") + colored.attr("bold"))
