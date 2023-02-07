@@ -5,6 +5,7 @@ grafana-wtf changelog
 
 in progress
 ===========
+- Add ``--dry-run`` option for ``replace`` subcommand. Thanks, @TaylorMutch.
 
 2022-06-19 0.13.4
 =================

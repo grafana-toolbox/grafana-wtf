@@ -34,7 +34,7 @@ def run():
       grafana-wtf [options] explore datasources
       grafana-wtf [options] explore dashboards
       grafana-wtf [options] find [<search-expression>]
-      grafana-wtf [options] replace <search-expression> <replacement>
+      grafana-wtf [options] replace <search-expression> <replacement> [--dry-run]
       grafana-wtf [options] log [<dashboard_uid>] [--number=<count>]
       grafana-wtf --version
       grafana-wtf (-h | --help)
@@ -48,6 +48,7 @@ def run():
       --cache-ttl=<cache-ttl>           Time-to-live for the request cache in seconds. [default: 300]
       --drop-cache                      Drop cache before requesting resources
       --concurrency=<concurrency>       Run multiple requests in parallel. [default: 5]
+      --dry-run                         Dry-run mode for the `replace` subcommand.
       --verbose                         Enable verbose mode
       --version                         Show version information
       --debug                           Enable debug messages
@@ -203,7 +204,7 @@ def run():
         report.display(options.search_expression, result)
 
     if options.replace:
-        engine.replace(options.search_expression, options.replacement)
+        engine.replace(options.search_expression, options.replacement, dry_run=options.dry_run)
         engine.clear_cache()
 
     if options.log:

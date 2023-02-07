@@ -175,6 +175,24 @@ def test_replace_dashboard_success(ldi_resources, capsys):
     grafana_wtf.commands.run()
 
 
+def test_replace_dashboard_dry_run_success(ldi_resources, capsys):
+
+    # Only provision specific dashboard(s).
+    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+
+    # Rename references from "ldi_v2" to "ldi_v3".
+    set_command("replace ldi_v2 ldi_v3 --dry-run")
+    grafana_wtf.commands.run()
+    capsys.readouterr()
+
+    # Verify new reference "ldi_v3" does not exist, because it is still called "ldi_v2".
+    set_command("find ldi_v3")
+    grafana_wtf.commands.run()
+    captured = capsys.readouterr()
+
+    assert "Dashboards: 0 hits" in captured.out
+
+
 def test_log_empty(capsys, caplog):
 
     # Run command and capture output.
