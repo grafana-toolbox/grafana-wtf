@@ -30,7 +30,7 @@ extras = {
     "test": [
         "pytest<8",
         "lovely-pytest-docker<1",
-        "grafanalib<0.7",
+        "grafanalib<0.8",
     ]
 }
 
