@@ -39,7 +39,6 @@ def configure_http_logging(options):
 def normalize_options(options):
     normalized = {}
     for key, value in options.items():
-
         # Add primary variant.
         key = key.strip("--<>")
         normalized[key] = value
@@ -76,7 +75,6 @@ class JsonPathFinder:
         # Iterate JSON, node by node, to find out about
         # where in the JSON document the needle is located.
         for node in self.jsonpath_expr.find(haystack):
-
             # Ignore empty nodes.
             if node.value is None:
                 continue
@@ -86,7 +84,6 @@ class JsonPathFinder:
                 continue
 
             if isinstance(node.value, self.scalars):
-
                 # Check if node matches search expression. Currently, this
                 # is essentially a basic "string contains" match but it might
                 # be improved in the future.

@@ -94,7 +94,6 @@ class GrafanaEngine:
         return grafana
 
     def setup(self):
-
         self.grafana = self.grafana_client_factory(self.grafana_url, grafana_token=self.grafana_token)
 
         # Configure a larger HTTP request pool.
@@ -167,7 +166,6 @@ class GrafanaEngine:
                 )
 
     def scan_dashboards(self, dashboard_uids=None):
-
         log.info("Scanning dashboards")
         try:
             if dashboard_uids is not None:
@@ -235,7 +233,6 @@ class GrafanaEngine:
         # https://hackernoon.com/how-to-run-asynchronous-web-requests-in-parallel-with-python-3-5-without-aiohttp-264dc0f8546
         log.info(f"Fetching dashboards in parallel with {self.concurrency} concurrent requests")
         with ThreadPoolExecutor(max_workers=self.concurrency) as executor:
-
             # Set any session parameters here before calling `fetch`
             loop = asyncio.get_event_loop()
             # START_TIME = default_timer()
@@ -252,7 +249,6 @@ class GrafanaEngine:
 
 class GrafanaWtf(GrafanaEngine):
     def info(self):
-
         try:
             health = self.grafana.client.GET("/health")
         except Exception as ex:
@@ -306,7 +302,6 @@ class GrafanaWtf(GrafanaEngine):
         return response
 
     def version(self):
-
         try:
             health = self.grafana.client.GET("/health")
         except Exception as ex:
@@ -401,7 +396,6 @@ class GrafanaWtf(GrafanaEngine):
         return r
 
     def explore_datasources(self):
-
         # Prepare indexes, mapping dashboards by uid, datasources by name
         # as well as dashboards to datasources and vice versa.
         ix = Indexer(engine=self)
@@ -435,7 +429,6 @@ class GrafanaWtf(GrafanaEngine):
         return response
 
     def explore_dashboards(self):
-
         # Prepare indexes, mapping dashboards by uid, datasources by name
         # as well as dashboards to datasources and vice versa.
         ix = Indexer(engine=self)
@@ -443,7 +436,6 @@ class GrafanaWtf(GrafanaEngine):
         # Compute list of exploration items, looking for dashboards with missing data sources.
         results = []
         for uid in sorted(ix.dashboard_by_uid):
-
             dashboard = ix.dashboard_by_uid[uid]
             datasource_items = ix.dashboard_datasource_index[uid]
 
@@ -512,12 +504,10 @@ class Indexer:
         return items
 
     def index_dashboards(self):
-
         self.dashboard_by_uid = {}
         self.dashboard_datasource_index = {}
 
         for dbdetails in self.engine.dashboard_details():
-
             dashboard = dbdetails.dashboard
 
             if dashboard.meta.isFolder:
@@ -541,7 +531,6 @@ class Indexer:
             self.dashboard_datasource_index[uid] = results
 
     def index_datasources(self):
-
         self.datasource_by_ident = {}
         self.datasource_by_uid = {}
         self.datasource_by_name = {}

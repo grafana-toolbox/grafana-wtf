@@ -108,7 +108,6 @@ def create_datasource(docker_grafana, grafana_version):
             return {"uid": response["uid"], "type": response["type"]}
 
     def _create_datasource(name: str, type: str = "testdata", access: str = "proxy", **kwargs):
-
         # Reuse existing datasource.
         try:
             response = grafana.datasource.get_datasource_by_name(name)
@@ -178,7 +177,6 @@ def create_folder(docker_grafana):
     folder_uids = []
 
     def _create_folder(title: str, uid: str = None):
-
         # Reuse folder when it already exists.
         try:
             response = grafana.folder.get_folder(uid=uid)
@@ -250,7 +248,6 @@ def create_dashboard(docker_grafana):
 
     # https://docs.pytest.org/en/4.6.x/fixture.html#factories-as-fixtures
     def _create_dashboard(dashboard: dict = None, folder_id: str = None, folder_uid: str = None):
-
         # Create dashboard in Grafana.
         payload = {"dashboard": dashboard, "overwrite": True}
         if folder_id:
