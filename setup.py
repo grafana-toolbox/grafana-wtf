@@ -20,7 +20,7 @@ requires = [
     # Caching
     "requests-cache>=0.5.2,<1",
     # Output
-    "tabulate>=0.8.5,<0.9",
+    "tabulate>=0.8.5,<0.10",
     "colored>=1.4.3,<2",
     "Pygments>=2.7.4,<3",
     "PyYAML>=5,<6",
