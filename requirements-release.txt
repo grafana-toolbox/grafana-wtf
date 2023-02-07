@@ -1,5 +1,5 @@
 bump2version<2
 twine<5
 keyring<24
-black<23
+black<24
 isort<6

@@ -15,22 +15,22 @@ requires = [
     "tqdm>=4.37.0,<5",
     # Grafana
     "requests>=2.23.0,<3",
-    "grafana-client>=2.1.0,<3",
+    "grafana-client>=2.1.0,<4",
     "jsonpath-rw>=1.4.0,<2",
     # Caching
     "requests-cache>=0.5.2,<1",
     # Output
-    "tabulate>=0.8.5,<0.9",
+    "tabulate>=0.8.5,<0.10",
     "colored>=1.4.3,<2",
     "Pygments>=2.7.4,<3",
-    "PyYAML>=5,<6",
+    "PyYAML>=5,<7",
 ]
 
 extras = {
     "test": [
         "pytest<8",
         "lovely-pytest-docker<1",
-        "grafanalib<0.7",
+        "grafanalib<0.8",
     ]
 }
 
