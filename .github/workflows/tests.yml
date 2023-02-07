@@ -34,7 +34,7 @@ jobs:
       PYTHON_VERSION: ${{ matrix.python-version }}
       GRAFANA_VERSION: ${{ matrix.grafana-version }}
 
-    name: OS ${{ matrix.os }}, Python ${{ matrix.python-version }}, Grafana ${{ matrix.grafana-version }}
+    name: Python ${{ matrix.python-version }}, Grafana ${{ matrix.grafana-version }}
     steps:
 
       - name: Acquire sources
