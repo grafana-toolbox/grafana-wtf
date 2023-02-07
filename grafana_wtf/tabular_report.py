@@ -25,7 +25,6 @@ class TabularReport(WtfReport):
         print(tabulate(items_rows, headers="keys", tablefmt=self.format))
 
     def get_bibdata_dict(self, item, **kwargs):
-
         # Sanity checks.
         if "dashboard" not in item.data:
             return {"data_source_type": item.data.type} if "type" in item.data else {}
@@ -47,7 +46,6 @@ class TabularReport(WtfReport):
         return bibdata
 
     def get_datasources(self, item):
-
         # Query datasources.
         _finder = parse("$..datasource")
         _datasources = _finder.find(item)

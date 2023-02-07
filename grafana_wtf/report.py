@@ -25,7 +25,6 @@ class WtfReport:
         self.output_items(_s("Dashboards"), result.dashboards, self.compute_url_dashboard)
 
     def output_items(self, label, items, url_callback):
-
         # Output section name (data source vs. dashboard).
         print("=" * 42)
         print("{label}: {hits} hits.".format(hits=_v(len(items)), label=label))
@@ -72,7 +71,6 @@ class WtfReport:
             return "unknown"
 
     def get_bibdata(self, item, **kwargs):
-
         # Sanity checks.
         if "dashboard" not in item.data:
             return

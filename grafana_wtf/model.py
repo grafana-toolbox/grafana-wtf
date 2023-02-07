@@ -26,7 +26,6 @@ class GrafanaDataModel:
 
 @dataclasses.dataclass
 class DashboardDetails:
-
     dashboard: Dict
 
     @property

@@ -26,7 +26,6 @@ def set_command(command, more_options="", cache=False):
 
 
 def test_failure_grafana_url_missing():
-
     # Run command and capture output.
     command = "grafana-wtf find foobar"
     sys.argv = shlex.split(command)
@@ -40,7 +39,6 @@ def test_failure_grafana_url_missing():
 
 
 def test_find_textual_empty(docker_grafana, capsys):
-
     # Run command and capture output.
     set_command("find foobar")
     grafana_wtf.commands.run()
@@ -53,7 +51,6 @@ def test_find_textual_empty(docker_grafana, capsys):
 
 
 def test_find_textual_select_empty(docker_grafana, capsys, caplog):
-
     # Run command and capture output.
     set_command("find foobar", "--select-dashboard=foo,bar")
     with caplog.at_level(logging.DEBUG):
@@ -71,7 +68,6 @@ def test_find_textual_select_empty(docker_grafana, capsys, caplog):
 
 
 def test_find_textual_dashboard_success(ldi_resources, capsys):
-
     # Only provision specific dashboard(s).
     ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
 
@@ -93,7 +89,6 @@ def test_find_textual_dashboard_success(ldi_resources, capsys):
 
 
 def test_find_textual_datasource_success(ldi_resources, capsys):
-
     # Only provision specific dashboard(s).
     ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
 
@@ -116,7 +111,6 @@ def test_find_textual_datasource_success(ldi_resources, capsys):
 
 
 def test_find_tabular_dashboard_success(ldi_resources, capsys):
-
     # Only provision specific dashboard(s).
     ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
 
@@ -144,7 +138,6 @@ def test_find_tabular_dashboard_success(ldi_resources, capsys):
 
 
 def test_replace_dashboard_success(ldi_resources, capsys):
-
     # Only provision specific dashboard(s).
     ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
 
@@ -176,7 +169,6 @@ def test_replace_dashboard_success(ldi_resources, capsys):
 
 
 def test_replace_dashboard_dry_run_success(ldi_resources, capsys):
-
     # Only provision specific dashboard(s).
     ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
 
@@ -194,7 +186,6 @@ def test_replace_dashboard_dry_run_success(ldi_resources, capsys):
 
 
 def test_log_empty(capsys, caplog):
-
     # Run command and capture output.
     set_command("log foobar")
     with caplog.at_level(logging.DEBUG):
@@ -207,7 +198,6 @@ def test_log_empty(capsys, caplog):
 
 
 def test_log_json_success(ldi_resources, capsys, caplog):
-
     # Only provision specific dashboard(s).
     ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
 
@@ -238,7 +228,6 @@ def test_log_json_success(ldi_resources, capsys, caplog):
 
 
 def test_log_tabular_success(ldi_resources, capsys, caplog):
-
     # Only provision specific dashboard(s).
     ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
 
@@ -261,7 +250,6 @@ def test_log_tabular_success(ldi_resources, capsys, caplog):
 
 
 def test_explore_datasources_used(create_datasource, create_dashboard, capsys, caplog):
-
     # Create two data sources and a dashboard which uses them.
     ds_foo = create_datasource(name="foo")
     ds_bar = create_datasource(name="bar")
@@ -289,7 +277,6 @@ def test_explore_datasources_used(create_datasource, create_dashboard, capsys, c
 
 
 def test_explore_datasources_unused(create_datasource, capsys, caplog):
-
     # Create two datasources, which are not used by any dashboard.
     create_datasource(name="foo")
     create_datasource(name="bar")
@@ -385,7 +372,6 @@ def test_explore_dashboards_grafana7up(grafana_version, ldi_resources, capsys, c
 
 
 def test_explore_dashboards_empty_annotations(create_datasource, create_dashboard, capsys, caplog):
-
     # Create a dashboard with an anomalous value in the "annotations" slot.
     dashboard = mkdashboard(title="foo")
     dashboard["annotations"]["list"] = None
@@ -420,7 +406,6 @@ def find_all_missing_datasources(data):
 
 
 def test_info(docker_grafana, capsys, caplog):
-
     # Which subcommand to test?
     set_command("info", "--format=yaml")
 

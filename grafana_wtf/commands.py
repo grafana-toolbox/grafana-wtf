@@ -182,7 +182,6 @@ def run():
     output_format = options["format"]
 
     if options.find or options.replace:
-
         if options.select_dashboard:
             # Restrict scan to list of dashboards.
             dashboard_uids = read_list(options.select_dashboard)
