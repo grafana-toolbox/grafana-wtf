@@ -122,6 +122,9 @@ def run():
       # Replace string within specific dashboard.
       grafana-wtf --select-dashboard=_JJ22OZZk replace grafana-worldmap-panel grafana-map-panel
 
+      # Preview the changes beforehand, using the `--dry-run` option.
+      grafana-wtf --select-dashboard=_JJ22OZZk replace grafana-worldmap-panel grafana-map-panel --dry-run
+
     Display edit history:
 
       # Display 50 most recent changes across all dashboards.
