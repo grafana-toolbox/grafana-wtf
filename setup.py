@@ -23,7 +23,7 @@ requires = [
     "tabulate>=0.8.5,<0.9",
     "colored>=1.4.3,<2",
     "Pygments>=2.7.4,<3",
-    "PyYAML>=5,<6",
+    "PyYAML>=5,<7",
 ]
 
 extras = {
