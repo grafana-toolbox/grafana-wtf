@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # (c) 2019-2021 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU Affero General Public License, Version 3
+import io
 import json
 import logging
 import sys
@@ -155,3 +156,12 @@ def as_bool(value: str) -> bool:
         return _STR_BOOLEAN_MAPPING[value.lower()]
     except KeyError:
         raise ValueError(f"invalid truth value {value}")
+
+
+def format_dict(data) -> str:
+    output = io.StringIO()
+    for key, value in data.items():
+        entry = f" {key:>12} {value}\n"
+        output.write(entry)
+    output.seek(0)
+    return output.read().rstrip()

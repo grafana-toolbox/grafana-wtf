@@ -83,7 +83,13 @@ def test_find_textual_dashboard_success(ldi_resources, capsys):
     assert "Title luftdaten.info generic trend" in captured.out
     assert "Folder Testdrive" in captured.out
     assert "UID ioUrPwQiz" in captured.out
-    assert "URL http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend" in captured.out
+    assert "Dashboard http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33" in captured.out
+    assert (
+        "Variables http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33?editview=templating"
+        in captured.out
+    )
+    assert "View http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33?viewPanel=17" in captured.out
+    assert "Edit http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33?editPanel=17" in captured.out
     assert "dashboard.panels.[1].targets.[0].measurement: ldi_readings" in captured.out
     assert "dashboard.panels.[7].panels.[0].targets.[0].measurement: ldi_readings" in captured.out
 
