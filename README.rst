@@ -176,6 +176,11 @@ UID ``_JJ22OZZk``::
 
     grafana-wtf --select-dashboard=_JJ22OZZk replace ldi_v2 ldi_v3
 
+In order to preview the changes, you should use the ``--dry-run`` option
+beforehand::
+
+    grafana-wtf --select-dashboard=_JJ22OZZk replace ldi_v2 ldi_v3 --dry-run
+
 
 Display edit history
 ====================
