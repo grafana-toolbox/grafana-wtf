@@ -335,7 +335,9 @@ class GrafanaWtf(GrafanaEngine):
 
         return results
 
-    def replace(self, expression, replacement):
+    def replace(self, expression, replacement, dry_run: bool = False):
+        if dry_run:
+            log.info("Dry-run mode enabled, skipping any actions")
         log.info(f'Replacing "{expression}" by "{replacement}" within Grafana at "{self.grafana_url}"')
         for dashboard in self.data.dashboards:
             payload_before = json.dumps(dashboard)
@@ -345,7 +347,8 @@ class GrafanaWtf(GrafanaEngine):
                 continue
             dashboard_new = json.loads(payload_after)
             dashboard_new["message"] = f'grafana-wtf: Replaced "{expression}" by "{replacement}"'
-            self.grafana.dashboard.update_dashboard(dashboard=dashboard_new)
+            if not dry_run:
+                self.grafana.dashboard.update_dashboard(dashboard=dashboard_new)
 
     def log(self, dashboard_uid=None):
         if dashboard_uid:
