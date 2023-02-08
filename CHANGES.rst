@@ -15,6 +15,7 @@ in progress
   - Use cache database location within user folder
   - c cache database location to log
   - Reduce default cache TTL from five minutes to 60 seconds
+- Drop support for Python 3.6
 
 2022-06-19 0.13.4
 =================
