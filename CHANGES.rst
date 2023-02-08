@@ -13,7 +13,7 @@ in progress
 - Improve caching
 
   - Use cache database location within user folder
-  - c cache database location to log
+  - Send cache database location to log
   - Reduce default cache TTL from five minutes to 60 seconds
 - Drop support for Python 3.6
 
