@@ -1,7 +1,18 @@
+[tool.black]
+line-length = 120
+src_paths = ["grafana_wtf", "tests"]
+
 [tool.isort]
 profile = "black"
 src_paths = ["grafana_wtf", "tests"]
 
-[tool.black]
-line-length = 120
-src_paths = ["grafana_wtf", "tests"]
+[tool.pytest.ini_options]
+addopts = "-ra -q --verbosity=3 --doctest-modules"
+minversion = "2.0"
+log_level = "DEBUG"
+log_cli_level = "DEBUG"
+testpaths = [
+  "grafana_wtf",
+  "tests",
+]
+xfail_strict = true
