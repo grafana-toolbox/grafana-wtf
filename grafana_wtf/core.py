@@ -9,6 +9,7 @@ import warnings
 from collections import OrderedDict
 from concurrent.futures.thread import ThreadPoolExecutor
 from urllib.parse import parse_qs, urljoin, urlparse
+from tqdm.contrib.logging import tqdm_logging_redirect
 
 import colored
 import requests
@@ -108,7 +109,8 @@ class GrafanaEngine:
 
     def start_progressbar(self, total):
         if self.progressbar:
-            self.taqadum = tqdm(total=total)
+            with tqdm_logging_redirect():
+                self.taqadum = tqdm(total=total)
 
     def scan_common(self):
         self.scan_dashboards()

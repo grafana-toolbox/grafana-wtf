@@ -9,6 +9,7 @@ in progress
 - Update dependencies to their most recent versions.
 - Add URLs to dashboard variables and panel view/edit pages to the output of
   the ``find`` subcommand. Thanks, @oplehto.
+- Improve display of progressbar wrt. being interrupted by logging output.
 
 2022-06-19 0.13.4
 =================
