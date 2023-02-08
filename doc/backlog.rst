@@ -6,6 +6,16 @@ grafana-wtf backlog
 ******
 Prio 1
 ******
+- [o] Expand searching via ``find`` subcommand to other entities
+- [o] Add output format JSON for ``find`` subcommand
+- [o] Add subcommand for checking data source health
+- [o] Provide environment variable for ``--drop-cache``
+- [o] Does it croak on play.grafana.org?
+
+
+*********
+Prio 1.10
+*********
 - [o] With Grafana >8.3, resolve datasource name and add to ``{'type': 'influxdb', 'uid': 'PDF2762CDFF14A314'}``
 - [o] Add "folder name/uid" to "explore dashboards" response.
 - [o] Check if "datasources" is always present in responses to "explore dashboards".
