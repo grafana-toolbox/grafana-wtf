@@ -10,6 +10,11 @@ in progress
 - Add URLs to dashboard variables and panel view/edit pages to the output of
   the ``find`` subcommand. Thanks, @oplehto.
 - Improve display of progressbar wrt. being interrupted by logging output.
+- Improve caching
+
+  - Use cache database location within user folder
+  - c cache database location to log
+  - Reduce default cache TTL from five minutes to 60 seconds
 
 2022-06-19 0.13.4
 =================

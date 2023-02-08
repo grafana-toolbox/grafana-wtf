@@ -18,7 +18,7 @@ requires = [
     "grafana-client>=2.1.0,<4",
     "jsonpath-rw>=1.4.0,<2",
     # Caching
-    "requests-cache>=0.5.2,<1",
+    "requests-cache>=0.8.0,<1",
     # Output
     "tabulate>=0.8.5,<0.10",
     "colored>=1.4.3,<2",
