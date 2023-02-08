@@ -11,6 +11,7 @@ Prio 1
 - [o] Add subcommand for checking data source health
 - [o] Provide environment variable for ``--drop-cache``
 - [o] Does it croak on play.grafana.org?
+- [o] Don't display "Global" section when it's mostly empty.
 
 
 *********
