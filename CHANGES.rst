@@ -10,6 +10,7 @@ in progress
 - Dependencies: Use ``verlib2`` instead of ``packaging``
 - Dependencies: Updated to ``docopt-ng``
 - Add subcommand ``explore permissions``. Thanks, @meyerder.
+- Added support for Python 3.12
 
 2024-03-07 0.18.0
 =================
