@@ -12,7 +12,7 @@ requires = [
     'dataclasses; python_version<"3.7"',
     "docopt>=0.6.2,<0.7",
     "munch>=2.5.0,<3",
-    "tqdm>=4.37.0,<5",
+    "tqdm>=4.60.0,<5",
     # Grafana
     "requests>=2.23.0,<3",
     "grafana-client>=2.1.0,<4",
