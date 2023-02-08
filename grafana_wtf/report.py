@@ -60,28 +60,51 @@ class WtfReport:
             if bibdata_output:
                 print(bibdata_output)
 
-            # Output findings.
+            # Separate matches into "dashboard"- and "panels"-groups.
+            dashboard_matches = []
+            panel_matches = []
             if "matches" in item.meta:
                 # print(' ', self.format_where(item))
-                seen = {}
                 for match in item.meta.matches:
                     panel = self.get_panel(match)
-                    if panel is not None and panel.id not in seen:
-                        seen[panel.id] = True
-                        print()
+                    if panel is not None:
+                        panel_matches.append((match, panel))
+                    else:
+                        dashboard_matches.append(match)
 
-                        title = panel.title
-                        subsection = f"Panel »{title}«"
-                        print(_ss(subsection))
-                        print("-" * len(subsection))
+            # Output dashboard matches.
+            print()
+            subsection = f"Global"
+            print(_ss(subsection))
+            print("-" * len(subsection))
+            for match in dashboard_matches:
+                match_text = f"- {self.format_match(match)}"
+                print(match_text)
 
-                        print(self.get_bibdata_panel(panel, url))
-                        print("      Matches")
-                    match = "- {path}: {value}".format(path=_k(match.full_path), value=_m(str(match.value).strip()))
-                    print(textwrap.indent(match, " " * 14))
+            # Output panel bibdata with matches.
+            seen = {}
+            for match, panel in panel_matches:
+                if panel.id not in seen:
+                    seen[panel.id] = True
+                    print()
+
+                    title = panel.title
+                    subsection = f"Panel »{title}«"
+                    print(_ss(subsection))
+                    print("-" * len(subsection))
+
+                    print(self.get_bibdata_panel(panel, url))
+                    print("      Matches")
+
+                match_text = f"- {self.format_match(match)}"
+                print(textwrap.indent(match_text, " " * 14))
 
             print()
             print()
+
+    @staticmethod
+    def format_match(match):
+        return "{path}: {value}".format(path=_k(match.full_path), value=_m(str(match.value).strip()))
 
     def get_panel(self, node):
         """
