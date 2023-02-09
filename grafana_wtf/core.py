@@ -9,7 +9,6 @@ import warnings
 from collections import OrderedDict
 from concurrent.futures.thread import ThreadPoolExecutor
 from urllib.parse import parse_qs, urljoin, urlparse
-from tqdm.contrib.logging import tqdm_logging_redirect
 
 import colored
 import requests
@@ -18,6 +17,7 @@ from grafana_client.api import GrafanaApi
 from grafana_client.client import GrafanaClientError, GrafanaUnauthorizedError
 from munch import Munch, munchify
 from tqdm import tqdm
+from tqdm.contrib.logging import tqdm_logging_redirect
 from urllib3.exceptions import InsecureRequestWarning
 
 from grafana_wtf.model import (
@@ -492,20 +492,35 @@ class Indexer:
         self.index()
 
     def index(self):
-        self.index_dashboards()
         self.index_datasources()
+        self.index_dashboards()
+        self.index_crossref()
 
-    @staticmethod
-    def collect_datasource_items(element):
+    def collect_datasource_items(self, element):
         element = element or []
         items = []
         for node in element:
+            ds = None
+
+            # Directly defined datasources.
             if "datasource" in node and node["datasource"]:
                 ds = node.datasource
                 if isinstance(ds, Munch):
                     ds = dict(ds)
-                if ds not in items:
-                    items.append(ds)
+
+            # Datasources defined as variables.
+            if "type" in node and node["type"] == "datasource":
+                ds_name = node.get("current", {}).get("value")
+                datasource = self.datasource_by_name.get(ds_name, {})
+                ds = dict(
+                    type=datasource.get("type"),
+                    uid=datasource.get("uid"),
+                    name=datasource.get("name"),
+                    url=datasource.get("url"),
+                )
+
+            if ds is not None and ds not in items:
+                items.append(ds)
         return items
 
     def index_dashboards(self):
@@ -548,6 +563,7 @@ class Indexer:
                 self.datasource_by_ident[datasource.uid] = datasource
                 self.datasource_by_uid[datasource.uid] = datasource
 
+    def index_crossref(self):
         for dashboard_uid, datasource_items in self.dashboard_datasource_index.items():
             datasource_item: DatasourceItem
             for datasource_item in datasource_items:
