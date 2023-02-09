@@ -5,6 +5,9 @@ grafana-wtf changelog
 
 in progress
 ===========
+
+2023-02-09 0.14.0
+=================
 - Add ``--dry-run`` option for ``replace`` subcommand. Thanks, @TaylorMutch.
 - Update dependencies to their most recent versions.
 - Add URLs to dashboard variables and panel view/edit pages to the output of
