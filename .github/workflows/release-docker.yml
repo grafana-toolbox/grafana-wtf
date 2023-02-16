@@ -27,7 +27,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
 env:
-  GHCR_IMAGE_NAME: ghcr.io/panodata/grafana-wtf
+  IMAGE_NAME: "${{ github.repository }}"
 
 jobs:
 
@@ -48,7 +48,7 @@ jobs:
         with:
           # List of Docker images to use as base name for tags
           images: |
-            ${{ env.GHCR_IMAGE_NAME }}
+            ghcr.io/${{ env.IMAGE_NAME }}
           # Generate Docker tags based on the following events/attributes
           tags: |
             type=schedule,pattern=nightly
