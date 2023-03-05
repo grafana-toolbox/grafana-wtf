@@ -357,21 +357,30 @@ class GrafanaWtf(GrafanaEngine):
             what = 'Grafana dashboard "{}"'.format(dashboard_uid)
         else:
             what = "multiple Grafana dashboards"
-        log.info("Aggregating edit history for {what} at {url}".format(what=what, url=self.grafana_url))
+        log.info(f"Acquiring data for {what}")
 
+        uid_filter = None
+        if dashboard_uid:
+            uid_filter = [dashboard_uid]
+        dashboards = self.scan_dashboards(dashboard_uids=uid_filter)
+
+        log.info(f"Aggregating edit history for {what}")
         entries = []
-        for dashboard_meta in self.data.dashboard_list:
-            if dashboard_uid is not None and dashboard_meta["uid"] != dashboard_uid:
+        for dashboard in dashboards:
+            dashboard_data = dashboard["dashboard"]
+            dashboard_meta = dashboard["meta"]
+
+            if dashboard_uid is not None and dashboard_data["uid"] != dashboard_uid:
                 continue
 
-            dashboard_versions = self.get_dashboard_versions(dashboard_meta["id"])
+            dashboard_versions = self.get_dashboard_versions(dashboard_data["id"])
             for dashboard_revision in dashboard_versions:
                 entry = OrderedDict(
                     datetime=dashboard_revision["created"],
                     user=dashboard_revision["createdBy"],
                     message=dashboard_revision["message"],
                     folder=dashboard_meta.get("folderTitle"),
-                    title=dashboard_meta["title"],
+                    title=dashboard_data["title"],
                     version=dashboard_revision["version"],
                     url=urljoin(self.grafana_url, dashboard_meta["url"]),
                 )

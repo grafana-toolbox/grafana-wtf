@@ -8,6 +8,7 @@ in progress
 - Explore dashboards: Ignore ``-- Mixed --`` data sources
 - Caching: Increase default cache TTL to five minutes again
 - Caching: Optionally configure TTL using environment variable ``CACHE_TTL``
+- History: Stop ``grafana-wtf log <UID>`` acquiring *all* dashboards
 
 2023-03-05 0.14.1
 =================

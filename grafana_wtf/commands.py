@@ -186,6 +186,8 @@ def run():
             'No Grafana URL given. Please use "--grafana-url" option or environment variable "GRAFANA_URL".'
         )
 
+    log.info(f"Using Grafana at {grafana_url}")
+
     engine = GrafanaWtf(grafana_url, grafana_token)
     engine.enable_cache(expire_after=cache_ttl, drop_cache=options["drop-cache"])
     engine.enable_concurrency(int(options["concurrency"]))
@@ -222,7 +224,6 @@ def run():
         engine.clear_cache()
 
     if options.log:
-        engine.scan_dashboards()
         entries = engine.log(dashboard_uid=options.dashboard_uid)
         entries = sorted(entries, key=itemgetter("datetime"), reverse=True)
 

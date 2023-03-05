@@ -191,7 +191,7 @@ def test_replace_dashboard_dry_run_success(ldi_resources, capsys):
     assert "Dashboards: 0 hits" in captured.out
 
 
-def test_log_empty(capsys, caplog):
+def test_log_empty(docker_grafana, capsys, caplog):
     # Run command and capture output.
     set_command("log foobar")
     with caplog.at_level(logging.DEBUG):
@@ -199,8 +199,25 @@ def test_log_empty(capsys, caplog):
     captured = capsys.readouterr()
 
     # Verify output.
-    assert 'Aggregating edit history for Grafana dashboard "foobar" at http://localhost:33333' in caplog.text
+    assert 'Aggregating edit history for Grafana dashboard "foobar"' in caplog.text
     assert "[]" in captured.out
+
+
+def test_log_all(ldi_resources, capsys, caplog):
+
+    # Only provision specific dashboard(s).
+    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+
+    # Run command and capture output.
+    set_command("log")
+    with caplog.at_level(logging.DEBUG):
+        grafana_wtf.commands.run()
+    captured = capsys.readouterr()
+
+    # Verify output.
+    assert 'Aggregating edit history for multiple Grafana dashboards' in caplog.text
+    history = json.loads(captured.out)
+    assert len(history) == 3
 
 
 def test_log_json_success(ldi_resources, capsys, caplog):
@@ -214,7 +231,7 @@ def test_log_json_success(ldi_resources, capsys, caplog):
     captured = capsys.readouterr()
 
     # Verify output.
-    assert 'Aggregating edit history for Grafana dashboard "ioUrPwQiz" at http://localhost:33333' in caplog.text
+    assert 'Aggregating edit history for Grafana dashboard "ioUrPwQiz"' in caplog.text
 
     reference = {
         # "datetime": "2021-09-29T17:32:23Z",
@@ -244,7 +261,7 @@ def test_log_tabular_success(ldi_resources, capsys, caplog):
         captured = capsys.readouterr()
 
     # Verify output.
-    assert 'Aggregating edit history for Grafana dashboard "ioUrPwQiz" at http://localhost:33333' in caplog.text
+    assert 'Aggregating edit history for Grafana dashboard "ioUrPwQiz"' in caplog.text
 
     reference = """
     | Notes: n/a<br/>[Testdrive » luftdaten.info generic trend v27](http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27) | User: admin<br/>Date: xxxx-xx-xxTxx:xx:xxZ      |
