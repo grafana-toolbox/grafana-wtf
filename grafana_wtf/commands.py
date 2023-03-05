@@ -105,12 +105,6 @@ def run():
       export GRAFANA_TOKEN=eyJrIjoiWHg...dGJpZCI6MX0=
       grafana-wtf find luftdaten
 
-      # Use infinite cache expiration time, essentially caching forever.
-      grafana-wtf find '#299c46' --cache-ttl=inf
-
-      # Set cache expiration time to zero, essentially disabling the cache.
-      grafana-wtf find geohash --cache-ttl=0
-
       # Search keyword within list of specific dashboards.
       grafana-wtf --select-dashboard=_JJ22OZZk,5iGTqNWZk find grafana-worldmap
 
@@ -139,6 +133,18 @@ def run():
       # Output full history table in Markdown format
       grafana-wtf log --format=tabular:pipe
 
+    Cache control:
+
+      # Use infinite cache expiration time, essentially caching forever.
+      grafana-wtf find '#299c46' --cache-ttl=inf
+
+      # Set cache expiration time to zero, essentially disabling the cache.
+      grafana-wtf find geohash --cache-ttl=0
+
+      # Setting `--cache-ttl` per environment variable `CACHE_TTL` is also possible
+      export CACHE_TTL=infinite
+      grafana-wtf find geohash
+
     """
 
     # Parse command line arguments
@@ -159,11 +165,17 @@ def run():
     grafana_url = options["grafana-url"] or os.getenv("GRAFANA_URL")
     grafana_token = options["grafana-token"] or os.getenv("GRAFANA_TOKEN")
 
+    # Read cache expiration time setting, environment variable takes precedence.
+    if "CACHE_TTL" in os.environ:
+        cache_ttl = os.getenv("CACHE_TTL")
+    else:
+        cache_ttl = options["cache-ttl"]
+
     # Compute cache expiration time.
     try:
-        cache_ttl = int(options["cache-ttl"])
-    except:
-        if not options["cache-ttl"] or "infinite".startswith(options["cache-ttl"].lower()):
+        cache_ttl = int(cache_ttl)
+    except ValueError:
+        if not cache_ttl or "infinite".startswith(cache_ttl.lower()):
             cache_ttl = None
         else:
             raise
