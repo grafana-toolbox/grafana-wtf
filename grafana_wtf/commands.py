@@ -4,18 +4,16 @@
 import json
 import logging
 import os
-from collections import OrderedDict
 from functools import partial
 from operator import itemgetter
 from typing import List
 
 from docopt import DocoptExit, docopt
-from tabulate import tabulate
 
 from grafana_wtf import __appname__, __version__
 from grafana_wtf.core import GrafanaWtf
-from grafana_wtf.report import WtfReport
-from grafana_wtf.tabular_report import TabularReport
+from grafana_wtf.report.textual import TextualSearchReport
+from grafana_wtf.report.tabular import TabularSearchReport, get_table_format, TabularEditHistoryReport
 from grafana_wtf.util import (
     configure_http_logging,
     normalize_options,
@@ -212,9 +210,9 @@ def run():
 
         if output_format.startswith("tabular"):
             table_format = get_table_format(output_format)
-            generator = partial(TabularReport, tblfmt=table_format)
+            generator = partial(TabularSearchReport, tblfmt=table_format)
         else:
-            generator = WtfReport
+            generator = TextualSearchReport
 
         report = generator(grafana_url, verbose=options.verbose)
         report.display(options.search_expression, result)
@@ -231,15 +229,12 @@ def run():
             count = int(options.number)
             entries = entries[:count]
 
-        # TODO: Refactor tabular formatting to WtfTabularReport class.
-        # https://bitbucket.org/astanin/python-tabulate
         if output_format == "json":
             output = json.dumps(entries, indent=4)
 
         elif output_format.startswith("tabular"):
-            table_format = get_table_format(output_format)
-            entries = compact_table(to_table(entries), output_format)
-            output = tabulate(entries, headers="keys", tablefmt=table_format)
+            report = TabularEditHistoryReport(data=entries)
+            output = report.render(output_format)
 
         else:
             raise ValueError(f'Unknown output format "{output_format}"')
@@ -275,53 +270,3 @@ def output_results(output_format: str, results: List):
         raise ValueError(f'Unknown output format "{output_format}"')
 
     print(output)
-
-
-def get_table_format(output_format):
-    tablefmt = None
-    if output_format is not None and output_format.startswith("tabular"):
-        try:
-            tablefmt = output_format.split(":")[1]
-        except:
-            tablefmt = "psql"
-
-    return tablefmt
-
-
-def to_table(entries):
-    for entry in entries:
-        item = entry
-        name = item["title"]
-        if item["folder"]:
-            name = item["folder"].strip() + " » " + name.strip()
-        item["name"] = name.strip(" 🤓")
-        # del item['url']
-        del item["folder"]
-        del item["title"]
-        del item["version"]
-        yield item
-
-
-def compact_table(entries, format):
-    seperator = "\n"
-    if format.endswith("pipe"):
-        seperator = "<br/>"
-    for entry in entries:
-        item = OrderedDict()
-        if format.endswith("pipe"):
-            link = "[{}]({})".format(entry["name"], entry["url"])
-        else:
-            link = "Name: {}\nURL: {}".format(entry["name"], entry["url"])
-        item["Dashboard"] = seperator.join(
-            [
-                "Notes: {}".format(entry["message"].capitalize() or "n/a"),
-                link,
-            ]
-        )
-        item["Update"] = seperator.join(
-            [
-                "User: {}".format(entry["user"]),
-                "Date: {}".format(entry["datetime"]),
-            ]
-        )
-        yield item

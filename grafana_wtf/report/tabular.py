@@ -5,10 +5,21 @@ from jsonpath_rw import parse
 from munch import Munch
 from tabulate import tabulate
 
-from grafana_wtf.report import WtfReport
+from grafana_wtf.report.textual import TextualSearchReport
 
 
-class TabularReport(WtfReport):
+def get_table_format(output_format):
+    tablefmt = None
+    if output_format is not None and output_format.startswith("tabular"):
+        try:
+            tablefmt = output_format.split(":")[1]
+        except:
+            tablefmt = "psql"
+
+    return tablefmt
+
+
+class TabularSearchReport(TextualSearchReport):
     def __init__(self, grafana_url, tblfmt="psql", verbose=False):
         self.format = tblfmt
         super().__init__(grafana_url, verbose=verbose)
@@ -63,3 +74,54 @@ class TabularReport(WtfReport):
                 datasources.append(value)
 
         return datasources
+
+
+class TabularEditHistoryReport:
+
+    def __init__(self, data):
+        self.data = data
+
+    def render(self, output_format: str):
+        table_format = get_table_format(output_format)
+        entries = self.compact_table(self.to_table(self.data), output_format)
+        output = tabulate(entries, headers="keys", tablefmt=table_format)
+        return output
+
+    @staticmethod
+    def to_table(entries):
+        for entry in entries:
+            item = entry
+            name = item["title"]
+            if item["folder"]:
+                name = item["folder"].strip() + " » " + name.strip()
+            item["name"] = name.strip(" 🤓")
+            # del item['url']
+            del item["folder"]
+            del item["title"]
+            del item["version"]
+            yield item
+
+    @staticmethod
+    def compact_table(entries, format):
+        seperator = "\n"
+        if format.endswith("pipe"):
+            seperator = "<br/>"
+        for entry in entries:
+            item = OrderedDict()
+            if format.endswith("pipe"):
+                link = "[{}]({})".format(entry["name"], entry["url"])
+            else:
+                link = "Name: {}\nURL: {}".format(entry["name"], entry["url"])
+            item["Dashboard"] = seperator.join(
+                [
+                    "Notes: {}".format(entry["message"].capitalize() or "n/a"),
+                    link,
+                ]
+            )
+            item["Update"] = seperator.join(
+                [
+                    "User: {}".format(entry["user"]),
+                    "Date: {}".format(entry["datetime"]),
+                ]
+            )
+            yield item
