@@ -10,7 +10,7 @@ from docopt import DocoptExit, docopt
 
 from grafana_wtf import __appname__, __version__
 from grafana_wtf.core import GrafanaWtf
-from grafana_wtf.report.data import output_results
+from grafana_wtf.report.data import output_results, DataSearchReport
 from grafana_wtf.report.textual import TextualSearchReport
 from grafana_wtf.report.tabular import TabularSearchReport, get_table_format, TabularEditHistoryReport
 from grafana_wtf.util import (
@@ -40,7 +40,7 @@ def run():
       --grafana-token=<grafana-token>   Grafana API Key token
       --select-dashboard=<uuid>         Restrict operation to dashboard by UID.
                                         Can be a list of comma-separated dashboard UIDs.
-      --format=<format>                 Output format. [default: json]
+      --format=<format>                 Output format. One of textual, tabular, json, yaml.
       --cache-ttl=<cache-ttl>           Time-to-live for the request cache in seconds. [default: 300]
       --drop-cache                      Drop cache before requesting resources
       --concurrency=<concurrency>       Run multiple requests in parallel. [default: 5]
@@ -176,6 +176,13 @@ def run():
         else:
             raise
 
+    # Compute default output format.
+    if not options.format:
+        if options.find or options.replace:
+            options.format = "textual"
+        else:
+            options.format = "json"
+
     # Sanity checks
     if grafana_url is None:
         raise DocoptExit(
@@ -195,6 +202,7 @@ def run():
     output_format = options["format"]
 
     if options.find or options.replace:
+
         if options.select_dashboard:
             # Restrict scan to list of dashboards.
             dashboard_uids = read_list(options.select_dashboard)
@@ -206,11 +214,13 @@ def run():
 
         result = engine.search(options.search_expression or None)
 
-        if output_format.startswith("tabular"):
+        if output_format.startswith("tab"):
             table_format = get_table_format(output_format)
             generator = partial(TabularSearchReport, tblfmt=table_format)
-        else:
+        elif output_format.startswith("text"):
             generator = TextualSearchReport
+        else:
+            generator = partial(DataSearchReport, format=output_format)
 
         report = generator(grafana_url, verbose=options.verbose)
         report.display(options.search_expression, result)
@@ -220,6 +230,7 @@ def run():
         engine.clear_cache()
 
     if options.log:
+
         entries = engine.log(dashboard_uid=options.dashboard_uid)
         entries = sorted(entries, key=itemgetter("datetime"))
 
@@ -237,7 +248,7 @@ def run():
         if options.reverse:
             entries = list(reversed(entries))
 
-        if output_format.startswith("tabular"):
+        if output_format.startswith("tab"):
             report = TabularEditHistoryReport(data=entries)
             output = report.render(output_format)
             print(output)
@@ -245,6 +256,7 @@ def run():
             output_results(output_format, entries)
 
     if options.explore and options.datasources:
+
         results = engine.explore_datasources()
 
         unused_count = len(results["unused"])

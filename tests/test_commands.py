@@ -143,6 +143,34 @@ def test_find_tabular_dashboard_success(ldi_resources, capsys):
     assert output_table_normalized == reference_table
 
 
+def test_find_format_json(ldi_resources, capsys):
+    # Only provision specific dashboard(s).
+    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+
+    # Run command and capture output.
+    set_command("find ldi_readings --format=json")
+    grafana_wtf.commands.run()
+    captured = capsys.readouterr()
+
+    # Verify output.
+    data = json.loads(captured.out)
+    assert len(data) == 3
+
+
+def test_find_format_yaml(ldi_resources, capsys):
+    # Only provision specific dashboard(s).
+    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+
+    # Run command and capture output.
+    set_command("find ldi_readings --format=yaml")
+    grafana_wtf.commands.run()
+    captured = capsys.readouterr()
+
+    # Verify output.
+    data = yaml.safe_load(captured.out)
+    assert len(data) == 3
+
+
 def test_replace_dashboard_success(ldi_resources, capsys):
     # Only provision specific dashboard(s).
     ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
