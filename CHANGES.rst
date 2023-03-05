@@ -13,6 +13,7 @@ in progress
 - History: Add ``id`` and ``uid`` dashboard attributes to report
 - History: Unlock YAML export format
 - History: Add new options ``--head``, ``--tail``, and ``--reverse``
+- Search: Unlock JSON and YAML export formats
 
 2023-03-05 0.14.1
 =================

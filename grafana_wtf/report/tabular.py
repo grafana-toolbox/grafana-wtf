@@ -25,6 +25,10 @@ class TabularSearchReport(TextualSearchReport):
         super().__init__(grafana_url, verbose=verbose)
 
     def output_items(self, label, items, url_callback):
+        items_rows = self.get_output_items(label, items, url_callback)
+        print(tabulate(items_rows, headers="keys", tablefmt=self.format))
+
+    def get_output_items(self, label, items, url_callback):
         items_rows = [
             {
                 "Type": label,
@@ -33,7 +37,7 @@ class TabularSearchReport(TextualSearchReport):
             }
             for item in items
         ]
-        print(tabulate(items_rows, headers="keys", tablefmt=self.format))
+        return items_rows
 
     def get_bibdata_dict(self, item, **kwargs):
         # Sanity checks.

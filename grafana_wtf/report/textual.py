@@ -21,13 +21,14 @@ class TextualSearchReport:
     def display(self, expression, result):
         expression = expression or "*"
         print('Searching for expression "{}" at Grafana instance {}'.format(_m(expression), self.grafana_url))
-        self.output_items(_s("Data Sources"), result.datasources, self.compute_url_datasource)
-        self.output_items(_s("Dashboards"), result.dashboards, self.compute_url_dashboard)
+        self.output_items("Data Sources", result.datasources, self.compute_url_datasource)
+        self.output_items("Dashboards", result.dashboards, self.compute_url_dashboard)
 
     def output_items(self, label, items, url_callback):
         # Output section name (data source vs. dashboard).
+        hits = len(items)
         print("=" * 42)
-        print("{label}: {hits} hits.".format(hits=_m(len(items)), label=label))
+        print(f"{_s(label)}: {_m(hits)} hits.")
         print("=" * 42)
         print()
 
