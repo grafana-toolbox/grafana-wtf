@@ -4,18 +4,16 @@
 import logging
 import textwrap
 from collections import OrderedDict
-from pprint import pprint
 from urllib.parse import urljoin
 
 import colored
-from six import StringIO
 
 from grafana_wtf.util import format_dict, prettify_json
 
 log = logging.getLogger(__name__)
 
 
-class WtfReport:
+class TextualSearchReport:
     def __init__(self, grafana_url, verbose=False):
         self.grafana_url = grafana_url
         self.verbose = verbose
