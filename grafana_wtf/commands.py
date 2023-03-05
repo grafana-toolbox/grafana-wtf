@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# (c) 2019-2021 Andreas Motl <andreas@hiveeyes.org>
+# (c) 2019-2023 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU Affero General Public License, Version 3
 import logging
 import os
@@ -15,6 +15,7 @@ from grafana_wtf.report.textual import TextualSearchReport
 from grafana_wtf.report.tabular import TabularSearchReport, get_table_format, TabularEditHistoryReport
 from grafana_wtf.util import (
     configure_http_logging,
+    filter_with_sql,
     normalize_options,
     read_list,
     setup_logging,
@@ -31,7 +32,7 @@ def run():
       grafana-wtf [options] explore dashboards
       grafana-wtf [options] find [<search-expression>]
       grafana-wtf [options] replace <search-expression> <replacement> [--dry-run]
-      grafana-wtf [options] log [<dashboard_uid>] [--number=<count>] [--head=<count>] [--tail=<count>] [--reverse]
+      grafana-wtf [options] log [<dashboard_uid>] [--number=<count>] [--head=<count>] [--tail=<count>] [--reverse] [--sql=<sql>]
       grafana-wtf --version
       grafana-wtf (-h | --help)
 
@@ -128,6 +129,22 @@ def run():
 
       # Output full history table in Markdown format
       grafana-wtf log --format=tabular:pipe
+
+      # Display dashboards with only a single edit, in JSON format.
+      grafana-wtf log --sql="
+        SELECT uid, url, COUNT(version) as number_of_edits
+        FROM dashboard_versions
+        GROUP BY uid, url
+        HAVING number_of_edits=1
+      "
+
+      # Display dashboards with only a single edit, in YAML format, `url` attribute only.
+      grafana-wtf log --format=yaml --sql="
+        SELECT url
+        FROM dashboard_versions
+        GROUP BY uid, url
+        HAVING COUNT(version)=1
+      "
 
     Cache control:
 
@@ -231,8 +248,23 @@ def run():
 
     if options.log:
 
+        # Sanity checks.
+        if output_format.startswith("tab") and options.sql:
+            raise DocoptExit(
+                f"Options --format={output_format} and --sql can not be used together, only data output is supported."
+            )
+
         entries = engine.log(dashboard_uid=options.dashboard_uid)
-        entries = sorted(entries, key=itemgetter("datetime"))
+
+        if options.sql is not None:
+            log.info(f"Filtering result with SQL expression: {options.sql}")
+            entries = filter_with_sql(
+                data=entries,
+                view_name="dashboard_versions",
+                expression=options.sql,
+            )
+        else:
+            entries = sorted(entries, key=itemgetter("datetime"))
 
         if options.number is not None:
             limit = int(options.number)

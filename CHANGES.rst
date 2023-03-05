@@ -14,6 +14,7 @@ in progress
 - History: Unlock YAML export format
 - History: Add new options ``--head``, ``--tail``, and ``--reverse``
 - Search: Unlock JSON and YAML export formats
+- History: Add SQL querying capabilities
 
 2023-03-05 0.14.1
 =================
