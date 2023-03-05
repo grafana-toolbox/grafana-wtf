@@ -19,6 +19,7 @@ in progress
   - Send cache database location to log
   - Reduce default cache TTL from five minutes to 60 seconds
 - Drop support for Python 3.6
+- Improve discovery of data sources defined by dashboard variables
 
 2022-06-19 0.13.4
 =================
