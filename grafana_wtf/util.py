@@ -165,3 +165,9 @@ def format_dict(data) -> str:
         output.write(entry)
     output.seek(0)
     return output.read().rstrip()
+
+
+def to_list(value):
+    if not isinstance(value, list):
+        value = [value]
+    return value

@@ -5,6 +5,8 @@ grafana-wtf changelog
 
 in progress
 ===========
+- Fix ``collect_datasource_items`` when hitting special templated datasource.
+  Thanks, @mauhiz.
 
 2023-02-09 0.14.0
 =================
