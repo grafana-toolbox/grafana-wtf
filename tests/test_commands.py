@@ -274,6 +274,21 @@ def test_log_tabular_success(ldi_resources, capsys, caplog):
     assert first_item_normalized == reference
 
 
+def test_log_yaml_success(ldi_resources, capsys, caplog):
+    # Only provision specific dashboard(s).
+    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+
+    # Run command and capture output.
+    set_command("log")
+    with caplog.at_level(logging.DEBUG):
+        grafana_wtf.commands.run()
+    captured = capsys.readouterr()
+
+    data = yaml.safe_load(captured.out)
+
+    assert len(data) == 3
+
+
 def test_explore_datasources_used(create_datasource, create_dashboard, capsys, caplog):
     # Create two data sources and a dashboard which uses them.
     ds_foo = create_datasource(name="foo")

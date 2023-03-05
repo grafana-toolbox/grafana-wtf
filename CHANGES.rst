@@ -11,6 +11,7 @@ in progress
 - History: Stop ``grafana-wtf log <UID>`` acquiring *all* dashboards
 - Refactoring: Move all report renderers to ``grafana_wtf.report``
 - History: Add ``id`` and ``uid`` dashboard attributes to report
+- History: Unlock YAML export format
 
 2023-03-05 0.14.1
 =================
