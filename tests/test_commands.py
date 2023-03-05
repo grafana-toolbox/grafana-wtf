@@ -234,18 +234,20 @@ def test_log_json_success(ldi_resources, capsys, caplog):
     assert 'Aggregating edit history for Grafana dashboard "ioUrPwQiz"' in caplog.text
 
     reference = {
+        "version": 1,
         # "datetime": "2021-09-29T17:32:23Z",
         "user": "admin",
         "message": "",
         "folder": "Testdrive",
         "title": "luftdaten.info generic trend v27",
-        "version": 1,
         "url": "http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27",
+        "uid": "ioUrPwQiz",
     }
 
     history = json.loads(captured.out)
     item = history[-1]
     del item["datetime"]
+    del item["id"]
 
     assert item == reference
 
