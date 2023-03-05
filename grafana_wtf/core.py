@@ -376,13 +376,15 @@ class GrafanaWtf(GrafanaEngine):
             dashboard_versions = self.get_dashboard_versions(dashboard_data["id"])
             for dashboard_revision in dashboard_versions:
                 entry = OrderedDict(
+                    version=dashboard_revision["version"],
                     datetime=dashboard_revision["created"],
                     user=dashboard_revision["createdBy"],
                     message=dashboard_revision["message"],
                     folder=dashboard_meta.get("folderTitle"),
                     title=dashboard_data["title"],
-                    version=dashboard_revision["version"],
                     url=urljoin(self.grafana_url, dashboard_meta["url"]),
+                    id=dashboard_data["id"],
+                    uid=dashboard_data["uid"],
                 )
                 entries.append(entry)
 
