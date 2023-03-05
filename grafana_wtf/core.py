@@ -27,7 +27,7 @@ from grafana_wtf.model import (
     DatasourceItem,
     GrafanaDataModel,
 )
-from grafana_wtf.util import JsonPathFinder, as_bool
+from grafana_wtf.util import JsonPathFinder, as_bool, to_list
 
 log = logging.getLogger(__name__)
 
@@ -499,28 +499,40 @@ class Indexer:
     def collect_datasource_items(self, element):
         element = element or []
         items = []
+
+        def add(item):
+            if item is not None and item not in items:
+                items.append(item)
+
         for node in element:
-            ds = None
 
             # Directly defined datasources.
             if "datasource" in node and node["datasource"]:
                 ds = node.datasource
-                if isinstance(ds, Munch):
+                if isinstance(ds, str):
+                    add(ds)
+                elif isinstance(ds, Munch):
                     ds = dict(ds)
+                    add(ds)
+                continue
 
             # Datasources defined as variables.
             if "type" in node and node["type"] == "datasource":
-                ds_name = node.get("current", {}).get("value")
-                datasource = self.datasource_by_name.get(ds_name, {})
-                ds = dict(
-                    type=datasource.get("type"),
-                    uid=datasource.get("uid"),
-                    name=datasource.get("name"),
-                    url=datasource.get("url"),
-                )
+                values = to_list(node.get("current", {}).get("value"))
+                for ds_name in values:
+                    datasource = self.datasource_by_name.get(ds_name)
+                    if datasource is None:
+                        log.warning(f"Data source '{ds_name}' not found")
+                        continue
+                    ds = dict(
+                        type=datasource.get("type"),
+                        uid=datasource.get("uid"),
+                        name=datasource.get("name"),
+                        url=datasource.get("url"),
+                    )
+                    add(ds)
+                continue
 
-            if ds is not None and ds not in items:
-                items.append(ds)
         return items
 
     def index_dashboards(self):
