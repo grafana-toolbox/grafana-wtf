@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 # (c) 2019-2021 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU Affero General Public License, Version 3
-import json
 import logging
 import os
 from functools import partial
 from operator import itemgetter
-from typing import List
 
 from docopt import DocoptExit, docopt
 
 from grafana_wtf import __appname__, __version__
 from grafana_wtf.core import GrafanaWtf
+from grafana_wtf.report.data import output_results
 from grafana_wtf.report.textual import TextualSearchReport
 from grafana_wtf.report.tabular import TabularSearchReport, get_table_format, TabularEditHistoryReport
 from grafana_wtf.util import (
@@ -19,7 +18,6 @@ from grafana_wtf.util import (
     normalize_options,
     read_list,
     setup_logging,
-    yaml_dump,
 )
 
 log = logging.getLogger(__name__)
@@ -229,17 +227,12 @@ def run():
             count = int(options.number)
             entries = entries[:count]
 
-        if output_format == "json":
-            output = json.dumps(entries, indent=4)
-
-        elif output_format.startswith("tabular"):
+        if output_format.startswith("tabular"):
             report = TabularEditHistoryReport(data=entries)
             output = report.render(output_format)
-
+            print(output)
         else:
-            raise ValueError(f'Unknown output format "{output_format}"')
-
-        print(output)
+            output_results(output_format, entries)
 
     if options.explore and options.datasources:
         results = engine.explore_datasources()
@@ -257,16 +250,3 @@ def run():
     if options.info:
         response = engine.info()
         output_results(output_format, response)
-
-
-def output_results(output_format: str, results: List):
-    if output_format == "json":
-        output = json.dumps(results, indent=4)
-
-    elif output_format == "yaml":
-        output = yaml_dump(results)
-
-    else:
-        raise ValueError(f'Unknown output format "{output_format}"')
-
-    print(output)
