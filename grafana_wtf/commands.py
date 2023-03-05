@@ -31,7 +31,7 @@ def run():
       grafana-wtf [options] explore dashboards
       grafana-wtf [options] find [<search-expression>]
       grafana-wtf [options] replace <search-expression> <replacement> [--dry-run]
-      grafana-wtf [options] log [<dashboard_uid>] [--number=<count>]
+      grafana-wtf [options] log [<dashboard_uid>] [--number=<count>] [--head=<count>] [--tail=<count>] [--reverse]
       grafana-wtf --version
       grafana-wtf (-h | --help)
 
@@ -221,11 +221,21 @@ def run():
 
     if options.log:
         entries = engine.log(dashboard_uid=options.dashboard_uid)
-        entries = sorted(entries, key=itemgetter("datetime"), reverse=True)
+        entries = sorted(entries, key=itemgetter("datetime"))
 
         if options.number is not None:
-            count = int(options.number)
-            entries = entries[:count]
+            limit = int(options.number)
+            entries = entries[-limit:]
+            options.reverse = True
+        elif options.tail is not None:
+            limit = int(options.tail)
+            entries = entries[-limit:]
+        elif options.head is not None:
+            limit = int(options.head)
+            entries = entries[:limit]
+
+        if options.reverse:
+            entries = list(reversed(entries))
 
         if output_format.startswith("tabular"):
             report = TabularEditHistoryReport(data=entries)
