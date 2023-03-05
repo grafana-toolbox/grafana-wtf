@@ -6,6 +6,7 @@ grafana-wtf changelog
 in progress
 ===========
 - Explore dashboards: Ignore ``-- Mixed --`` data sources
+- Caching: Increase default cache TTL to five minutes again
 
 2023-03-05 0.14.1
 =================
