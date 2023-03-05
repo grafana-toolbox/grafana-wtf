@@ -447,7 +447,7 @@ class GrafanaWtf(GrafanaEngine):
             datasources_existing = []
             datasources_missing = []
             for datasource_item in datasource_items:
-                if datasource_item.name == "-- Grafana --":
+                if datasource_item.name in ["-- Grafana --", "-- Mixed --"]:
                     continue
                 datasource_by_uid = ix.datasource_by_uid.get(datasource_item.uid)
                 datasource_by_name = ix.datasource_by_name.get(datasource_item.name)

@@ -5,6 +5,7 @@ grafana-wtf changelog
 
 in progress
 ===========
+- Explore dashboards: Ignore ``-- Mixed --`` data sources
 
 2023-03-05 0.14.1
 =================
