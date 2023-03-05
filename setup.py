@@ -13,6 +13,9 @@ requires = [
     "docopt>=0.6.2,<0.7",
     "munch>=2.5.0,<3",
     "tqdm>=4.60.0,<5",
+    # Filtering
+    "pandas<1.6",
+    "duckdb<0.8",
     # Grafana
     "requests>=2.23.0,<3",
     "grafana-client>=2.1.0,<4",

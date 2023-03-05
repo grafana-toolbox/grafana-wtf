@@ -5,6 +5,7 @@ import io
 import json
 import logging
 import sys
+import typing as t
 from collections import OrderedDict
 
 import yaml
@@ -171,3 +172,34 @@ def to_list(value):
     if not isinstance(value, list):
         value = [value]
     return value
+
+
+trecord = t.List[t.Dict[str, str]]
+
+
+def filter_with_sql(data: trecord, view_name: str, expression: str) -> trecord:
+    """
+    Filter data in "records" shape by SQL expression, using pandas and DuckDB.
+
+    - https://duckdb.org/
+    - https://pandas.pydata.org/
+
+    Example::
+
+        SELECT uid, url, COUNT(version) as number_of_edits
+        FROM dashboard_versions
+        GROUP BY uid, url
+        HAVING number_of_edits=1
+
+    :param data: Data in "record" shape, aka. list of dictionaries
+    :param expression: SQL expression
+    :param view_name: View name the data is registered at, when querying per SQL.
+    :return:
+    """
+    import pandas as pd
+    import duckdb
+    df = pd.DataFrame.from_records(data)
+    duckdb.register(view_name, df)
+    results = duckdb.sql(expression)
+    entries = results.to_df().to_dict(orient="records")
+    return entries

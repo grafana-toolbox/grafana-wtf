@@ -317,6 +317,29 @@ def test_log_yaml_success(ldi_resources, capsys, caplog):
     assert len(data) == 3
 
 
+def test_log_filter_sql(ldi_resources, capsys, caplog):
+    # Only provision specific dashboard(s).
+    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+
+    # Run command and capture output.
+    set_command("""log --format=yaml --sql='
+        SELECT url
+        FROM dashboard_versions
+        GROUP BY uid, url
+        HAVING COUNT(version)=1
+    '
+    """)
+    with caplog.at_level(logging.DEBUG):
+        grafana_wtf.commands.run()
+    captured = capsys.readouterr()
+
+    assert captured.out.strip().split("\n") == [
+        "- url: http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27",
+        "- url: http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33",
+        "- url: http://localhost:33333/dashboards/f/testdrive/testdrive",
+    ]
+
+
 def test_explore_datasources_used(create_datasource, create_dashboard, capsys, caplog):
     # Create two data sources and a dashboard which uses them.
     ds_foo = create_datasource(name="foo")
