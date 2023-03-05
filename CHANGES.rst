@@ -7,6 +7,7 @@ in progress
 ===========
 - Explore dashboards: Ignore ``-- Mixed --`` data sources
 - Caching: Increase default cache TTL to five minutes again
+- Caching: Optionally configure TTL using environment variable ``CACHE_TTL``
 
 2023-03-05 0.14.1
 =================

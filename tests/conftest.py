@@ -22,7 +22,7 @@ CLEANUP_RESOURCES = True
 
 # Make sure development or production settings don't leak into the test suite.
 def clean_environment():
-    for envvar in ["GRAFANA_URL", "GRAFANA_TOKEN"]:
+    for envvar in ["GRAFANA_URL", "GRAFANA_TOKEN", "CACHE_TTL"]:
         try:
             del os.environ[envvar]
         except KeyError:
