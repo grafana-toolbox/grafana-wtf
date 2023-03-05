@@ -12,4 +12,4 @@ COPY . /app
 
 # Install package
 WORKDIR /app
-RUN pip install .
+RUN pip install --prefer-binary .
