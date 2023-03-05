@@ -12,6 +12,7 @@ in progress
 - Refactoring: Move all report renderers to ``grafana_wtf.report``
 - History: Add ``id`` and ``uid`` dashboard attributes to report
 - History: Unlock YAML export format
+- History: Add new options ``--head``, ``--tail``, and ``--reverse``
 
 2023-03-05 0.14.1
 =================
