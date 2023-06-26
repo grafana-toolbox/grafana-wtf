@@ -32,11 +32,9 @@ env:
 jobs:
 
   docker:
-
-    # To save resources, skip running on commits authored by Dependabot.
-    if: ${{ !contains(github.event.head_commit.author.name, 'dependabot') }}
-
     runs-on: ubuntu-latest
+    if: ${{ ! (startsWith(github.actor, 'dependabot') || github.event.pull_request.head.repo.fork ) }}
+
     steps:
       -
         name: Checkout
