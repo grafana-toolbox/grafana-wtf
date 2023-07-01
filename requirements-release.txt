@@ -1,6 +1,6 @@
 bump2version<2
 twine<5
-keyring<24
+keyring<25
 black<24
 isort<6
 build<1
