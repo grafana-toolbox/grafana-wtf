@@ -13,7 +13,7 @@ requires = [
     "six",
     'dataclasses; python_version<"3.7"',
     "docopt>=0.6.2,<0.7",
-    "munch>=2.5.0,<3",
+    "munch>=2.5.0,<4",
     "tqdm>=4.60.0,<5",
     # Filtering
     f"pandas<1.6; {no_linux_on_arm}",
