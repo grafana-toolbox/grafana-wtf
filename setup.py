@@ -26,7 +26,7 @@ requires = [
     "requests-cache>=0.8.0,<2",
     # Output
     "tabulate>=0.8.5,<0.10",
-    "colored>=1.4.3,<2",
+    "colored>=1.4.3,<3",
     "Pygments>=2.7.4,<3",
     "PyYAML>=5,<7",
 ]
