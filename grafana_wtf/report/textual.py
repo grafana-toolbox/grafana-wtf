@@ -87,7 +87,7 @@ class TextualSearchReport:
                     seen[panel.id] = True
                     print()
 
-                    title = panel.title
+                    title = self.get_panel_title(panel)
                     subsection = f"Panel »{title}«"
                     print(_ss(subsection))
                     print("-" * len(subsection))
@@ -123,7 +123,7 @@ class TextualSearchReport:
         """
         bibdata = OrderedDict()
         bibdata["Id"] = _v(panel.id)
-        bibdata["Title"] = _v(panel.title)
+        bibdata["Title"] = _v(self.get_panel_title(panel))
         bibdata["Description"] = _v(str(panel.get("description", "")).strip())
         bibdata["View"] = _v(baseurl + f"?viewPanel={panel.id}")
         bibdata["Edit"] = _v(baseurl + f"?editPanel={panel.id}")
@@ -137,6 +137,9 @@ class TextualSearchReport:
             return item.data.meta.slug
         else:
             return "unknown"
+
+    def get_panel_title(self, panel):
+        return panel.get("title", "")
 
     def get_bibdata_dashboard(self, item, **kwargs):
         """
