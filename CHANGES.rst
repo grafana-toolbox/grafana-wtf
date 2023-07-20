@@ -8,7 +8,7 @@ in progress
 
 2023-07-21 0.15.1
 =================
-- Fix processing panels without title. Thanks, @nikodemus and @atavakoliyext.
+- Fix processing panels without title. Thanks, @nikodemas and @atavakoliyext.
 
 2023-03-06 0.15.0
 =================
