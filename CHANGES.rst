@@ -6,6 +6,10 @@ grafana-wtf changelog
 in progress
 ===========
 
+2023-07-21 0.15.1
+=================
+- Fix processing panels without title. Thanks, @nikodemus and @atavakoliyext.
+
 2023-03-06 0.15.0
 =================
 - Explore dashboards: Ignore ``-- Mixed --`` data sources
