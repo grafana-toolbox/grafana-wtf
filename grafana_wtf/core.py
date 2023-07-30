@@ -451,6 +451,9 @@ class GrafanaWtf(GrafanaEngine):
         # as well as dashboards to datasources and vice versa.
         ix = Indexer(engine=self)
 
+        # Those dashboard names or uids will be ignored.
+        ignore_dashboards = ["-- Grafana --", "-- Mixed --", "grafana", "-- Dashboard --"]
+
         # Compute list of exploration items, looking for dashboards with missing data sources.
         results = []
         for uid in sorted(ix.dashboard_by_uid):
@@ -460,7 +463,11 @@ class GrafanaWtf(GrafanaEngine):
             datasources_existing = []
             datasources_missing = []
             for datasource_item in datasource_items:
-                if datasource_item.name in ["-- Grafana --", "-- Mixed --"]:
+                if (
+                    datasource_item.name in ignore_dashboards
+                    or datasource_item.uid in ignore_dashboards
+                    or datasource_item.type == "grafana"
+                ):
                     continue
                 datasource_by_uid = ix.datasource_by_uid.get(datasource_item.uid)
                 datasource_by_name = ix.datasource_by_name.get(datasource_item.name)
