@@ -5,6 +5,9 @@ grafana-wtf changelog
 
 in progress
 ===========
+
+2023-07-30 0.15.2
+=================
 - Improve finding unused datasources. Thanks, @meyerder.
 
 2023-07-21 0.15.1
