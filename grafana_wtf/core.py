@@ -20,6 +20,7 @@ from tqdm import tqdm
 from tqdm.contrib.logging import tqdm_logging_redirect
 from urllib3.exceptions import InsecureRequestWarning
 
+from grafana_wtf import __appname__
 from grafana_wtf.model import (
     DashboardDetails,
     DashboardExplorationItem,
@@ -55,7 +56,7 @@ class GrafanaEngine:
             log.info(f"Response cache will expire immediately (expire_after=0)")
         else:
             log.info(f"Response cache will expire after {expire_after} seconds")
-        requests_cache.install_cache(expire_after=expire_after, use_cache_dir=True)
+        requests_cache.install_cache(cache_name=__appname__, expire_after=expire_after, use_cache_dir=True)
         cache_database_file = requests_cache.get_cache().db_path
         log.info(f"Response cache database location is {cache_database_file}")
         if drop_cache:
@@ -525,7 +526,6 @@ class Indexer:
                 items.append(item)
 
         for node in element:
-
             # Directly defined datasources.
             if "datasource" in node and node["datasource"]:
                 ds = node.datasource
