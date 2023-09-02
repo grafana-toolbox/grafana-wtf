@@ -16,10 +16,10 @@ requires = [
     "munch>=2.5.0,<5",
     "tqdm>=4.60.0,<5",
     # Filtering
-    f"pandas<1.6; {no_linux_on_arm}",
+    f"pandas<2.1; {no_linux_on_arm}",
     f"duckdb<0.9; {no_linux_on_arm}",
     # Grafana
-    "requests>=2.23.0,<3",
+    "requests>=2.26,<3",
     "grafana-client>=2.1.0,<4",
     "jsonpath-rw>=1.4.0,<2",
     # Caching
