@@ -264,7 +264,6 @@ def test_log_json_success(ldi_resources, capsys, caplog):
     reference = {
         "version": 1,
         # "datetime": "2021-09-29T17:32:23Z",
-        "user": "admin",
         "message": "",
         "folder": "Testdrive",
         "title": "luftdaten.info generic trend v27",
@@ -274,8 +273,10 @@ def test_log_json_success(ldi_resources, capsys, caplog):
 
     history = json.loads(captured.out)
     item = history[-1]
+    assert item["user"] in ["admin", 1]
     del item["datetime"]
     del item["id"]
+    del item["user"]
 
     assert item == reference
 

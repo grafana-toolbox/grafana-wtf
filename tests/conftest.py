@@ -2,6 +2,7 @@ import json
 import os
 import re
 from io import StringIO
+from json import JSONDecodeError
 from pathlib import Path
 from typing import List, Optional, Union
 
@@ -216,7 +217,13 @@ def create_folder(docker_grafana):
     if CLEANUP_RESOURCES:
         if folder_uids:
             for folder_uid in folder_uids:
-                grafana.folder.delete_folder(uid=folder_uid)
+                # Grafana 9.3 introduced a regression.
+                # It returns 200 OK with an empty response body on delete operations.
+                # https://github.com/panodata/grafana-wtf/pull/44
+                try:
+                    grafana.folder.delete_folder(uid=folder_uid)
+                except JSONDecodeError:
+                    pass
 
 
 @pytest.fixture
