@@ -9,6 +9,7 @@ in progress
 - Update to pandas 2.0 and requests 2.26
 - CI: Update to Grafana 8.5.21 and 9.4.3
 - Grafana 9.3: Work around delete folder operation returning empty body
+- Grafana 9.4.3: Accept numeric user identifiers in log responses
 
 2023-07-30 0.15.2
 =================
