@@ -1,5 +1,5 @@
-.. image:: https://github.com/panodata/grafana-wtf/workflows/Tests/badge.svg
-    :target: https://github.com/panodata/grafana-wtf/actions?workflow=Tests
+.. image:: https://github.com/panodata/grafana-wtf/actions/workflows/tests.yml/badge.svg
+    :target: https://github.com/panodata/grafana-wtf/actions/workflows/tests.yml
 
 .. image:: https://img.shields.io/pypi/pyversions/grafana-wtf.svg
     :target: https://pypi.org/project/grafana-wtf/
@@ -10,7 +10,7 @@
 .. image:: https://img.shields.io/pypi/v/grafana-wtf.svg
     :target: https://pypi.org/project/grafana-wtf/
 
-.. image:: https://pepy.tech/badge/grafana-wtf/month
+.. image:: https://static.pepy.tech/badge/grafana-wtf/month
     :target: https://pypi.org/project/grafana-wtf/
 
 .. image:: https://img.shields.io/pypi/l/grafana-wtf.svg
