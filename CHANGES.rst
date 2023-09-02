@@ -7,7 +7,7 @@ in progress
 ===========
 - Caching: Set cache filename to appname. Thanks, @gtirloni.
 - Update to pandas 2.0 and requests 2.26
-- CI: Update to Grafana 8.5.21 and 9.4.3
+- CI: Update to Grafana 8.5.27, 9.5.8, and 10.1.1
 - Grafana 9.3: Work around delete folder operation returning empty body
 - Grafana 9.4.3: Accept numeric user identifiers in log responses
 
