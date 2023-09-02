@@ -3,4 +3,4 @@ twine<5
 keyring<25
 black<24
 isort<6
-build<1
+build<2
