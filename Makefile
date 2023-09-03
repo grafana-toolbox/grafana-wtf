@@ -21,6 +21,7 @@ $(eval isort        := $(venvpath)/bin/isort)
 # Setup Python virtualenv
 setup-virtualenv:
 	@test -e $(python) || python3 -m venv $(venvpath)
+	@$(pip) install --upgrade setuptools
 
 
 # -------

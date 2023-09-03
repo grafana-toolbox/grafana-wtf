@@ -48,9 +48,10 @@ jobs:
           cache: 'pip'
           cache-dependency-path: 'setup.py'
 
-      - name: Install program
+      - name: Setup Project
         run: |
-          pip install --editable=.[test]
+          pip install pip 'setuptools>=64' --upgrade
+          pip install --editable='.[test]'
 
       - name: Run tests
         run: |
