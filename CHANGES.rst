@@ -9,6 +9,7 @@ in progress
 - Update to pandas 2.0 and requests 2.26
 - CI: Update to Grafana 8.5.27, 9.5.8, and 10.1.1
 - Grafana 9.3: Work around delete folder operation returning empty body
+- Grafana 9.5: Use standard UUIDs instead of short UIDs
 
 2023-07-30 0.15.2
 =================

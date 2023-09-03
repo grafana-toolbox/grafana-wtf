@@ -463,7 +463,7 @@ def test_explore_dashboards_grafana7up(grafana_version, ldi_resources, capsys, c
     assert dashboard["datasources_missing"][0]["type"] is None
 
 
-def test_explore_dashboards_empty_annotations(create_datasource, create_dashboard, capsys, caplog):
+def test_explore_dashboards_empty_annotations(grafana_version, create_datasource, create_dashboard, capsys, caplog):
     # Create a dashboard with an anomalous value in the "annotations" slot.
     dashboard = mkdashboard(title="foo")
     dashboard["annotations"]["list"] = None
@@ -484,7 +484,10 @@ def test_explore_dashboards_empty_annotations(create_datasource, create_dashboar
     assert len(data) == 1
     dashboard = data[0]
     assert dashboard["dashboard"]["title"] == "foo"
-    assert len(dashboard["dashboard"]["uid"]) == 9
+    if version.parse(grafana_version) >= version.parse("9.5"):
+        assert len(dashboard["dashboard"]["uid"]) == 36
+    else:
+        assert len(dashboard["dashboard"]["uid"]) == 9
     assert "datasources" not in dashboard
     assert "datasources_missing" not in dashboard
 
