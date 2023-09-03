@@ -281,7 +281,7 @@ def test_log_json_success(ldi_resources, capsys, caplog):
     assert item == reference
 
 
-def test_log_tabular_success(ldi_resources, capsys, caplog, grafana_version):
+def test_log_tabular_success(ldi_resources, capsys, caplog):
     # Only provision specific dashboard(s).
     ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
 
@@ -294,14 +294,9 @@ def test_log_tabular_success(ldi_resources, capsys, caplog, grafana_version):
     # Verify output.
     assert 'Aggregating edit history for Grafana dashboard "ioUrPwQiz"' in caplog.text
 
-    if version.parse(grafana_version) >= version.parse("9.4.3"):
-        reference = """
-        | Notes: n/a<br/>[Testdrive » luftdaten.info generic trend v27](http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27) | User: 1<br/>Date: xxxx-xx-xxTxx:xx:xxZ      |
-        """.strip()
-    else:
-        reference = """
-        | Notes: n/a<br/>[Testdrive » luftdaten.info generic trend v27](http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27) | User: admin<br/>Date: xxxx-xx-xxTxx:xx:xxZ      |
-        """.strip()
+    reference = """
+    | Notes: n/a<br/>[Testdrive » luftdaten.info generic trend v27](http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27) | User: admin<br/>Date: xxxx-xx-xxTxx:xx:xxZ      |
+    """.strip()
 
     first_item_raw = str.splitlines(captured.out)[-1]
     first_item_normalized = re.sub("(.*)Date: .+|(.*)", r"\1Date: xxxx-xx-xxTxx:xx:xxZ      |\2", first_item_raw, 1)
