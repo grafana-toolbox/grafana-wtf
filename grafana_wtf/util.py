@@ -196,8 +196,9 @@ def filter_with_sql(data: trecord, view_name: str, expression: str) -> trecord:
     :param view_name: View name the data is registered at, when querying per SQL.
     :return:
     """
-    import pandas as pd
     import duckdb
+    import pandas as pd
+
     df = pd.DataFrame.from_records(data)
     duckdb.register(view_name, df)
     results = duckdb.sql(expression)
