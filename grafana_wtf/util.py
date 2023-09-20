@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 
 
 def setup_logging(level=logging.INFO):
-    log_format = "%(asctime)-15s [%(name)-22s] %(levelname)-7s: %(message)s"
+    log_format = "%(asctime)-15s [%(name)-36s] %(levelname)-7s: %(message)s"
     logging.basicConfig(format=log_format, stream=sys.stderr, level=level)
 
 
