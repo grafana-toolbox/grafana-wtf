@@ -12,6 +12,8 @@ in progress
 - Grafana 9.5: Use standard UUIDs instead of short UIDs
 - Add ``explore dashboards --data-details`` option, to extend the output
   by many more details about data inquiry / queries. Thanks, @meyerder.
+- Add ``plugins {list,status}`` subcommands, to inquire installed Grafana
+  plugins. Thanks, @bhks.
 
 2023-07-30 0.15.2
 =================

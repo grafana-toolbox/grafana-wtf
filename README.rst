@@ -60,6 +60,12 @@ Explore dashboards and datasources in more detail.
     grafana-wtf explore dashboards
     grafana-wtf explore datasources
 
+Explore plugins.
+::
+
+    grafana-wtf plugins list
+    grafana-wtf plugins status
+
 Run with Docker::
 
     # Access Grafana instance on localhost, without authentication.

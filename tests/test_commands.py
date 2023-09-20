@@ -1,5 +1,7 @@
 import warnings
 
+import grafana_client
+from grafana_client.elements.plugin import filter_plugin_by_id
 from munch import munchify
 from packaging import version
 
@@ -555,3 +557,90 @@ def test_info(docker_grafana, capsys, caplog):
     assert "dashboard_panels" in data["summary"]
     assert "dashboard_annotations" in data["summary"]
     assert "dashboard_templating" in data["summary"]
+
+
+def test_plugins_list(docker_grafana, capsys, caplog):
+    """
+    Verify the plugin inquiry API works.
+    """
+    # Which subcommand to test?
+    set_command("plugins list", "--format=yaml")
+
+    # Run command and capture YAML output.
+    with caplog.at_level(logging.DEBUG):
+        grafana_wtf.commands.run()
+    captured = capsys.readouterr()
+    data = yaml.safe_load(captured.out)
+
+    # Grafana 6 has 28 plugins preinstalled.
+    assert len(data) >= 28
+
+    # Proof the output is correct.
+    plugin = munchify(filter_plugin_by_id(plugin_list=data, plugin_id="alertlist"))
+    assert plugin.name.title() == "Alert List"
+    assert plugin.type == "panel"
+    assert plugin.id == "alertlist"
+    assert plugin.category == ""
+    assert plugin.enabled is True
+    assert plugin.info.author.name in ["Grafana Project", "Grafana Labs"]
+    assert plugin.info.version == ""
+
+    assert "metrics" not in plugin
+    assert "health" not in plugin
+
+
+def test_plugins_status_datasource(grafana_version, docker_grafana, capsys, caplog):
+    """
+    Verify the plugin status (metrics endpoint) on a 3rd-party "datasource" plugin.
+    """
+    if version.parse(grafana_version) < version.parse("8"):
+        raise pytest.skip(f"Plugin status inquiry only works on Grafana 8 and newer")
+
+    # Before conducting a plugin status test, install a non-internal one.
+    grafana = grafana_client.GrafanaApi.from_url(url=docker_grafana, timeout=15)
+    grafana.plugin.install_plugin("yesoreyeram-infinity-datasource")
+
+    # Which subcommand to test?
+    set_command("plugins status", "--format=yaml")
+
+    # Run command and capture YAML output.
+    with caplog.at_level(logging.DEBUG):
+        grafana_wtf.commands.run()
+    captured = capsys.readouterr()
+    data = yaml.safe_load(captured.out)
+
+    # Grafana 6 has 28 plugins preinstalled.
+    assert len(data) >= 28
+
+    # Proof the output is correct.
+    plugin = munchify(filter_plugin_by_id(plugin_list=data, plugin_id="yesoreyeram-infinity-datasource"))
+    assert "go_gc_duration_seconds" in plugin.metrics
+
+
+def test_plugins_status_app(grafana_version, docker_grafana, capsys, caplog):
+    """
+    Verify the plugin status (metrics endpoint and health check) on a 3rd-party "app" plugin.
+    """
+    if version.parse(grafana_version) < version.parse("8"):
+        raise pytest.skip(f"Plugin status inquiry only works on Grafana 8 and newer")
+
+    # Before conducting a plugin status test, install a non-internal one.
+    grafana = grafana_client.GrafanaApi.from_url(url=docker_grafana, timeout=15)
+    grafana.plugin.install_plugin("aws-datasource-provisioner-app")
+
+    # Which subcommand to test?
+    set_command("plugins status", "--format=yaml")
+
+    # Run command and capture YAML output.
+    with caplog.at_level(logging.DEBUG):
+        grafana_wtf.commands.run()
+    captured = capsys.readouterr()
+    data = yaml.safe_load(captured.out)
+
+    # Grafana 6 has 28 plugins preinstalled.
+    assert len(data) >= 28
+
+    # Proof the output is correct.
+    plugin = munchify(filter_plugin_by_id(plugin_list=data, plugin_id="aws-datasource-provisioner-app"))
+    assert "process_virtual_memory_max_bytes" in plugin.metrics
+    assert plugin.health == {"message": "", "status": "OK"}
