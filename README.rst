@@ -44,7 +44,7 @@ grafana-wtf - grep through all Grafana entities in the spirit of `git-wtf`_.
 Synopsis
 ********
 
-Search Grafana API for string "weatherbase".
+Search Grafana (dashboards and datasources) for string "weatherbase".
 ::
 
     grafana-wtf find weatherbase
@@ -54,13 +54,24 @@ Display 50 most recent changes across all dashboards.
 
     grafana-wtf log --number=50
 
+Explore dashboards and datasources in more detail.
+::
+
+    grafana-wtf explore dashboards
+    grafana-wtf explore datasources
+
 Run with Docker::
 
     # Access Grafana instance on localhost, without authentication.
-    docker run --rm -it --env GRAFANA_URL="http://host.docker.internal:3000" ghcr.io/panodata/grafana-wtf grafana-wtf info
+    docker run --rm -it \
+        --env GRAFANA_URL="http://host.docker.internal:3000" \
+        ghcr.io/panodata/grafana-wtf grafana-wtf info
 
     # Access Grafana instance with authentication.
-    docker run --rm -it --env GRAFANA_URL="https://daq.grafana.org/grafana" --env GRAFANA_TOKEN="eyJrIjoiWHg...dGJpZCI6MX0=" ghcr.io/panodata/grafana-wtf grafana-wtf info
+    docker run --rm -it \
+        --env GRAFANA_URL="https://grafana.example.org/grafana" \
+        --env GRAFANA_TOKEN="eyJrIjoiWHg...dGJpZCI6MX0=" \
+        ghcr.io/panodata/grafana-wtf grafana-wtf info
 
 
 ***********
@@ -102,19 +113,41 @@ Please take these steps to create an API key with your Grafana instance:
   please take note of the Bearer token. This is your Grafana API key.
 
 
-*****
-Usage
-*****
+*************
+Configuration
+*************
 
-Before running ``grafana-wtf``, define URL and access token of your Grafana instance::
+Grafana connection
+==================
+
+To configure to which Grafana instance to connect to, and how to authenticate, use
+the ``--grafana-url`` and ``--grafana-token`` command line options.
+
+Alternatively, before running ``grafana-wtf``, you can define URL and access token
+of your Grafana instance by using environment variables::
 
     export GRAFANA_URL=https://daq.example.org/grafana/
     export GRAFANA_TOKEN=eyJrIjoiWHg...dGJpZCI6MX0=
 
-In order to ignore untrusted SSL certificates, append the ``?verify=no`` query string
+In order to accept untrusted SSL certificates, append the ``?verify=no`` query string
 to the ``GRAFANA_URL``::
 
     export GRAFANA_URL=https://daq.example.org/grafana/?verify=no
+
+Caching
+=======
+
+``grafana-wtf`` will cache HTTP responses for 300 seconds by default, in order to save
+resources, by not hitting the server each server. You can configure that setting by using
+the ``--cache-ttl`` option, or the ``CACHE_TTL`` environment variable.
+
+When invoking the program with the ``--drop-cache`` option, it will drop its cache upfront.
+
+
+
+*****
+Usage
+*****
 
 
 General information
@@ -152,7 +185,8 @@ How to find dashboards which use non-existing data sources?
     grafana-wtf explore dashboards --format=yaml
 
     # Display only dashboards which have missing data sources, along with their names.
-    grafana-wtf explore dashboards --format=json | jq '.[] | select( .datasources_missing ) | .dashboard + {ds_missing: .datasources_missing[] | [.name]}'
+    grafana-wtf explore dashboards --format=json | \
+        jq '.[] | select( .datasources_missing ) | .dashboard + {ds_missing: .datasources_missing[] | [.name]}'
 
 How to list all queries used in all dashboards?
 ::
@@ -167,12 +201,6 @@ Searching for strings
 Find the string ``weatherbase`` throughout all dashboards and data sources::
 
     grafana-wtf find weatherbase
-
-.. note::
-
-    ``grafana-wtf`` will cache HTTP responses for 300 seconds by default.
-    When running it with the ``--drop-cache`` option, it will drop its cache upfront.
-
 
 Replacing strings
 =================
