@@ -37,6 +37,8 @@ def run():
       grafana-wtf [options] find [<search-expression>]
       grafana-wtf [options] replace <search-expression> <replacement> [--dry-run]
       grafana-wtf [options] log [<dashboard_uid>] [--number=<count>] [--head=<count>] [--tail=<count>] [--reverse] [--sql=<sql>]
+      grafana-wtf [options] plugins list
+      grafana-wtf [options] plugins status
       grafana-wtf --version
       grafana-wtf (-h | --help)
 
@@ -155,6 +157,14 @@ def run():
         GROUP BY uid, url
         HAVING COUNT(version)=1
       "
+
+    List plugins:
+
+      # Inquire plugin list.
+      grafana-wtf plugins list
+
+      # Inquire plugin health check and metrics endpoints.
+      grafana-wtf plugins status
 
     Cache control:
 
@@ -310,4 +320,13 @@ def run():
 
     if options.info:
         response = engine.info()
+        output_results(output_format, response)
+
+    if options.plugins:
+        if options.list:
+            response = engine.plugins_list()
+        elif options.status:
+            response = engine.plugins_status()
+        else:
+            raise DocoptExit('Subcommand "plugins" only provides "list" and "status"')
         output_results(output_format, response)
