@@ -50,7 +50,7 @@ def docker_grafana(docker_services):
     """
     docker_services.start("grafana")
     public_port = docker_services.wait_for_service("grafana", 3000)
-    url = "http://{docker_services.docker_ip}:{public_port}".format(**locals())
+    url = "http://admin:admin@{docker_services.docker_ip}:{public_port}".format(**locals())
     return url
 
 
