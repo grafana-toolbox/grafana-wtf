@@ -1,9 +1,8 @@
 name: Tests
 
 on:
+  pull_request: ~
   push:
-    branches: [ main ]
-  pull_request:
     branches: [ main ]
 
   # Also, run each Monday At 07:00.
