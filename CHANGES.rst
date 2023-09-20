@@ -10,6 +10,8 @@ in progress
 - CI: Update to Grafana 8.5.27, 9.5.8, and 10.1.1
 - Grafana 9.3: Work around delete folder operation returning empty body
 - Grafana 9.5: Use standard UUIDs instead of short UIDs
+- Add ``explore dashboards --data-details`` option, to extend the output
+  by many more details about data inquiry / queries. Thanks, @meyerder.
 
 2023-07-30 0.15.2
 =================

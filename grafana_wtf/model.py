@@ -91,21 +91,99 @@ class DashboardExplorationItem:
     datasources: List[Munch]
     grafana_url: str
 
-    def format_compact(self):
+    def format(self, with_data_details: bool = False):
+        """
+        Generate a representation from selected information.
+
+        - dashboard
+        - datasources
+        - details
+            - panels/targets
+            - annotations
+            - templating
+        """
         dbshort = OrderedDict(
             title=self.dashboard.dashboard.title,
             uid=self.dashboard.dashboard.uid,
             path=self.dashboard.meta.url,
             url=urljoin(self.grafana_url, self.dashboard.meta.url),
         )
-        item = OrderedDict(dashboard=dbshort)
+
+        dsshort = []
         for datasource in self.datasources:
-            item.setdefault("datasources", [])
-            dsshort = OrderedDict(
+            item = OrderedDict(
                 uid=datasource.get("uid"),
                 name=datasource.name,
                 type=datasource.type,
                 url=datasource.url,
             )
-            item["datasources"].append(dsshort)
-        return item
+            dsshort.append(item)
+
+        data = Munch(dashboard=dbshort, datasources=dsshort)
+        if with_data_details:
+            data.details = self.collect_data_details()
+        return data
+
+    def collect_data_details(self):
+        """
+        Collect details concerned about data from dashboard information.
+        """
+
+        dbdetails = DashboardDetails(dashboard=self.dashboard)
+
+        ds_panels = self.collect_data_nodes(dbdetails.panels)
+        ds_annotations = self.collect_data_nodes(dbdetails.annotations)
+        ds_templating = self.collect_data_nodes(dbdetails.templating)
+
+        targets = []
+        for panel in ds_panels:
+            panel_item = self._format_panel_compact(panel)
+            for target in panel.targets:
+                target["_panel"] = panel_item
+                targets.append(target)
+
+        response = OrderedDict(targets=targets, annotations=ds_annotations, templating=ds_templating)
+
+        return response
+
+    @staticmethod
+    def collect_data_nodes(element):
+        """
+        Select all element nodes which have a "datasource" attribute.
+        """
+        element = element or []
+        items = []
+
+        def add(item):
+            if item is not None and item not in items:
+                items.append(item)
+
+        for node in element:
+            if "datasource" in node and node["datasource"]:
+                add(node)
+
+        return items
+
+    @staticmethod
+    def _format_panel_compact(panel):
+        """
+        Return a compact representation of panel information.
+        """
+        attributes = ["id", "title", "type", "datasource"]
+        data = OrderedDict()
+        for attribute in attributes:
+            data[attribute] = panel.get(attribute)
+        return data
+
+    @staticmethod
+    def _format_data_node_compact(item: Dict) -> Dict:
+        """
+        Return a compact representation of an element concerned about data.
+        """
+        data = OrderedDict()
+        data["datasource"] = item.get("datasource")
+        data["type"] = item.get("type")
+        for key, value in item.items():
+            if "query" in key.lower():
+                data[key] = value
+        return data

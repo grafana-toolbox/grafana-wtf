@@ -29,7 +29,7 @@ def run():
     Usage:
       grafana-wtf [options] info
       grafana-wtf [options] explore datasources
-      grafana-wtf [options] explore dashboards
+      grafana-wtf [options] explore dashboards [--data-details]
       grafana-wtf [options] find [<search-expression>]
       grafana-wtf [options] replace <search-expression> <replacement> [--dry-run]
       grafana-wtf [options] log [<dashboard_uid>] [--number=<count>] [--head=<count>] [--tail=<count>] [--reverse] [--sql=<sql>]
@@ -91,6 +91,12 @@ def run():
       # Display all dashboards using data sources with a specific type. Here: InfluxDB.
       grafana-wtf explore dashboards --format=json | jq 'select( .[] | .datasources | .[].type=="influxdb" )'
 
+      # Display dashboards and many more details about where data source queries are happening.
+      # Specifically, within "panels/targets", "annotations", and "templating" slots.
+      grafana-wtf explore dashboards --data-details --format=json
+
+      # Display all database queries within dashboards.
+      grafana-wtf explore dashboards --data-details --format=json | jq -r '.[].details | values[] | .[].query // "null"'
 
     Find dashboards and data sources:
 
@@ -298,7 +304,7 @@ def run():
         output_results(output_format, results)
 
     if options.explore and options.dashboards:
-        results = engine.explore_dashboards()
+        results = engine.explore_dashboards(with_data_details=options.data_details)
         output_results(output_format, results)
 
     if options.info:

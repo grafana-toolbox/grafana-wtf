@@ -1,5 +1,6 @@
 import warnings
 
+from munch import munchify
 from packaging import version
 
 warnings.filterwarnings("ignore", category=DeprecationWarning, module=".*docopt.*")
@@ -463,6 +464,36 @@ def test_explore_dashboards_grafana7up(grafana_version, ldi_resources, capsys, c
     assert dashboard["datasources_missing"][0]["type"] is None
 
 
+def test_explore_dashboards_data_details(ldi_resources, capsys, caplog):
+    """
+    Explore more details of dashboards, wrt. to data and queries.
+    """
+
+    # Only provision specific dashboard.
+    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v33.json"])
+
+    # Compute exploration.
+    set_command("explore dashboards --data-details", "--format=yaml")
+
+    # Run command and capture YAML output.
+    with caplog.at_level(logging.DEBUG):
+        grafana_wtf.commands.run()
+    captured = capsys.readouterr()
+    data = yaml.safe_load(captured.out)
+
+    # Proof the output is correct.
+    assert len(data) == 1
+    dashboard = munchify(data[0])
+    assert dashboard.details.targets[0]._panel.id == 18
+    assert dashboard.details.targets[0]._panel.type == "graph"
+    assert dashboard.details.targets[0]._panel.datasource.type == "influxdb"
+    assert dashboard.details.targets[0]._panel.datasource.uid == "PDF2762CDFF14A314"
+    assert dashboard.details.targets[0].fields == [{'func': 'mean', 'name': 'P1'}]
+    assert dashboard.details.templating[0].query == \
+           "SELECT osm_country_code AS __value, country_and_countrycode AS __text " \
+           "FROM ldi_network ORDER BY osm_country_code"
+
+
 def test_explore_dashboards_empty_annotations(grafana_version, create_datasource, create_dashboard, capsys, caplog):
     # Create a dashboard with an anomalous value in the "annotations" slot.
     dashboard = mkdashboard(title="foo")
@@ -488,7 +519,7 @@ def test_explore_dashboards_empty_annotations(grafana_version, create_datasource
         assert len(dashboard["dashboard"]["uid"]) == 36
     else:
         assert len(dashboard["dashboard"]["uid"]) == 9
-    assert "datasources" not in dashboard
+    assert dashboard["datasources"] == []
     assert "datasources_missing" not in dashboard
 
 
