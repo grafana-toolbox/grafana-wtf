@@ -15,7 +15,6 @@ def output_results(output_format: str, results: List):
 
 
 def serialize_results(output_format: str, results: List):
-
     if output_format == "json":
         output = json.dumps(results, indent=4)
 

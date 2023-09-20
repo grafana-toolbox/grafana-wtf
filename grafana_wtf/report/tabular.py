@@ -81,7 +81,6 @@ class TabularSearchReport(TextualSearchReport):
 
 
 class TabularEditHistoryReport:
-
     def __init__(self, data):
         self.data = data
 

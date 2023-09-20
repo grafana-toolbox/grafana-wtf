@@ -53,7 +53,7 @@ test-coverage: install-tests
 # Formatting
 # ----------
 format: install-releasetools
-	$(isort) .
+	$(isort) grafana_wtf test
 	$(black) .
 
 
