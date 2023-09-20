@@ -233,7 +233,6 @@ def test_log_empty(docker_grafana, capsys, caplog):
 
 
 def test_log_all(ldi_resources, capsys, caplog):
-
     # Only provision specific dashboard(s).
     ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
 
@@ -244,7 +243,7 @@ def test_log_all(ldi_resources, capsys, caplog):
     captured = capsys.readouterr()
 
     # Verify output.
-    assert 'Aggregating edit history for multiple Grafana dashboards' in caplog.text
+    assert "Aggregating edit history for multiple Grafana dashboards" in caplog.text
     history = json.loads(captured.out)
     assert len(history) == 3
 
@@ -324,13 +323,15 @@ def test_log_filter_sql(ldi_resources, capsys, caplog):
     ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
 
     # Run command and capture output.
-    set_command("""log --format=yaml --sql='
+    set_command(
+        """log --format=yaml --sql='
         SELECT url
         FROM dashboard_versions
         GROUP BY uid, url
         HAVING COUNT(version)=1
     '
-    """)
+    """
+    )
     with caplog.at_level(logging.DEBUG):
         grafana_wtf.commands.run()
     captured = capsys.readouterr()
@@ -488,10 +489,12 @@ def test_explore_dashboards_data_details(ldi_resources, capsys, caplog):
     assert dashboard.details.targets[0]._panel.type == "graph"
     assert dashboard.details.targets[0]._panel.datasource.type == "influxdb"
     assert dashboard.details.targets[0]._panel.datasource.uid == "PDF2762CDFF14A314"
-    assert dashboard.details.targets[0].fields == [{'func': 'mean', 'name': 'P1'}]
-    assert dashboard.details.templating[0].query == \
-           "SELECT osm_country_code AS __value, country_and_countrycode AS __text " \
-           "FROM ldi_network ORDER BY osm_country_code"
+    assert dashboard.details.targets[0].fields == [{"func": "mean", "name": "P1"}]
+    assert (
+        dashboard.details.templating[0].query
+        == "SELECT osm_country_code AS __value, country_and_countrycode AS __text "
+        "FROM ldi_network ORDER BY osm_country_code"
+    )
 
 
 def test_explore_dashboards_empty_annotations(grafana_version, create_datasource, create_dashboard, capsys, caplog):

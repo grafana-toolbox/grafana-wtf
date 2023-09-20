@@ -10,9 +10,13 @@ from docopt import DocoptExit, docopt
 
 from grafana_wtf import __appname__, __version__
 from grafana_wtf.core import GrafanaWtf
-from grafana_wtf.report.data import output_results, DataSearchReport
+from grafana_wtf.report.data import DataSearchReport, output_results
+from grafana_wtf.report.tabular import (
+    TabularEditHistoryReport,
+    TabularSearchReport,
+    get_table_format,
+)
 from grafana_wtf.report.textual import TextualSearchReport
-from grafana_wtf.report.tabular import TabularSearchReport, get_table_format, TabularEditHistoryReport
 from grafana_wtf.util import (
     configure_http_logging,
     filter_with_sql,
@@ -225,7 +229,6 @@ def run():
     output_format = options["format"]
 
     if options.find or options.replace:
-
         if options.select_dashboard:
             # Restrict scan to list of dashboards.
             dashboard_uids = read_list(options.select_dashboard)
@@ -253,7 +256,6 @@ def run():
         engine.clear_cache()
 
     if options.log:
-
         # Sanity checks.
         if output_format.startswith("tab") and options.sql:
             raise DocoptExit(
@@ -294,7 +296,6 @@ def run():
             output_results(output_format, entries)
 
     if options.explore and options.datasources:
-
         results = engine.explore_datasources()
 
         unused_count = len(results["unused"])
