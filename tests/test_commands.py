@@ -1,7 +1,7 @@
 import warnings
 
 import grafana_client
-from grafana_client.elements.plugin import filter_plugin_by_id
+from grafana_client.elements.plugin import get_plugin_by_id
 from munch import munchify
 from packaging import version
 
@@ -576,7 +576,7 @@ def test_plugins_list(docker_grafana, capsys, caplog):
     assert len(data) >= 28
 
     # Proof the output is correct.
-    plugin = munchify(filter_plugin_by_id(plugin_list=data, plugin_id="alertlist"))
+    plugin = munchify(get_plugin_by_id(plugin_list=data, plugin_id="alertlist"))
     assert plugin.name.title() == "Alert List"
     assert plugin.type == "panel"
     assert plugin.id == "alertlist"
@@ -598,7 +598,7 @@ def test_plugins_status_datasource(grafana_version, docker_grafana, capsys, capl
 
     # Before conducting a plugin status test, install a non-internal one.
     grafana = grafana_client.GrafanaApi.from_url(url=docker_grafana, timeout=15)
-    grafana.plugin.install_plugin("yesoreyeram-infinity-datasource")
+    grafana.plugin.install("yesoreyeram-infinity-datasource")
 
     # Which subcommand to test?
     set_command("plugins status", "--format=yaml")
@@ -613,7 +613,7 @@ def test_plugins_status_datasource(grafana_version, docker_grafana, capsys, capl
     assert len(data) >= 28
 
     # Proof the output is correct.
-    plugin = munchify(filter_plugin_by_id(plugin_list=data, plugin_id="yesoreyeram-infinity-datasource"))
+    plugin = munchify(get_plugin_by_id(plugin_list=data, plugin_id="yesoreyeram-infinity-datasource"))
     assert "go_gc_duration_seconds" in plugin.metrics
 
 
@@ -626,7 +626,7 @@ def test_plugins_status_app(grafana_version, docker_grafana, capsys, caplog):
 
     # Before conducting a plugin status test, install a non-internal one.
     grafana = grafana_client.GrafanaApi.from_url(url=docker_grafana, timeout=15)
-    grafana.plugin.install_plugin("aws-datasource-provisioner-app")
+    grafana.plugin.install("aws-datasource-provisioner-app")
 
     # Which subcommand to test?
     set_command("plugins status", "--format=yaml")
@@ -641,6 +641,42 @@ def test_plugins_status_app(grafana_version, docker_grafana, capsys, caplog):
     assert len(data) >= 28
 
     # Proof the output is correct.
-    plugin = munchify(filter_plugin_by_id(plugin_list=data, plugin_id="aws-datasource-provisioner-app"))
+    plugin = munchify(get_plugin_by_id(plugin_list=data, plugin_id="aws-datasource-provisioner-app"))
     assert "process_virtual_memory_max_bytes" in plugin.metrics
     assert plugin.health == {"message": "", "status": "OK"}
+
+
+def test_plugins_install_uninstall(grafana_version, docker_grafana, capsys, caplog):
+    """
+    Verify the plugin status when installing/uninstalling a plugin.
+    """
+    if version.parse(grafana_version) < version.parse("8"):
+        raise pytest.skip(f"Plugin status inquiry only works on Grafana 8 and newer")
+
+    plugin_name = "yesoreyeram-infinity-datasource"
+
+    # Before conducting a plugin status test, install a non-internal one.
+    grafana = grafana_client.GrafanaApi.from_url(url=docker_grafana, timeout=15)
+    grafana.plugin.install(plugin_name)
+
+    # Which subcommand to test?
+    set_command(f"plugins status --id={plugin_name}", "--format=yaml")
+
+    # Run command and capture YAML output.
+    with caplog.at_level(logging.DEBUG):
+        grafana_wtf.commands.run()
+    captured = capsys.readouterr()
+    plugin_status = munchify(yaml.safe_load(captured.out))
+
+    # Proof the output is correct.
+    assert plugin_status.id == plugin_name
+    assert version.parse(plugin_status.version) >= version.parse("2.0.0")
+    assert "go_gc_duration_seconds" in plugin_status.metrics
+
+    # Uninstall the plugin again.
+    grafana.plugin.uninstall(plugin_name)
+
+    # Verify uninstalling worked.
+    with pytest.raises(KeyError) as ex:
+        grafana_wtf.commands.run()
+    assert ex.match("Plugin not found: yesoreyeram-infinity-datasource")
