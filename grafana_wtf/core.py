@@ -493,38 +493,49 @@ class GrafanaWtf(GrafanaEngine):
         return results
 
     def plugins_list(self):
-        return self.grafana.plugin.get_installed_plugins()
+        return self.grafana.plugin.list()
 
     def plugins_status(self):
         status = []
-        plugins = self.grafana.plugin.get_installed_plugins()
+        plugins = self.grafana.plugin.list()
         for plugin in plugins:
-            plugin = munchify(plugin)
-            item = Munch(
-                name=plugin.name,
-                type=plugin.type,
-                id=plugin.id,
-                enabled=plugin.enabled,
-                category=plugin.category,
-                version=plugin.info.version,
-                signature=plugin.get("signature"),
-            )
-
-            # Status inquiry is not provided by all plugins. Let's filter them.
-            # Effectively, run it only on non-internal "app" and "datasource" items.
-            if item.type != "panel" and item.signature != "internal":
-                try:
-                    item.health = self.grafana.plugin.health_check_plugin(plugin.id)
-                except Exception as ex:
-                    log.warning(f"Health check failed for plugin {item.id}, type={item.type}: {ex}")
-                try:
-                    item.metrics = self.grafana.plugin.get_plugin_metrics(plugin.id)
-                except Exception as ex:
-                    log.warning(f"Metrics inquiry failed for plugin {item.id}, type={item.type}: {ex}")
-            else:
-                log.info(f"Skipping status inquiry for plugin {item.id}, type={item.type}")
+            item = self.get_plugin_status(plugin)
             status.append(item)
         return status
+
+    def get_plugin_status(self, plugin):
+        plugin = munchify(plugin)
+        item = Munch(
+            name=plugin.name,
+            type=plugin.type,
+            id=plugin.id,
+            enabled=plugin.enabled,
+            category=plugin.category,
+            version=plugin.info.version,
+            signature=plugin.get("signature"),
+        )
+
+        # Status inquiry is not provided by all plugins. Let's filter them.
+        # Effectively, run it only on non-internal "app" and "datasource" items.
+        if item.type != "panel" and item.signature != "internal":
+            try:
+                item.health = self.grafana.plugin.health(plugin.id)
+            except Exception as ex:
+                log.warning(f"Health check failed for plugin {item.id}, type={item.type}: {ex}")
+            try:
+                item.metrics = self.grafana.plugin.metrics(plugin.id)
+            except Exception as ex:
+                log.warning(f"Metrics inquiry failed for plugin {item.id}, type={item.type}: {ex}")
+        else:
+            log.info(f"Skipping status inquiry for plugin {item.id}, type={item.type}")
+        return item
+
+    def plugins_list_by_id(self, plugin_id):
+        return self.grafana.plugin.by_id(plugin_id=plugin_id)
+
+    def plugins_status_by_id(self, plugin_id):
+        plugin = self.plugins_list_by_id(plugin_id)
+        return self.get_plugin_status(plugin)
 
 
 class Indexer:

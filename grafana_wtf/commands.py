@@ -37,8 +37,8 @@ def run():
       grafana-wtf [options] find [<search-expression>]
       grafana-wtf [options] replace <search-expression> <replacement> [--dry-run]
       grafana-wtf [options] log [<dashboard_uid>] [--number=<count>] [--head=<count>] [--tail=<count>] [--reverse] [--sql=<sql>]
-      grafana-wtf [options] plugins list
-      grafana-wtf [options] plugins status
+      grafana-wtf [options] plugins list [--id=]
+      grafana-wtf [options] plugins status [--id=]
       grafana-wtf --version
       grafana-wtf (-h | --help)
 
@@ -324,9 +324,15 @@ def run():
 
     if options.plugins:
         if options.list:
-            response = engine.plugins_list()
+            if options.id:
+                response = engine.plugins_list_by_id(options.id)
+            else:
+                response = engine.plugins_list()
         elif options.status:
-            response = engine.plugins_status()
+            if options.id:
+                response = engine.plugins_status_by_id(options.id)
+            else:
+                response = engine.plugins_status()
         else:
             raise DocoptExit('Subcommand "plugins" only provides "list" and "status"')
         output_results(output_format, response)
