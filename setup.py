@@ -17,7 +17,7 @@ requires = [
     "tqdm>=4.60.0,<5",
     # Filtering
     f"pandas<2.1; {no_linux_on_arm}",
-    f"duckdb<0.9; {no_linux_on_arm}",
+    f"duckdb<0.10; {no_linux_on_arm}",
     # Grafana
     "requests>=2.26,<3",
     "grafana-client>=3.9.1,<4",
