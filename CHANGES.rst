@@ -7,7 +7,7 @@ in progress
 ===========
 - Caching: Set cache filename to appname. Thanks, @gtirloni.
 - Update to pandas 2.0 and requests 2.26
-- CI: Update to Grafana 8.5.27, 9.5.8, and 10.1.1
+- CI: Update to Grafana 8.5.27, 9.5.12, and 10.1.4
 - Grafana 9.3: Work around delete folder operation returning empty body
 - Grafana 9.5: Use standard UUIDs instead of short UIDs
 - Add ``explore dashboards --data-details`` option, to extend the output
