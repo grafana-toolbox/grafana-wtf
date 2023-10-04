@@ -5,6 +5,9 @@ grafana-wtf changelog
 
 in progress
 ===========
+
+2023-10-03 0.16.0
+=================
 - Caching: Set cache filename to appname. Thanks, @gtirloni.
 - Update to pandas 2.0 and requests 2.26
 - CI: Update to Grafana 8.5.27, 9.5.12, and 10.1.4
