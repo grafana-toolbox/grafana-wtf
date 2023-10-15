@@ -2,11 +2,14 @@
 # (c) 2021 Andreas Motl <andreas@hiveeyes.org>
 # License: GNU Affero General Public License, Version 3
 import dataclasses
+import logging
 from collections import OrderedDict
 from typing import Dict, List, Optional
 from urllib.parse import urljoin
 
 from munch import Munch
+
+logger = logging.getLogger(__name__)
 
 
 @dataclasses.dataclass
@@ -138,9 +141,10 @@ class DashboardExplorationItem:
         targets = []
         for panel in ds_panels:
             panel_item = self._format_panel_compact(panel)
-            for target in panel.targets:
-                target["_panel"] = panel_item
-                targets.append(target)
+            if "targets" in panel:
+                for target in panel.targets:
+                    target["_panel"] = panel_item
+                    targets.append(target)
 
         response = OrderedDict(targets=targets, annotations=ds_annotations, templating=ds_templating)
 

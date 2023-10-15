@@ -8,6 +8,8 @@ in progress
 
 - Use 60 minutes as default cache TTL
 - Fix wrong ``jq`` commands in documentation. Thanks, @rahulnandan.
+- Fix collecting data information from dashboards w/o ``targets`` slots
+  in panels
 
 2023-10-03 0.16.0
 =================
