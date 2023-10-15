@@ -143,7 +143,7 @@ to the ``GRAFANA_URL``::
 Caching
 =======
 
-``grafana-wtf`` will cache HTTP responses for 300 seconds by default, in order to save
+``grafana-wtf`` will cache HTTP responses for 60 minutes by default, in order to save
 resources, by not hitting the server each server. You can configure that setting by using
 the ``--cache-ttl`` option, or the ``CACHE_TTL`` environment variable.
 

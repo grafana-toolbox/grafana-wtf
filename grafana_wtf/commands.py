@@ -48,7 +48,7 @@ def run():
       --select-dashboard=<uuid>         Restrict operation to dashboard by UID.
                                         Can be a list of comma-separated dashboard UIDs.
       --format=<format>                 Output format. One of textual, tabular, json, yaml.
-      --cache-ttl=<cache-ttl>           Time-to-live for the request cache in seconds. [default: 300]
+      --cache-ttl=<cache-ttl>           Time-to-live for the request cache in seconds. [default: 3600]
       --drop-cache                      Drop cache before requesting resources
       --concurrency=<concurrency>       Run multiple requests in parallel. [default: 5]
       --dry-run                         Dry-run mode for the `replace` subcommand.
