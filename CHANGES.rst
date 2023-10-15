@@ -6,6 +6,8 @@ grafana-wtf changelog
 in progress
 ===========
 
+- Use 60 minutes as default cache TTL
+
 2023-10-03 0.16.0
 =================
 - Caching: Set cache filename to appname. Thanks, @gtirloni.
