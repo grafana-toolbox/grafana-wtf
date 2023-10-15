@@ -26,7 +26,7 @@ jobs:
       matrix:
         os: [ "ubuntu-latest" ]
         python-version: [ "3.7", "3.11" ]
-        grafana-version: [ "6.7.6", "7.5.17", "8.5.27", "9.5.12", "10.1.4" ]
+        grafana-version: [ "6.7.6", "7.5.17", "8.5.27", "9.5.13", "10.1.5" ]
 
     env:
       OS_TYPE: ${{ matrix.os }}
