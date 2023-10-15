@@ -192,7 +192,16 @@ How to find dashboards which use non-existing data sources?
 
     # Display only dashboards which have missing data sources, along with their names.
     grafana-wtf explore dashboards --format=json | \
-        jq '.[] | select( .datasources_missing ) | .dashboard + {ds_missing: .datasources_missing[] | [.name]}'
+        jq '.[] | select(.datasources_missing) | .dashboard + {ds_missing: .datasources_missing[] | [.name]}'
+
+How to find dashboards using specific data sources?
+::
+
+    # Display all dashboards which use a specific data source, filtered by data source name.
+    grafana-wtf explore dashboards --format=json | jq '.[] | select(.datasources | .[].type=="<datasource_name>")'
+
+    # Display all dashboards using data sources with a specific type. Here: InfluxDB.
+    grafana-wtf explore dashboards --format=json | jq '.[] | select(.datasources | .[].type=="influxdb")'
 
 How to list all queries used in all dashboards?
 ::
