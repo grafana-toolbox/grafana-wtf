@@ -6,11 +6,15 @@ grafana-wtf changelog
 in progress
 ===========
 
-- Use 60 minutes as default cache TTL
+
+2023-11-15 0.17.0
+=================
+- Use 60 minutes as default cache TTL. Thanks, @pciang.
 - Fix wrong ``jq`` commands in documentation. Thanks, @rahulnandan.
 - Fix collecting data information from dashboards w/o ``targets`` slots
   in panels
-- Add ``--queries-only`` option to ``explore dashboards`` subcommand
+- Add ``--queries-only`` option to ``explore dashboards`` subcommand.
+  Thanks, @meyerder.
 
 2023-10-03 0.16.0
 =================
