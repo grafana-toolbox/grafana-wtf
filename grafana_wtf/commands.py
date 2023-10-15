@@ -34,6 +34,7 @@ def run():
       grafana-wtf [options] info
       grafana-wtf [options] explore datasources
       grafana-wtf [options] explore dashboards [--data-details] [--queries-only]
+      grafana-wtf [options] explore permissions
       grafana-wtf [options] find [<search-expression>]
       grafana-wtf [options] replace <search-expression> <replacement> [--dry-run]
       grafana-wtf [options] log [<dashboard_uid>] [--number=<count>] [--head=<count>] [--tail=<count>] [--reverse] [--sql=<sql>]
@@ -317,6 +318,10 @@ def run():
 
     if options.explore and options.dashboards:
         results = engine.explore_dashboards(with_data_details=options.data_details, queries_only=options.queries_only)
+        output_results(output_format, results)
+
+    if options.explore and options.permissions:
+        results = engine.explore_permissions()
         output_results(output_format, results)
 
     if options.info:
