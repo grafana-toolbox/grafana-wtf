@@ -13,6 +13,7 @@ Iteration +1
 - [o] Does it croak on play.grafana.org?
 - [o] Why are there two newlines on stdout output?
 - [o] Query dashboard edit history by dashboard tag(s)
+- [o] Set user agent to ``grafana-wtf``
 
 
 ************
