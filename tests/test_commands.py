@@ -487,11 +487,11 @@ def test_explore_dashboards_data_details(ldi_resources, capsys, caplog):
     # Proof the output is correct.
     assert len(data) == 1
     dashboard = munchify(data[0])
-    assert dashboard.details.targets[0]._panel.id == 18
-    assert dashboard.details.targets[0]._panel.type == "graph"
-    assert dashboard.details.targets[0]._panel.datasource.type == "influxdb"
-    assert dashboard.details.targets[0]._panel.datasource.uid == "PDF2762CDFF14A314"
-    assert dashboard.details.targets[0].fields == [{"func": "mean", "name": "P1"}]
+    assert dashboard.details.panels[0]._panel.id == 18
+    assert dashboard.details.panels[0]._panel.type == "graph"
+    assert dashboard.details.panels[0]._panel.datasource.type == "influxdb"
+    assert dashboard.details.panels[0]._panel.datasource.uid == "PDF2762CDFF14A314"
+    assert dashboard.details.panels[0].fields == [{"func": "mean", "name": "P1"}]
     assert (
         dashboard.details.templating[0].query
         == "SELECT osm_country_code AS __value, country_and_countrycode AS __text "

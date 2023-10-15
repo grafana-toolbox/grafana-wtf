@@ -206,8 +206,8 @@ How to find dashboards using specific data sources?
 How to list all queries used in all dashboards?
 ::
 
-    grafana-wtf explore dashboards --data-details --format=json | \
-        jq -r '.[].details | values[] | .[].query // "null"'
+    grafana-wtf explore dashboards --data-details --queries-only --format=json | \
+        jq '.[].details | values[] | .[] | .expr,.jql,.query,.rawSql | select( . != null and . != "" )'
 
 
 Searching for strings

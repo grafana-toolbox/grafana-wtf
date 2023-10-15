@@ -447,7 +447,7 @@ class GrafanaWtf(GrafanaEngine):
 
         return response
 
-    def explore_dashboards(self, with_data_details: bool = False):
+    def explore_dashboards(self, with_data_details: bool = False, queries_only: bool = False):
         # Prepare indexes, mapping dashboards by uid, datasources by name
         # as well as dashboards to datasources and vice versa.
         ix = Indexer(engine=self)
@@ -482,7 +482,9 @@ class GrafanaWtf(GrafanaEngine):
             )
 
             # Format results, using only a subset of all the attributes.
-            result = item.format(with_data_details=with_data_details)
+            result = item.format(with_data_details=with_data_details, queries_only=queries_only)
+            if result is None:
+                continue
 
             # Add information about missing data sources.
             if datasources_missing:

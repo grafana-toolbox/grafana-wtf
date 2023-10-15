@@ -10,6 +10,7 @@ in progress
 - Fix wrong ``jq`` commands in documentation. Thanks, @rahulnandan.
 - Fix collecting data information from dashboards w/o ``targets`` slots
   in panels
+- Add ``--queries-only`` option to ``explore dashboards`` subcommand
 
 2023-10-03 0.16.0
 =================
