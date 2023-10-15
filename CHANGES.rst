@@ -9,6 +9,7 @@ in progress
 - OCI: Removed builds for linux/arm/v7
 - Dependencies: Use ``verlib2`` instead of ``packaging``
 - Dependencies: Updated to ``docopt-ng``
+- Add subcommand ``explore permissions``. Thanks, @meyerder.
 
 2024-03-07 0.18.0
 =================

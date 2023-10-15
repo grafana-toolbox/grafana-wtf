@@ -492,6 +492,23 @@ class GrafanaWtf(GrafanaEngine):
 
         return results
 
+    def explore_permissions(self):
+        self.scan_folders()
+        self.scan_dashboards()
+
+        items = []
+        for folder in self.data.folders:
+            perms = self.grafana.folder.get_folder_permissions(folder["uid"])
+            item = OrderedDict(item=folder, type="folder", permissions=perms)
+            items.append(item)
+
+        for dashboard in self.data.dashboards:
+            perms = self.grafana.dashboard.get_permissions_by_uid(dashboard["dashboard"]["uid"])
+            item = OrderedDict(item=dashboard["meta"], type="dashboard", permissions=perms)
+            items.append(item)
+
+        return items
+
     def plugins_list(self):
         return self.grafana.plugin.list()
 
