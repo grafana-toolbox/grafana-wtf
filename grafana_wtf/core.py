@@ -539,6 +539,13 @@ class GrafanaWtf(GrafanaEngine):
         plugin = self.plugins_list_by_id(plugin_id)
         return self.get_plugin_status(plugin)
 
+    def channels_list(self):
+        return self.grafana.notifications.lookup_channels()
+
+    def channels_list_by_id(self, channel_id):
+        channel = self.grafana.notifications.get_channel_by_id(channel_id)
+        return channel
+
 
 class Indexer:
     def __init__(self, engine: GrafanaWtf):

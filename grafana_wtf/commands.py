@@ -39,6 +39,7 @@ def run():
       grafana-wtf [options] log [<dashboard_uid>] [--number=<count>] [--head=<count>] [--tail=<count>] [--reverse] [--sql=<sql>]
       grafana-wtf [options] plugins list [--id=]
       grafana-wtf [options] plugins status [--id=]
+      grafana-wtf [options] channels [--id=]
       grafana-wtf --version
       grafana-wtf (-h | --help)
 
@@ -335,4 +336,11 @@ def run():
                 response = engine.plugins_status()
         else:
             raise DocoptExit('Subcommand "plugins" only provides "list" and "status"')
+        output_results(output_format, response)
+
+    if options.channels:
+        if options.id:
+            response = engine.channels_list_by_id(options.id)
+        else:
+            response = engine.channels_list()
         output_results(output_format, response)
