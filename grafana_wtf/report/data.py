@@ -44,5 +44,7 @@ class DataSearchReport(TabularSearchReport):
             ),
             datasources=self.get_output_items("Datasource", result.datasources, self.compute_url_datasource),
             dashboards=self.get_output_items("Dashboard", result.dashboards, self.compute_url_dashboard),
+            notifications=self.get_output_items("Notifications channel", result.notifications,
+                                                self.compute_url_notifications),
         )
         output_results(self.format, output)
