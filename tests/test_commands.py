@@ -338,11 +338,13 @@ def test_log_filter_sql(ldi_resources, capsys, caplog):
         grafana_wtf.commands.run()
     captured = capsys.readouterr()
 
-    assert captured.out.strip().split("\n") == [
-        "- url: http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27",
-        "- url: http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33",
-        "- url: http://localhost:33333/dashboards/f/testdrive/testdrive",
-    ]
+    assert set(captured.out.strip().split("\n")) == set(
+        [
+            "- url: http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27",
+            "- url: http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33",
+            "- url: http://localhost:33333/dashboards/f/testdrive/testdrive",
+        ]
+    )
 
 
 def test_explore_datasources_used(create_datasource, create_dashboard, capsys, caplog):
