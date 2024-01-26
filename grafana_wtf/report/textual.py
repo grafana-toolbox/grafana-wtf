@@ -23,10 +23,9 @@ class TextualSearchReport:
         print('Searching for expression "{}" at Grafana instance {}'.format(_m(expression), self.grafana_url))
         self.output_items("Data Sources", result.datasources, self.compute_url_datasource)
         self.output_items("Dashboards", result.dashboards, self.compute_url_dashboard)
-        self.output_items("Notification channels", result.notifications, self.compute_url_notifications)
 
     def output_items(self, label, items, url_callback):
-        # Output section name (data source, dashboard or notification channel).
+        # Output section name (data source vs. dashboard).
         hits = len(items)
         print("=" * 42)
         print(f"{_s(label)}: {_m(hits)} hits.")
@@ -173,9 +172,6 @@ class TextualSearchReport:
 
     def compute_url_dashboard(self, dashboard):
         return urljoin(self.grafana_url, dashboard.data.meta.url)
-
-    def compute_url_notifications(self, notifications):
-        return urljoin(self.grafana_url, f"/alerting/notification/{notifications.data.id}/edit")
 
     def experimental(self):
         # print(match)

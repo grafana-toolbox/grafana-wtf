@@ -157,7 +157,7 @@ def test_find_format_json(ldi_resources, capsys):
 
     # Verify output.
     data = json.loads(captured.out)
-    assert len(data) == 4
+    assert len(data) == 3
 
 
 def test_find_format_yaml(ldi_resources, capsys):
@@ -171,7 +171,7 @@ def test_find_format_yaml(ldi_resources, capsys):
 
     # Verify output.
     data = yaml.safe_load(captured.out)
-    assert len(data) == 4
+    assert len(data) == 3
 
 
 def test_replace_dashboard_success(ldi_resources, capsys):

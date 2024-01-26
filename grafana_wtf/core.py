@@ -121,7 +121,6 @@ class GrafanaEngine:
     def scan_common(self):
         self.scan_dashboards()
         self.scan_datasources()
-        self.scan_notifications()
 
     def scan_all(self):
         self.scan_common()
@@ -156,8 +155,7 @@ class GrafanaEngine:
         self.data.snapshots = self.grafana.snapshots.get_dashboard_snapshots()
 
     def scan_notifications(self):
-        self.data.notifications = munchify(self.grafana.notifications.lookup_channels())
-        return self.data.notifications
+        self.data.notifications = self.grafana.notifications.lookup_channels()
 
     def scan_datasources(self):
         log.info("Scanning datasources")
@@ -328,7 +326,7 @@ class GrafanaWtf(GrafanaEngine):
     def search(self, expression):
         log.info('Searching Grafana at "{}" for expression "{}"'.format(self.grafana_url, expression))
 
-        results = Munch(datasources=[], dashboard_list=[], dashboards=[], notifications=[])
+        results = Munch(datasources=[], dashboard_list=[], dashboards=[])
 
         # Check datasources
         log.info("Searching data sources")
@@ -337,10 +335,6 @@ class GrafanaWtf(GrafanaEngine):
         # Check dashboards
         log.info("Searching dashboards")
         self.search_items(expression, self.data.dashboards, results.dashboards)
-
-        # Check notification channels
-        log.info("Searching notification channels")
-        self.search_items(expression, self.data.notifications, results.notifications)
 
         return results
 
@@ -568,7 +562,6 @@ class Indexer:
         # Gather all data.
         self.dashboards = self.engine.scan_dashboards()
         self.datasources = self.engine.scan_datasources()
-        self.notifications = self.engine.scan_notifications()
 
         # Invoke indexer.
         self.index()
