@@ -42,7 +42,7 @@ class TextualSearchReport:
 
             # Output match title / entity name.
             name = self.get_item_name(item)
-            section = f"Dashboard »{name}«"
+            section = f"{_s(label)[:-1]} »{name}«"
             print(_ssb(section))
             print("=" * len(section))
 
