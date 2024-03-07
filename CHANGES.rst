@@ -6,6 +6,12 @@ grafana-wtf changelog
 in progress
 ===========
 
+2024-03-07 0.18.0
+=================
+- Added "channels" subcommand, to get information about the notification
+  channels. Thanks, @nikodemas.
+- Fixed datasource output text, it is not always a dashboard. Thanks,
+  @nikodemas.
 
 2023-11-15 0.17.0
 =================
