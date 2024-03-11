@@ -16,7 +16,7 @@ requires = [
     "munch>=2.5.0,<5",
     "tqdm>=4.60.0,<5",
     # Filtering
-    f"pandas<2.2; {no_linux_on_arm}",
+    f"pandas<2.3; {no_linux_on_arm}",
     f"duckdb<0.11; {no_linux_on_arm}",
     # Grafana
     "requests>=2.26,<3",
