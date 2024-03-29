@@ -369,9 +369,9 @@ def test_explore_datasources_used(create_datasource, create_dashboard, capsys, c
 
     # Results will be sorted by name, so `bar` comes first.
     assert data["used"][0]["datasource"]["name"] == "bar"
-    assert data["used"][0]["datasource"]["type"] == "testdata"
+    assert data["used"][0]["datasource"]["type"] in ["testdata", "grafana-testdata-datasource"]
     assert data["used"][1]["datasource"]["name"] == "foo"
-    assert data["used"][1]["datasource"]["type"] == "testdata"
+    assert data["used"][1]["datasource"]["type"] in ["testdata", "grafana-testdata-datasource"]
 
 
 def test_explore_datasources_unused(create_datasource, capsys, caplog):
@@ -522,7 +522,9 @@ def test_explore_dashboards_empty_annotations(grafana_version, create_datasource
     assert len(data) == 1
     dashboard = data[0]
     assert dashboard["dashboard"]["title"] == "foo"
-    if version.parse(grafana_version) >= version.parse("9.5"):
+    if version.parse(grafana_version) >= version.parse("10.4"):
+        assert len(dashboard["dashboard"]["uid"]) == 14
+    elif version.parse(grafana_version) >= version.parse("9.5"):
         assert len(dashboard["dashboard"]["uid"]) == 36
     else:
         assert len(dashboard["dashboard"]["uid"]) == 9
@@ -644,8 +646,11 @@ def test_plugins_status_app(grafana_version, docker_grafana, capsys, caplog):
 
     # Proof the output is correct.
     plugin = munchify(get_plugin_by_id(plugin_list=data, plugin_id="aws-datasource-provisioner-app"))
+    assert plugin.id == "aws-datasource-provisioner-app"
     assert "process_virtual_memory_max_bytes" in plugin.metrics
-    assert plugin.health == {"message": "", "status": "OK"}
+
+    if version.parse(grafana_version) < version.parse("10.3"):
+        assert plugin.health == {"message": "", "status": "OK"}
 
 
 def test_plugins_install_uninstall(grafana_version, docker_grafana, capsys, caplog):
