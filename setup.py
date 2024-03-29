@@ -12,7 +12,7 @@ requires = [
     # Core
     "six",
     'dataclasses; python_version<"3.7"',
-    "docopt>=0.6.2,<0.7",
+    "docopt-ng>=0.6.2,<0.10",
     "munch>=2.5.0,<5",
     "tqdm>=4.60.0,<5",
     "verlib2==0.2.0",
