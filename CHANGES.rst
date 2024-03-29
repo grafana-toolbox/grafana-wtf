@@ -6,6 +6,7 @@ grafana-wtf changelog
 in progress
 ===========
 - Updated to grafana-client 4.0.0.
+- OCI: Removed builds for linux/arm/v7
 
 2024-03-07 0.18.0
 =================
