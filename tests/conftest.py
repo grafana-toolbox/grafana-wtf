@@ -10,7 +10,7 @@ import grafanalib.core
 import pytest
 from grafana_client.client import GrafanaClientError
 from grafanalib._gen import write_dashboard
-from packaging import version
+from verlib2 import version
 
 from grafana_wtf.core import GrafanaWtf
 

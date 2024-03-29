@@ -3,7 +3,7 @@ import warnings
 import grafana_client
 from grafana_client.elements.plugin import get_plugin_by_id
 from munch import munchify
-from packaging import version
+from verlib2 import version
 
 warnings.filterwarnings("ignore", category=DeprecationWarning, module=".*docopt.*")
 import json

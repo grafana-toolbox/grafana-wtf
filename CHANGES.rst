@@ -7,6 +7,7 @@ in progress
 ===========
 - Updated to grafana-client 4.0.0.
 - OCI: Removed builds for linux/arm/v7
+- Dependencies: Use ``verlib2`` instead of ``packaging``
 
 2024-03-07 0.18.0
 =================
