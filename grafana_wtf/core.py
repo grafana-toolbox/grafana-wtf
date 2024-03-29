@@ -16,6 +16,7 @@ import requests_cache
 from grafana_client.api import GrafanaApi
 from grafana_client.client import GrafanaClientError, GrafanaUnauthorizedError
 from munch import Munch, munchify
+from requests_cache import CachedSession
 from tqdm import tqdm
 from tqdm.contrib.logging import tqdm_logging_redirect
 from urllib3.exceptions import InsecureRequestWarning
@@ -34,6 +35,8 @@ log = logging.getLogger(__name__)
 
 
 class GrafanaEngine:
+    session = niquests.Session()
+
     def __init__(self, grafana_url, grafana_token):
         self.grafana_url = grafana_url
         self.grafana_token = grafana_token
@@ -56,9 +59,11 @@ class GrafanaEngine:
             log.info(f"Response cache will expire immediately (expire_after=0)")
         else:
             log.info(f"Response cache will expire after {expire_after} seconds")
-        requests_cache.install_cache(cache_name=__appname__, expire_after=expire_after, use_cache_dir=True)
-        cache_database_file = requests_cache.get_cache().db_path
-        log.info(f"Response cache database location is {cache_database_file}")
+
+        self.session = CachedSession(cache_name=__appname__, expire_after=expire_after, use_cache_dir=True)
+
+        cache = self.session.cache
+        log.info(f"Response cache database location is: {cache.db_path}")
         if drop_cache:
             log.info("Dropping response cache")
             self.clear_cache()
@@ -72,8 +77,8 @@ class GrafanaEngine:
     def enable_concurrency(self, concurrency):
         self.concurrency = concurrency
 
-    @staticmethod
-    def grafana_client_factory(grafana_url, grafana_token=None):
+    @classmethod
+    def grafana_client_factory(cls, grafana_url, grafana_token=None):
         url = urlparse(grafana_url)
 
         # Grafana API Key auth
@@ -97,6 +102,9 @@ class GrafanaEngine:
             url_path_prefix=url.path.lstrip("/"),
             verify=verify,
         )
+        if cls.session:
+            cls.session.headers["User-Agent"] = grafana.client.user_agent
+            grafana.client.s = cls.session
 
         return grafana
 
