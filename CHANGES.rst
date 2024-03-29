@@ -5,6 +5,7 @@ grafana-wtf changelog
 
 in progress
 ===========
+- Updated to grafana-client 4.0.0.
 
 2024-03-07 0.18.0
 =================

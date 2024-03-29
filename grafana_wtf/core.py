@@ -11,7 +11,7 @@ from concurrent.futures.thread import ThreadPoolExecutor
 from urllib.parse import parse_qs, urljoin, urlparse
 
 import colored
-import requests
+import niquests
 import requests_cache
 from grafana_client.api import GrafanaApi
 from grafana_client.client import GrafanaClientError, GrafanaUnauthorizedError
@@ -107,9 +107,7 @@ class GrafanaEngine:
         # Todo: Review the pool settings and eventually adjust according to concurrency level or other parameters.
         # https://urllib3.readthedocs.io/en/latest/advanced-usage.html#customizing-pool-behavior
         # https://laike9m.com/blog/requests-secret-pool_connections-and-pool_maxsize,89/
-        adapter = requests.adapters.HTTPAdapter(pool_connections=100, pool_maxsize=100, max_retries=5, pool_block=True)
-        self.grafana.client.s.mount("http://", adapter)
-        self.grafana.client.s.mount("https://", adapter)
+        self.grafana.client.s = niquests.Session(pool_connections=100, pool_maxsize=100, retries=5)
 
         return self
 

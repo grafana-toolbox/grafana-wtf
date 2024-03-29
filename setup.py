@@ -19,8 +19,7 @@ requires = [
     f"pandas<2.3; {no_linux_on_arm}",
     f"duckdb<0.11; {no_linux_on_arm}",
     # Grafana
-    "requests>=2.26,<3",
-    "grafana-client>=3.9.1,<4",
+    "grafana-client>=4,<5",
     "jsonpath-rw>=1.4.0,<2",
     # Caching
     "requests-cache>=0.8.0,<2",
