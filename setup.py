@@ -15,6 +15,7 @@ requires = [
     "docopt>=0.6.2,<0.7",
     "munch>=2.5.0,<5",
     "tqdm>=4.60.0,<5",
+    "verlib2==0.2.0",
     # Filtering
     f"pandas<2.3; {no_linux_on_arm}",
     f"duckdb<0.11; {no_linux_on_arm}",
