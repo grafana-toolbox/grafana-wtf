@@ -6,8 +6,10 @@ grafana-wtf changelog
 in progress
 ===========
 - CI: Verify support for Grafana 11
-- AMG compatibility: Fetch Grafana version from `/api/frontend/settings`
-  instead of `/api/health`. Thanks, @squadgazzz.
+- AMG compatibility: Fetch Grafana version from ``/api/frontend/settings``
+  instead of ``/api/health``. Thanks, @squadgazzz.
+- Accept ``datasource`` attribute on ``DatasourceItem``, but
+  ignore it for the time being. Thanks, @apepojken.
 
 2024-04-20 0.19.1
 =================

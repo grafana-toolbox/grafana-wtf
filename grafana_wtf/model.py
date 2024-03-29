@@ -3,8 +3,9 @@
 # License: GNU Affero General Public License, Version 3
 import dataclasses
 import logging
+import warnings
 from collections import OrderedDict
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin
 
 from munch import Munch
@@ -158,6 +159,10 @@ class DashboardDataDetails:
 
 @dataclasses.dataclass
 class DatasourceItem:
+    """
+    Represent a datasource reference within a panel, annotation, or templating (variable).
+    """
+
     uid: Optional[str] = None
     name: Optional[str] = None
     type: Optional[str] = None
@@ -168,10 +173,30 @@ class DatasourceItem:
         if isinstance(payload, Munch):
             payload = dict(payload)
         if isinstance(payload, dict):
+            cls.validate(payload)
             return cls(**payload)
         if isinstance(payload, str):
             return cls(name=payload)
         raise TypeError(f"Unknown payload type for DatasourceItem: {type(payload)}")
+
+    @classmethod
+    def validate(cls, data: dict):
+        if "datasource" in data:
+            warnings.warn(
+                f"""
+The `datasource` attribute is ignored for the time being.
+
+See also: https://github.com/panodata/grafana-wtf/issues/110
+
+Please report back this occurrence to the grafana-wtf issue tracker,
+so the maintainers can improve the situation.
+
+The context of this error is in `DatasourceItem`, using this ingress data:
+{data}
+""".strip(),
+                UserWarning,
+            )
+            del data["datasource"]
 
 
 @dataclasses.dataclass
