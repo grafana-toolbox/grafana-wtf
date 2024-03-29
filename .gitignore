@@ -5,3 +5,5 @@
 /.venv*
 /var
 /dist
+.coverage
+coverage.xml
