@@ -11,6 +11,7 @@ in progress
 - Dependencies: Updated to ``docopt-ng``
 - Add subcommand ``explore permissions``. Thanks, @meyerder.
 - Added support for Python 3.12
+- Removed support for Python 3.7
 
 2024-03-07 0.18.0
 =================
