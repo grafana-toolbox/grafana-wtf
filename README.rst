@@ -1,30 +1,41 @@
-.. image:: https://github.com/panodata/grafana-wtf/actions/workflows/tests.yml/badge.svg
-    :target: https://github.com/panodata/grafana-wtf/actions/workflows/tests.yml
-
-.. image:: https://img.shields.io/pypi/pyversions/grafana-wtf.svg
-    :target: https://pypi.org/project/grafana-wtf/
-
-.. image:: https://img.shields.io/pypi/status/grafana-wtf.svg
-    :target: https://pypi.org/project/grafana-wtf/
-
-.. image:: https://img.shields.io/pypi/v/grafana-wtf.svg
-    :target: https://pypi.org/project/grafana-wtf/
-
-.. image:: https://static.pepy.tech/badge/grafana-wtf/month
-    :target: https://pypi.org/project/grafana-wtf/
-
-.. image:: https://img.shields.io/pypi/l/grafana-wtf.svg
-    :target: https://github.com/panodata/grafana-wtf/blob/main/LICENSE
-
-.. image:: https://img.shields.io/badge/Grafana-6.x%20--%2010.x-blue.svg
-    :target: https://github.com/grafana/grafana
-    :alt: Supported Grafana versions
-
-|
-
 ###########
 grafana-wtf
 ###########
+
+|
+
+.. start-badges
+
+|ci-tests| |ci-coverage| |license| |pypi-downloads|
+|python-versions| |status| |pypi-version| |grafana-versions|
+
+.. |ci-tests| image:: https://github.com/panodata/grafana-wtf/actions/workflows/tests.yml/badge.svg
+    :target: https://github.com/panodata/grafana-wtf/actions/workflows/tests.yml
+
+.. |ci-coverage| image:: https://codecov.io/gh/panodata/grafana-wtf/branch/main/graph/badge.svg
+    :target: https://codecov.io/gh/panodata/grafana-wtf
+    :alt: Test suite code coverage
+
+.. |python-versions| image:: https://img.shields.io/pypi/pyversions/grafana-wtf.svg
+    :target: https://pypi.org/project/grafana-wtf/
+
+.. |status| image:: https://img.shields.io/pypi/status/grafana-wtf.svg
+    :target: https://pypi.org/project/grafana-wtf/
+
+.. |pypi-version| image:: https://img.shields.io/pypi/v/grafana-wtf.svg
+    :target: https://pypi.org/project/grafana-wtf/
+
+.. |pypi-downloads| image:: https://static.pepy.tech/badge/grafana-wtf/month
+    :target: https://pypi.org/project/grafana-wtf/
+
+.. |license| image:: https://img.shields.io/pypi/l/grafana-wtf.svg
+    :target: https://github.com/panodata/grafana-wtf/blob/main/LICENSE
+
+.. |grafana-versions| image:: https://img.shields.io/badge/Grafana-6.x%20--%2010.x-blue.svg
+    :target: https://github.com/grafana/grafana
+    :alt: Supported Grafana versions
+
+.. end-badges
 
 
 *****
