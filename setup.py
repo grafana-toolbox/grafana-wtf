@@ -11,7 +11,6 @@ no_linux_on_arm = "platform_system != 'Linux' or (platform_machine != 'armv7l' a
 requires = [
     # Core
     "six",
-    'dataclasses; python_version<"3.7"',
     "docopt-ng>=0.6.2,<0.10",
     "munch>=2.5.0,<5",
     "tqdm>=4.60.0,<5",
@@ -63,7 +62,6 @@ setup(
         "Operating System :: Unix",
         "Operating System :: MacOS",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
