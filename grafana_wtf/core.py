@@ -21,7 +21,7 @@ from tqdm import tqdm
 from tqdm.contrib.logging import tqdm_logging_redirect
 from urllib3.exceptions import InsecureRequestWarning
 
-from grafana_wtf import __appname__
+from grafana_wtf import __appname__, __version__
 from grafana_wtf.model import (
     DashboardDetails,
     DashboardExplorationItem,
@@ -103,7 +103,8 @@ class GrafanaEngine:
             verify=verify,
         )
         if cls.session:
-            cls.session.headers["User-Agent"] = grafana.client.user_agent
+            user_agent = f"{__appname__}/{__version__}"
+            cls.session.headers["User-Agent"] = user_agent
             grafana.client.s = cls.session
 
         return grafana

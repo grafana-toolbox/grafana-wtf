@@ -16,6 +16,7 @@ in progress
   behaviour. Thanks, @JensRichnow and @JWCook.
 - Improve error reporting and exit behavior when connecting to Grafana
   instance fails. Thanks, @interfan7.
+- Set ``User-Agent`` HTTP header like ``grafana-wtf/0.18.0``
 
 2024-03-07 0.18.0
 =================
