@@ -5,7 +5,10 @@ grafana-wtf changelog
 
 in progress
 ===========
-- Updated to grafana-client 4.0.0.
+
+2024-03-31 0.19.0
+=================
+- Updated to grafana-client 4.0.0. Thanks, @Ousret.
 - OCI: Removed builds for linux/arm/v7
 - Dependencies: Use ``verlib2`` instead of ``packaging``
 - Dependencies: Updated to ``docopt-ng``
