@@ -12,7 +12,6 @@ Iteration +1
   - https://swarm.hiveeyes.org/grafana/dashboards/f/VM-KxXvWk/ruhrgebiet
 - [o] Why are there two newlines on stdout output?
 - [o] Query dashboard edit history by dashboard tag(s)
-- [o] Use per-domain caching, to improve multi-instance use
 
 
 ************
