@@ -10,10 +10,8 @@ Iteration +1
 
   - https://swarm.hiveeyes.org/grafana/dashboards/f/ODVFg50mz/arnas
   - https://swarm.hiveeyes.org/grafana/dashboards/f/VM-KxXvWk/ruhrgebiet
-- [o] Does it croak on play.grafana.org?
 - [o] Why are there two newlines on stdout output?
 - [o] Query dashboard edit history by dashboard tag(s)
-- [o] Set user agent to ``grafana-wtf``
 
 
 ************
@@ -94,3 +92,5 @@ Done
 - [x] Add JSON and YAML output formats for ``find`` subcommand
 - [x] History: Group edits by dashboard, to be able to count them
 - [x] History: Add a feature to filter dashboards by ``COUNT(edits) = 1``
+- [x] Does it croak on play.grafana.org? No.
+- [x] Set user agent to ``grafana-wtf``
