@@ -228,12 +228,15 @@ def run():
             'No Grafana URL given. Please use "--grafana-url" option or environment variable "GRAFANA_URL".'
         )
 
-    log.info(f"Using Grafana at {grafana_url}")
+    log.info(f"Grafana location: {grafana_url}")
 
     engine = GrafanaWtf(grafana_url, grafana_token)
+
     engine.enable_cache(expire_after=cache_ttl, drop_cache=options["drop-cache"])
     engine.enable_concurrency(int(options["concurrency"]))
     engine.setup()
+
+    log.info(f"Grafana version: {engine.version}")
 
     if options.replace:
         engine.clear_cache()

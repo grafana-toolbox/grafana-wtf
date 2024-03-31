@@ -321,7 +321,7 @@ def grafana_version(docker_grafana):
     """
     engine = GrafanaWtf(grafana_url=docker_grafana, grafana_token=None)
     engine.setup()
-    grafana_version = engine.version()
+    grafana_version = engine.version
     return grafana_version
 
 
