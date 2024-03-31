@@ -320,7 +320,6 @@ def grafana_version(docker_grafana):
     Return Grafana version number.
     """
     engine = GrafanaWtf(grafana_url=docker_grafana, grafana_token=None)
-    engine.setup()
     grafana_version = engine.version
     return grafana_version
 

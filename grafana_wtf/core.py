@@ -16,12 +16,12 @@ import requests_cache
 from grafana_client.api import GrafanaApi
 from grafana_client.client import GrafanaClientError, GrafanaUnauthorizedError
 from munch import Munch, munchify
-from requests_cache import CachedSession
 from tqdm import tqdm
 from tqdm.contrib.logging import tqdm_logging_redirect
 from urllib3.exceptions import InsecureRequestWarning
 
 from grafana_wtf import __appname__, __version__
+from grafana_wtf.compat import CachedSession
 from grafana_wtf.model import (
     DashboardDetails,
     DashboardExplorationItem,
@@ -35,22 +35,33 @@ log = logging.getLogger(__name__)
 
 
 class GrafanaEngine:
-    session = niquests.Session()
+
+    # Configure a larger HTTP request pool.
+    # TODO: Review the pool settings and eventually adjust according to concurrency level or other parameters.
+    # https://urllib3.readthedocs.io/en/latest/advanced-usage.html#customizing-pool-behavior
+    # https://laike9m.com/blog/requests-secret-pool_connections-and-pool_maxsize,89/
+    session_args = dict(pool_connections=100, pool_maxsize=100, retries=5)
+
+    # The HTTP `User-Agent` header value.
+    user_agent = f"{__appname__}/{__version__}"
 
     def __init__(self, grafana_url, grafana_token=None):
         self.grafana_url = grafana_url
         self.grafana_token = grafana_token
 
-        self.grafana = None
-        self.data = GrafanaDataModel()
+        self.concurrency = 5
 
+        self.grafana = self.grafana_client_factory(self.grafana_url, grafana_token=self.grafana_token)
+        self.set_user_agent()
+        self.data = GrafanaDataModel()
         self.finder = JsonPathFinder()
 
         self.taqadum = None
-        self.concurrency = 5
-
         self.debug = log.getEffectiveLevel() == logging.DEBUG
         self.progressbar = not self.debug
+
+    def set_session(self, session):
+        self.grafana.client.s = session
 
     def enable_cache(self, expire_after=60, drop_cache=False):
         if expire_after is None:
@@ -60,10 +71,13 @@ class GrafanaEngine:
         else:
             log.info(f"Response cache will expire after {expire_after} seconds")
 
-        self.session = CachedSession(cache_name=__appname__, expire_after=expire_after, use_cache_dir=True)
+        session = CachedSession(
+            cache_name=__appname__, expire_after=expire_after, use_cache_dir=True, **self.session_args
+        )
+        self.set_session(session)
+        self.set_user_agent()
 
-        cache = self.session.cache
-        log.info(f"Response cache database location is: {cache.db_path}")
+        log.info(f"Response cache database: {session.cache.db_path}")
         if drop_cache:
             log.info("Dropping response cache")
             self.clear_cache()
@@ -102,23 +116,14 @@ class GrafanaEngine:
             url_path_prefix=url.path.lstrip("/"),
             verify=verify,
         )
-        if cls.session:
-            user_agent = f"{__appname__}/{__version__}"
-            cls.session.headers["User-Agent"] = user_agent
-            grafana.client.s = cls.session
+
+        # Configure HTTP session to use a larger HTTP request pool.
+        grafana.client.s = niquests.Session(**cls.session_args)
 
         return grafana
 
-    def setup(self):
-        self.grafana = self.grafana_client_factory(self.grafana_url, grafana_token=self.grafana_token)
-
-        # Configure a larger HTTP request pool.
-        # Todo: Review the pool settings and eventually adjust according to concurrency level or other parameters.
-        # https://urllib3.readthedocs.io/en/latest/advanced-usage.html#customizing-pool-behavior
-        # https://laike9m.com/blog/requests-secret-pool_connections-and-pool_maxsize,89/
-        self.grafana.client.s = niquests.Session(pool_connections=100, pool_maxsize=100, retries=5)
-
-        return self
+    def set_user_agent(self):
+        self.grafana.client.s.headers["User-Agent"] = self.user_agent
 
     def start_progressbar(self, total):
         if self.progressbar:

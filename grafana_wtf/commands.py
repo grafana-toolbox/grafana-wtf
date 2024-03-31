@@ -234,7 +234,6 @@ def run():
 
     engine.enable_cache(expire_after=cache_ttl, drop_cache=options["drop-cache"])
     engine.enable_concurrency(int(options["concurrency"]))
-    engine.setup()
 
     log.info(f"Grafana version: {engine.version}")
 
