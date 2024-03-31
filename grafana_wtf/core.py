@@ -37,7 +37,7 @@ log = logging.getLogger(__name__)
 class GrafanaEngine:
     session = niquests.Session()
 
-    def __init__(self, grafana_url, grafana_token):
+    def __init__(self, grafana_url, grafana_token=None):
         self.grafana_url = grafana_url
         self.grafana_token = grafana_token
 
@@ -263,15 +263,10 @@ class GrafanaEngine:
 
 class GrafanaWtf(GrafanaEngine):
     def info(self):
-        try:
-            health = self.grafana.client.GET("/health")
-        except Exception as ex:
-            log.error(f"Request to /health endpoint failed: {ex}")
-            health = {}
 
         response = OrderedDict(
             grafana=OrderedDict(
-                version=health.get("version"),
+                version=self.version,
                 url=self.grafana_url,
             ),
             statistics=OrderedDict(),
@@ -315,15 +310,29 @@ class GrafanaWtf(GrafanaEngine):
 
         return response
 
-    def version(self):
+    @property
+    def health(self):
+        response = None
+        error = None
+        error_template = f"The request to {self.grafana_url.rstrip('/')}/api/health failed"
         try:
-            health = self.grafana.client.GET("/health")
-        except Exception as ex:
-            log.error(f"Request to /health endpoint failed: {ex}")
-            health = {}
+            response = self.grafana.client.GET("/health")
+            if not isinstance(response, dict):
+                error = f"{error_template}: Invalid response, content was: {response}"
 
-        version = health.get("version")
-        return version
+        except Exception as ex:
+            error = f"{error_template}: {ex}"
+
+        if error:
+            log.critical(error)
+            raise ConnectionError(error)
+
+        if response:
+            return Munch(response)
+
+    @property
+    def version(self):
+        return self.health.get("version")
 
     def dashboard_details(self):
         for dashboard in self.data.dashboards:

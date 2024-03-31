@@ -14,6 +14,8 @@ in progress
 - Removed support for Python 3.7
 - SQLite cache: Use ``requests_cache.CachedSession`` for better concurrency
   behaviour. Thanks, @JensRichnow and @JWCook.
+- Improve error reporting and exit behavior when connecting to Grafana
+  instance fails. Thanks, @interfan7.
 
 2024-03-07 0.18.0
 =================

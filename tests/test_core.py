@@ -1,8 +1,9 @@
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
+import pytest
 from munch import Munch
 
-from grafana_wtf.core import Indexer
+from grafana_wtf.core import Indexer, GrafanaWtf
 
 
 def test_collect_datasource_items_variable_all():
@@ -35,3 +36,37 @@ def test_collect_datasource_items_variable_all():
     indexer = Indexer(engine=engine_mock)
     result = indexer.collect_datasource_items([node])
     assert result == []
+
+
+def test_connect_success():
+    wtf = GrafanaWtf("https://play.grafana.org")
+    wtf.setup()
+    health = wtf.health
+    assert "commit" in health
+    assert "version" in health
+    assert health.database == "ok"
+
+
+def test_connect_failure():
+    wtf = GrafanaWtf("http://localhost:1234")
+    wtf.setup()
+    with pytest.raises(ConnectionError) as ex:
+        _ = wtf.health
+    assert ex.match("The request to http://localhost:1234/api/health failed")
+
+
+@patch("grafana_client.client.GrafanaClient.__getattr__")
+def test_connect_version(mock_get):
+    mock_get.return_value = Mock()
+    mock_get.return_value.return_value = {"commit": "14e988bd22", "database": "ok", "version": "9.0.1"}
+    wtf = GrafanaWtf("http://localhost:1234")
+    wtf.setup()
+    assert wtf.version == "9.0.1"
+
+
+def test_connect_non_json_response():
+    wtf = GrafanaWtf("https://example.org/")
+    wtf.setup()
+    with pytest.raises(ConnectionError) as ex:
+        _ = wtf.health
+    assert ex.match("The request to https://example.org/api/health failed: Client Error 404")
