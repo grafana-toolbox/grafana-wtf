@@ -26,7 +26,7 @@ requires = [
     # Output
     "tabulate>=0.8.5,<0.10",
     "colored>=1.4.3,<3",
-    "Pygments>=2.7.4,<3",
+    "Pygments>=2.15.1,<3",
     "PyYAML>=5,<7",
 ]
 
