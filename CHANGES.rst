@@ -5,6 +5,9 @@ grafana-wtf changelog
 
 in progress
 ===========
+
+2024-04-20 0.19.1
+=================
 - SQLite cache: Use `SQLite write-ahead logging`_ for better concurrency
   behaviour, allowing read operations to not block writes. Thanks, @JWCook.
 
