@@ -72,7 +72,7 @@ class GrafanaEngine:
             log.info(f"Response cache will expire after {expire_after} seconds")
 
         session = CachedSession(
-            cache_name=__appname__, expire_after=expire_after, use_cache_dir=True, **self.session_args
+            cache_name=__appname__, expire_after=expire_after, use_cache_dir=True, wal=True, **self.session_args
         )
         self.set_session(session)
         self.set_user_agent()
