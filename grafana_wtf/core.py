@@ -19,6 +19,7 @@ from munch import Munch, munchify
 from tqdm import tqdm
 from tqdm.contrib.logging import tqdm_logging_redirect
 from urllib3.exceptions import InsecureRequestWarning
+from verlib2 import Version
 
 from grafana_wtf import __appname__, __version__
 from grafana_wtf.compat import CachedSession
@@ -167,7 +168,10 @@ class GrafanaEngine:
         self.data.snapshots = self.grafana.snapshots.get_dashboard_snapshots()
 
     def scan_notifications(self):
-        self.data.notifications = self.grafana.notifications.lookup_channels()
+        if Version(self.grafana.version) < Version("11"):
+            self.data.notifications = self.grafana.notifications.lookup_channels()
+        else:
+            warnings.warn("Notification channel scanning support for Grafana 11 is not implemented yet", UserWarning)
 
     def scan_datasources(self):
         log.info("Scanning datasources")

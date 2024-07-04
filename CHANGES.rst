@@ -5,6 +5,7 @@ grafana-wtf changelog
 
 in progress
 ===========
+- CI: Verify support for Grafana 11
 
 2024-04-20 0.19.1
 =================
