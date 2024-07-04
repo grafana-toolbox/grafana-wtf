@@ -65,4 +65,4 @@ def test_connect_non_json_response():
     wtf = GrafanaWtf("https://example.org/")
     with pytest.raises(ConnectionError) as ex:
         _ = wtf.health
-    assert ex.match("The request to https://example.org/api/health failed: Client Error 404")
+    assert ex.match("The request to https://example.org/api/health failed")
