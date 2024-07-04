@@ -31,7 +31,7 @@ grafana-wtf
 .. |license| image:: https://img.shields.io/pypi/l/grafana-wtf.svg
     :target: https://github.com/panodata/grafana-wtf/blob/main/LICENSE
 
-.. |grafana-versions| image:: https://img.shields.io/badge/Grafana-6.x%20--%2010.x-blue.svg
+.. |grafana-versions| image:: https://img.shields.io/badge/Grafana-6.x%20--%2011.x-blue.svg
     :target: https://github.com/grafana/grafana
     :alt: Supported Grafana versions
 
