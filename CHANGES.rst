@@ -5,6 +5,9 @@ grafana-wtf changelog
 
 in progress
 ===========
+
+2024-09-28 0.20.0
+=================
 - CI: Verify support for Grafana 11
 - AMG compatibility: Fetch Grafana version from ``/api/frontend/settings``
   instead of ``/api/health``. Thanks, @squadgazzz.
