@@ -112,4 +112,4 @@ install-tests: setup-virtualenv
 # -------
 
 grafana-start:
-	cd tests/grafana; docker-compose up
+	cd tests/grafana; docker compose up
