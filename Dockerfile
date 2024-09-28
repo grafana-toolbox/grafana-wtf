@@ -1,7 +1,7 @@
 FROM python:3.11-slim-bullseye
 
-ENV DEBIAN_FRONTEND noninteractive
-ENV TERM linux
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TERM=linux
 
 # Install prerequisites
 RUN apt-get update
