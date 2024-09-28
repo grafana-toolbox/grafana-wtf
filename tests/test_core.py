@@ -55,7 +55,7 @@ def test_connect_failure():
 @patch("grafana_client.client.GrafanaClient.__getattr__")
 def test_connect_version(mock_get):
     mock_get.return_value = Mock()
-    mock_get.return_value.return_value = {"commit": "14e988bd22", "database": "ok", "version": "9.0.1"}
+    mock_get.return_value.return_value = {"buildInfo": {"version": "9.0.1", "commit": "14e988bd22"}}
     wtf = GrafanaWtf("http://localhost:1234")
     assert wtf.version == "9.0.1"
 
