@@ -42,7 +42,7 @@ def test_datasource_item_dict_compensate_datasource():
     Validate that the `datasource` attribute is ignored.
 
     TypeError: DatasourceItem.__init__() got an unexpected keyword argument 'datasource'
-    https://github.com/panodata/grafana-wtf/issues/110
+    https://github.com/grafana-toolbox/grafana-wtf/issues/110
     """
     mydata = DATA.copy()
     mydata.update({"datasource": "unknown"})

@@ -9,11 +9,11 @@ grafana-wtf
 |ci-tests| |ci-coverage| |license| |pypi-downloads|
 |python-versions| |status| |pypi-version| |grafana-versions|
 
-.. |ci-tests| image:: https://github.com/panodata/grafana-wtf/actions/workflows/tests.yml/badge.svg
-    :target: https://github.com/panodata/grafana-wtf/actions/workflows/tests.yml
+.. |ci-tests| image:: https://github.com/grafana-toolbox/grafana-wtf/actions/workflows/tests.yml/badge.svg
+    :target: https://github.com/grafana-toolbox/grafana-wtf/actions/workflows/tests.yml
 
-.. |ci-coverage| image:: https://codecov.io/gh/panodata/grafana-wtf/branch/main/graph/badge.svg
-    :target: https://codecov.io/gh/panodata/grafana-wtf
+.. |ci-coverage| image:: https://codecov.io/gh/grafana-toolbox/grafana-wtf/branch/main/graph/badge.svg
+    :target: https://codecov.io/gh/grafana-toolbox/grafana-wtf
     :alt: Test suite code coverage
 
 .. |python-versions| image:: https://img.shields.io/pypi/pyversions/grafana-wtf.svg
@@ -29,7 +29,7 @@ grafana-wtf
     :target: https://pypi.org/project/grafana-wtf/
 
 .. |license| image:: https://img.shields.io/pypi/l/grafana-wtf.svg
-    :target: https://github.com/panodata/grafana-wtf/blob/main/LICENSE
+    :target: https://github.com/grafana-toolbox/grafana-wtf/blob/main/LICENSE
 
 .. |grafana-versions| image:: https://img.shields.io/badge/Grafana-6.x%20--%2011.x-blue.svg
     :target: https://github.com/grafana/grafana
@@ -82,13 +82,13 @@ Run with Docker::
     # Access Grafana instance on localhost, without authentication.
     docker run --rm -it \
         --env GRAFANA_URL="http://host.docker.internal:3000" \
-        ghcr.io/panodata/grafana-wtf grafana-wtf info
+        ghcr.io/grafana-toolbox/grafana-wtf grafana-wtf info
 
     # Access Grafana instance with authentication.
     docker run --rm -it \
         --env GRAFANA_URL="https://grafana.example.org/grafana" \
         --env GRAFANA_TOKEN="eyJrIjoiWHg...dGJpZCI6MX0=" \
-        ghcr.io/panodata/grafana-wtf grafana-wtf info
+        ghcr.io/grafana-toolbox/grafana-wtf grafana-wtf info
 
 
 ***********
@@ -267,7 +267,7 @@ Development
 ***********
 ::
 
-    git clone https://github.com/panodata/grafana-wtf
+    git clone https://github.com/grafana-toolbox/grafana-wtf
     cd grafana-wtf
 
     # Run all tests.
@@ -277,4 +277,4 @@ Development
     pytest --keepalive -vvv -k test_find_textual
 
 
-.. _grafana-wtf examples: https://github.com/panodata/grafana-wtf/blob/master/doc/examples.rst
+.. _grafana-wtf examples: https://github.com/grafana-toolbox/grafana-wtf/blob/main/doc/examples.rst

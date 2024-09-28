@@ -10,7 +10,7 @@ def test_collect_datasource_items_variable_all():
     """
     Verify fix for `TypeError: unhashable type: 'list'` in `collect_datasource_items`.
 
-    https://github.com/panodata/grafana-wtf/issues/62
+    https://github.com/grafana-toolbox/grafana-wtf/issues/62
     """
     node = Munch(
         {

@@ -186,7 +186,7 @@ class DatasourceItem:
                 f"""
 The `datasource` attribute is ignored for the time being.
 
-See also: https://github.com/panodata/grafana-wtf/issues/110
+See also: https://github.com/grafana-toolbox/grafana-wtf/issues/110
 
 Please report back this occurrence to the grafana-wtf issue tracker,
 so the maintainers can improve the situation.
