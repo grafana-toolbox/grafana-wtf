@@ -15,8 +15,8 @@ on:
   push:
     tags:
       - '*.*.*'
-  # pull_request:
-  #   branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
   # Allow job to be triggered manually.
   workflow_dispatch:
