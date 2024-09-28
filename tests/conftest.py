@@ -219,7 +219,7 @@ def create_folder(docker_grafana):
             for folder_uid in folder_uids:
                 # Grafana 9.3 introduced a regression.
                 # It returns 200 OK with an empty response body on delete operations.
-                # https://github.com/panodata/grafana-wtf/pull/44
+                # https://github.com/grafana-toolbox/grafana-wtf/pull/44
                 try:
                     grafana.folder.delete_folder(uid=folder_uid)
                 except JSONDecodeError:

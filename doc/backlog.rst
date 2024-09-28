@@ -29,8 +29,8 @@ Iteration +3
 - [o] With Grafana >8.3, resolve datasource name and add to ``{'type': 'influxdb', 'uid': 'PDF2762CDFF14A314'}``
 - [o] Add "folder name/uid" to "explore dashboards" response.
 - [o] Check if "datasources" is always present in responses to "explore dashboards".
-- [o] Statistics reports for data sources and panels: https://github.com/panodata/grafana-wtf/issues/18
-- [o] Finding invalid data sources: https://github.com/panodata/grafana-wtf/issues/19
+- [o] Statistics reports for data sources and panels: https://github.com/grafana-toolbox/grafana-wtf/issues/18
+- [o] Finding invalid data sources: https://github.com/grafana-toolbox/grafana-wtf/issues/19
 - [o] Add subcommand ``dump`` for dumping whole documents from the API, unmodified
 
 
@@ -71,7 +71,7 @@ Done
   see https://github.com/kennethreitz/grequests
 - [x] Add software tests
 - [x] Document "replace" feature in README
-- [x] AttributeError: https://github.com/panodata/grafana-wtf/issues/17
+- [x] AttributeError: https://github.com/grafana-toolbox/grafana-wtf/issues/17
 - [/] Repair ``log`` subcommand
 - [x] Add subcommand ``explore dashboards``
 - [x] Add subcommand ``info``
