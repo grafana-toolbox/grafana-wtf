@@ -35,6 +35,9 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ ! (startsWith(github.actor, 'dependabot') || github.event.pull_request.head.repo.fork ) }}
 
+    permissions:
+      packages: write
+
     steps:
       -
         name: Checkout
