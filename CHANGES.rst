@@ -6,6 +6,10 @@ grafana-wtf changelog
 in progress
 ===========
 
+2024-09-29 0.20.1
+=================
+- OCI: Fix uploading packages to ghcr.io
+
 2024-09-28 0.20.0
 =================
 - CI: Verify support for Grafana 11
