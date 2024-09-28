@@ -40,17 +40,16 @@ def test_collect_datasource_items_variable_all():
 
 def test_connect_success():
     wtf = GrafanaWtf("https://play.grafana.org")
-    health = wtf.health
-    assert "commit" in health
-    assert "version" in health
-    assert health.database == "ok"
+    build_info = wtf.build_info
+    assert "commit" in build_info
+    assert "version" in build_info
 
 
 def test_connect_failure():
     wtf = GrafanaWtf("http://localhost:1234")
     with pytest.raises(ConnectionError) as ex:
-        _ = wtf.health
-    assert ex.match("The request to http://localhost:1234/api/health failed")
+        _ = wtf.build_info
+    assert ex.match("The request to http://localhost:1234/api/frontend/settings failed")
 
 
 @patch("grafana_client.client.GrafanaClient.__getattr__")
@@ -64,5 +63,5 @@ def test_connect_version(mock_get):
 def test_connect_non_json_response():
     wtf = GrafanaWtf("https://example.org/")
     with pytest.raises(ConnectionError) as ex:
-        _ = wtf.health
-    assert ex.match("The request to https://example.org/api/health failed")
+        _ = wtf.build_info
+    assert ex.match("The request to https://example.org/api/frontend/settings failed")

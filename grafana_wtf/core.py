@@ -321,14 +321,19 @@ class GrafanaWtf(GrafanaEngine):
         return response
 
     @property
-    def health(self):
+    def build_info(self):
         response = None
         error = None
-        error_template = f"The request to {self.grafana_url.rstrip('/')}/api/health failed"
+        error_template = f"The request to {self.grafana_url.rstrip('/')}/api/frontend/settings failed"
         try:
-            response = self.grafana.client.GET("/health")
+            response = self.grafana.client.GET("/frontend/settings")
             if not isinstance(response, dict):
                 error = f"{error_template}: Invalid response, content was: {response}"
+
+            response = Munch(response)
+            response = response.get("buildInfo")
+            if not response:
+                error = f"{error_template}: No buildInfo found in the settings response"
 
         except Exception as ex:
             error = f"{error_template}: {ex}"
@@ -337,12 +342,11 @@ class GrafanaWtf(GrafanaEngine):
             log.critical(error)
             raise ConnectionError(error)
 
-        if response:
-            return Munch(response)
+        return response
 
     @property
     def version(self):
-        return self.health.get("version")
+        return self.build_info.get("version")
 
     def dashboard_details(self):
         for dashboard in self.data.dashboards:
