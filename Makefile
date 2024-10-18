@@ -100,8 +100,7 @@ install-releasetools: setup-virtualenv
 	@$(pip) install --quiet --requirement requirements-release.txt --upgrade
 
 install-tests: setup-virtualenv
-	@$(pip) install --quiet --editable .[test] --upgrade
-	@$(python) setup.py --quiet develop
+	@$(pip) install --quiet --upgrade --editable='.[test]'
 	@touch $(venvpath)/bin/activate
 	@mkdir -p .pytest_results
 
