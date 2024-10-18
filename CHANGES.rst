@@ -5,6 +5,7 @@ grafana-wtf changelog
 
 in progress
 ===========
+- CI: Verified support on Python 3.13
 
 2024-09-29 0.20.1
 =================
