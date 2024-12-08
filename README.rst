@@ -112,7 +112,7 @@ Install ``grafana-wtf``
 =======================
 ::
 
-    pip install grafana-wtf
+    pipx install grafana-wtf
 
 
 Configure Grafana
