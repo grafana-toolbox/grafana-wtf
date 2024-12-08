@@ -1,30 +1,42 @@
-FROM python:3.13-slim-bookworm
+# -----
+# Build
+# -----
+FROM python:3.13-bookworm AS build
+
+# For more verbose output, use:
+# export BUILDKIT_PROGRESS=plain
 
 # Configure operating system
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=linux
 
+# Configure build environment
+ENV PIP_ROOT_USER_ACTION=ignore
+ENV UV_COMPILE_BYTECODE=true
+ENV UV_LINK_MODE=copy
+ENV UV_PYTHON_DOWNLOADS=never
+
 # Provide package sources
 COPY . /src
 
 # Install package and dependencies
-ENV UV_COMPILE_BYTECODE=true
-ENV UV_NO_CACHE=true
-ENV UV_PYTHON_DOWNLOADS=never
-ENV UV_SYSTEM_PYTHON=true
 RUN \
+    --mount=type=cache,id=pip,target=/root/.cache/pip \
+    --mount=type=cache,id=uv,target=/root/.cache/uv \
     true \
-    # Install package.
     && pip install uv \
-    && uv pip install /src \
-    && uv pip uninstall uv \
-    # Install `jq`.
-    && apt-get update \
-    && apt-get install --no-install-recommends --no-install-suggests --yes jq \
-    # Tear down.
-    && apt-get autoremove --yes \
-    && apt-get autoclean --yes \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /root/.cache \
-    && rm -rf /src \
-    && rm -rf /tmp/*
+    && uv venv --no-project --relocatable /app \
+    && uv pip install --directory=/app /src
+
+# Install optional software
+RUN wget --quiet --output-document=/tmp/jq "https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-amd64"
+RUN chmod +x /tmp/jq
+
+
+# ------------
+# Distribution
+# ------------
+FROM python:3.13-slim-bookworm
+COPY --from=build /app /opt/grafana-wtf
+COPY --from=build /tmp/jq /usr/local/bin/jq
+ENV PATH="$PATH:/opt/grafana-wtf/bin"
