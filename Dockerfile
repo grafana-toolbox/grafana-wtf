@@ -8,8 +8,12 @@ RUN apt-get update
 RUN apt-get --yes install jq
 
 # Provide sources
-COPY . /app
+COPY . /src
 
 # Install package
-WORKDIR /app
-RUN pip install --prefer-binary .
+ENV UV_SYSTEM_PYTHON=true
+RUN \
+    true \
+    && pip install uv \
+    && uv pip install /src \
+    && uv pip uninstall uv
