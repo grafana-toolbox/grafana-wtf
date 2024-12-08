@@ -27,12 +27,13 @@ jobs:
       matrix:
         os: [ "ubuntu-latest" ]
         python-version: [ "3.8", "3.13" ]
-        grafana-version: [ "6.7.6", "7.5.17", "8.5.27", "9.5.18", "10.3.5", "10.4.1", "11.2.2" ]
+        grafana-version: [ "6.7.6", "7.5.17", "8.5.27", "9.5.21", "10.3.12", "10.4.14", "11.4.0" ]
 
     env:
       OS_TYPE: ${{ matrix.os }}
       PYTHON_VERSION: ${{ matrix.python-version }}
       GRAFANA_VERSION: ${{ matrix.grafana-version }}
+      UV_SYSTEM_PYTHON: true
 
     name: Python ${{ matrix.python-version }}, Grafana ${{ matrix.grafana-version }}
     steps:
@@ -40,7 +41,7 @@ jobs:
       - name: Acquire sources
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
@@ -48,10 +49,17 @@ jobs:
           cache: 'pip'
           cache-dependency-path: 'setup.py'
 
-      - name: Setup Project
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+          cache-dependency-glob: "requirements*.txt"
+          cache-suffix: ${{ matrix.python-version }}
+          version: "latest"
+
+      - name: Set up project
         run: |
-          pip install pip 'setuptools>=64' --upgrade
-          pip install --editable='.[test]'
+          uv pip install --editable='.[test]'
 
       - name: Run tests
         run: |

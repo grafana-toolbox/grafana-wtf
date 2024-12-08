@@ -4,6 +4,7 @@
 /.idea
 /.venv*
 /var
+/build
 /dist
 .coverage
 coverage.xml
