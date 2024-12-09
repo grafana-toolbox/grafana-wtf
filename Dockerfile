@@ -43,4 +43,4 @@ RUN chmod +x /tmp/jq
 FROM python:3.13-slim-bookworm
 COPY --from=build /app /opt/grafana-wtf
 COPY --from=build /tmp/jq /usr/local/bin/jq
-ENV PATH="$PATH:/opt/grafana-wtf/bin"
+RUN ln -s /opt/grafana-wtf/bin/grafana-wtf /usr/local/bin/
