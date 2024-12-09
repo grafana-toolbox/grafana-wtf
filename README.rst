@@ -41,9 +41,8 @@ grafana-wtf
 *****
 About
 *****
-grafana-wtf - grep through all Grafana entities in the spirit of `git-wtf`_.
-
-.. _git-wtf: http://thrawn01.org/posts/2014/03/03/git-wtf/
+grafana-wtf - grep through all Grafana entities in the spirit of `git-wtf`_,
+see also `Introduction to GIT WTF`_.
 
 .. attention::
 
@@ -277,4 +276,6 @@ Development
     pytest --keepalive -vvv -k test_find_textual
 
 
+.. _git-wtf: https://github.com/DanielVartanov/willgit/blob/master/bin/git-wtf
 .. _grafana-wtf examples: https://github.com/grafana-toolbox/grafana-wtf/blob/main/doc/examples.rst
+.. _Introduction to GIT WTF: https://web.archive.org/web/20230921074244/https://thrawn01.org/posts/2014/03/03/git-wtf/
