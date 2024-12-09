@@ -1,7 +1,7 @@
 # -----
 # Build
 # -----
-FROM python:3.13-bookworm AS build
+FROM python:3.13-slim-bookworm AS build
 
 # For more verbose output, use:
 # export BUILDKIT_PROGRESS=plain
@@ -9,6 +9,10 @@ FROM python:3.13-bookworm AS build
 # Configure operating system
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=linux
+
+# Install prerequisites
+RUN apt-get update
+RUN apt-get --yes install wget
 
 # Configure build environment
 ENV PIP_ROOT_USER_ACTION=ignore
