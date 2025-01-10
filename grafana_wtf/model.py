@@ -167,6 +167,7 @@ class DatasourceItem:
     name: Optional[str] = None
     type: Optional[str] = None
     url: Optional[str] = None
+    default: Optional[str] = None
 
     @classmethod
     def from_payload(cls, payload: any):
