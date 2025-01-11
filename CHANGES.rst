@@ -5,6 +5,9 @@ grafana-wtf changelog
 
 in progress
 ===========
+
+2025-01-11 0.20.2
+=================
 - CI: Verified support on Python 3.13
 - Fixed `DatasourceItem` re. `Unexpected keyword argument 'default'`.
   Thank you, @jwoodhouse.
