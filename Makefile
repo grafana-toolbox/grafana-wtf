@@ -87,11 +87,11 @@ bumpversion: install-releasetools
 push:
 	git push && git push --tags
 
-build:
-	@$(python) -m build
+build: install-releasetools
+	$(python) -m build
 
 pypi-upload: install-releasetools
-	twine upload --skip-existing --verbose dist/{*.tar.gz,*.whl}
+	twine upload --skip-existing dist/{*.tar.gz,*.whl}
 
 install-doctools: setup-virtualenv
 	@$(pip) install --quiet --requirement requirements-docs.txt --upgrade
@@ -112,3 +112,12 @@ install-tests: setup-virtualenv
 
 grafana-start:
 	cd tests/grafana; docker compose up
+
+
+.PHONY: build
+.PHONY: bumpversion
+.PHONY: format
+.PHONY: install-releasetools
+.PHONY: pypi-upload
+.PHONY: release
+.PHONY: test
