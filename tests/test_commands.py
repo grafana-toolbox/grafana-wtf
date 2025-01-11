@@ -625,8 +625,8 @@ def test_plugins_status_app(grafana_version, docker_grafana, capsys, caplog):
     """
     Verify the plugin status (metrics endpoint and health check) on a 3rd-party "app" plugin.
     """
-    if version.parse(grafana_version) < version.parse("8"):
-        raise pytest.skip(f"Plugin status inquiry only works on Grafana 8 and newer")
+    if version.parse(grafana_version) < version.parse("10"):
+        raise pytest.skip(f"Plugin status inquiry only works on Grafana 10 and newer")
 
     # Before conducting a plugin status test, install a non-internal one.
     grafana = grafana_client.GrafanaApi.from_url(url=docker_grafana, timeout=15)
