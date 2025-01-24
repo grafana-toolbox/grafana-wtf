@@ -588,9 +588,33 @@ class GrafanaWtf(GrafanaEngine):
     def channels_list(self):
         return self.grafana.notifications.lookup_channels()
 
-    def channels_list_by_id(self, channel_id):
-        channel = self.grafana.notifications.get_channel_by_id(channel_id)
+    def channels_list_by_uid(self, channel_uid):
+        channel = self.grafana.notifications.get_channel_by_uid(channel_uid)
+
+        # Scan dashboards and panels to find where the channel is used
+        dashboards = self.scan_dashboards()
+        related_panels = []
+        for dashboard in dashboards:
+            for panel in dashboard["dashboard"].get("panels", []):
+                if "alert" in panel and panel["alert"]["notifications"]:
+                    related_panels += self.extract_channel_related_information(channel_uid, dashboard, panel)
+
+                # Some dashboards have a deeper nested structure
+                elif "panels" in panel:
+                    for subpanel in panel["panels"]:
+                        if "alert" in subpanel and subpanel["alert"]["notifications"]:
+                            related_panels += self.extract_channel_related_information(channel_uid, dashboard, subpanel)
+        if related_panels:
+            channel["related_panels"] = related_panels
         return channel
+
+    @staticmethod
+    def extract_channel_related_information(channel_uid, dashboard, panel):
+        related_information = []
+        for notification in panel["alert"]["notifications"]:
+            if "uid" in notification and notification["uid"] == channel_uid:
+                related_information.append({"dashboard": dashboard["dashboard"]["title"], "panel": panel["title"]})
+        return related_information
 
 
 class Indexer:
