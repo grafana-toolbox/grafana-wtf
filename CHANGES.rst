@@ -6,6 +6,11 @@ grafana-wtf changelog
 in progress
 ===========
 
+2025-01-27 0.21.0
+=================
+- Updated channel scanning to discover in what dashboards
+  different notification channels are used. Thanks, @nikodemas.
+
 2025-01-11 0.20.2
 =================
 - CI: Verified support on Python 3.13
