@@ -41,7 +41,7 @@ extras = {
 
 setup(
     name="grafana-wtf",
-    version="0.20.2",
+    version="0.21.0",
     description="Grep through all Grafana entities in the spirit of git-wtf",
     long_description=README,
     license="AGPL 3, EUPL 1.2",
