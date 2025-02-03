@@ -28,7 +28,7 @@ def serialize_results(output_format: str, results: List):
 
 
 class DataSearchReport(TabularSearchReport):
-    def __init__(self, grafana_url, verbose=False, format=None):
+    def __init__(self, grafana_url, verbose=False, format=None):  # noqa: A002
         self.grafana_url = grafana_url
         self.verbose = verbose
         self.format = format
@@ -42,7 +42,11 @@ class DataSearchReport(TabularSearchReport):
                 grafana=self.grafana_url,
                 expression=expression,
             ),
-            datasources=self.get_output_items("Datasource", result.datasources, self.compute_url_datasource),
-            dashboards=self.get_output_items("Dashboard", result.dashboards, self.compute_url_dashboard),
+            datasources=self.get_output_items(
+                "Datasource", result.datasources, self.compute_url_datasource
+            ),
+            dashboards=self.get_output_items(
+                "Dashboard", result.dashboards, self.compute_url_dashboard
+            ),
         )
         output_results(self.format, output)

@@ -1,9 +1,36 @@
-[tool.black]
-line-length = 120
+[tool.ruff]
+line-length = 100
 
-[tool.isort]
-profile = "black"
-src_paths = ["grafana_wtf", "tests"]
+lint.select = [
+  # Builtins
+  "A",
+  # Bugbear
+  "B",
+  # comprehensions
+  "C4",
+  # Pycodestyle
+  "E",
+  # eradicate
+  "ERA",
+  # Pyflakes
+  "F",
+  # isort
+  "I",
+  # pandas-vet
+  "PD",
+  # return
+  "RET",
+  # Bandit
+  "S",
+  # print
+  "T20",
+  "W",
+  # flake8-2020
+  "YTT",
+]
+
+lint.ignore = [ "C408", "RET505" ]
+lint.per-file-ignores."tests/*" = [ "S101" ] # Use of `assert` detected
 
 [tool.pytest.ini_options]
 addopts = """

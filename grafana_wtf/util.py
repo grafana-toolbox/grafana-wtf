@@ -42,7 +42,7 @@ def normalize_options(options):
     normalized = {}
     for key, value in options.items():
         # Add primary variant.
-        key = key.strip("--<>")
+        key = key.strip("--<>")  # noqa: B005
         normalized[key] = value
 
         # Add secondary variant.
@@ -55,7 +55,7 @@ def normalize_options(options):
 def read_list(data, separator=","):
     if data is None:
         return []
-    result = list(map(lambda x: x.strip(), data.split(separator)))
+    result = [x.strip() for x in data.split(separator)]
     if len(result) == 1 and not result[0]:
         result = []
     return result
@@ -119,7 +119,9 @@ def yaml_dump(data, stream=None, Dumper=yaml.SafeDumper, **kwds):
         pass
 
     def _dict_representer(dumper, data):
-        return dumper.represent_mapping(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, data.items())
+        return dumper.represent_mapping(
+            yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, data.items()
+        )
 
     OrderedDumper.add_representer(OrderedDict, _dict_representer)
     return yaml.dump(data, stream, OrderedDumper, **kwds)
@@ -155,8 +157,8 @@ def as_bool(value: str) -> bool:
     }
     try:
         return _STR_BOOLEAN_MAPPING[value.lower()]
-    except KeyError:
-        raise ValueError(f"invalid truth value {value}")
+    except KeyError as ex:
+        raise ValueError(f"invalid truth value {value}") from ex
 
 
 def format_dict(data) -> str:
@@ -199,8 +201,7 @@ def filter_with_sql(data: trecord, view_name: str, expression: str) -> trecord:
     import duckdb
     import pandas as pd
 
-    df = pd.DataFrame.from_records(data)
-    duckdb.register(view_name, df)
+    frame = pd.DataFrame.from_records(data)
+    duckdb.register(view_name, frame)
     results = duckdb.sql(expression)
-    entries = results.to_df().to_dict(orient="records")
-    return entries
+    return results.to_df().to_dict(orient="records")

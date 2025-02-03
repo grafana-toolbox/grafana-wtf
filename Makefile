@@ -14,8 +14,7 @@ $(eval pytest       := $(venvpath)/bin/pytest)
 $(eval bumpversion  := $(venvpath)/bin/bumpversion)
 $(eval twine        := $(venvpath)/bin/twine)
 $(eval sphinx       := $(venvpath)/bin/sphinx-build)
-$(eval black        := $(venvpath)/bin/black)
-$(eval isort        := $(venvpath)/bin/isort)
+$(eval ruff         := $(venvpath)/bin/ruff)
 
 
 # Setup Python virtualenv
@@ -54,8 +53,8 @@ test-coverage: install-tests
 # Formatting
 # ----------
 format: install-releasetools
-	$(isort) grafana_wtf test
-	$(black) .
+	$(ruff) format
+	$(ruff) check --fix --ignore=ERA --ignore=F401 --ignore=F841 --ignore=T20 --ignore=ERA001 .
 
 
 # -------

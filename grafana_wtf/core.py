@@ -36,9 +36,9 @@ log = logging.getLogger(__name__)
 
 
 class GrafanaEngine:
-
     # Configure a larger HTTP request pool.
-    # TODO: Review the pool settings and eventually adjust according to concurrency level or other parameters.
+    # TODO: Review the pool settings and eventually adjust according
+    #       to concurrency level or other parameters.
     # https://urllib3.readthedocs.io/en/latest/advanced-usage.html#customizing-pool-behavior
     # https://laike9m.com/blog/requests-secret-pool_connections-and-pool_maxsize,89/
     session_args = dict(pool_connections=100, pool_maxsize=100, retries=5)
@@ -52,7 +52,9 @@ class GrafanaEngine:
 
         self.concurrency = 5
 
-        self.grafana = self.grafana_client_factory(self.grafana_url, grafana_token=self.grafana_token)
+        self.grafana = self.grafana_client_factory(
+            self.grafana_url, grafana_token=self.grafana_token
+        )
         self.set_user_agent()
         self.data = GrafanaDataModel()
         self.finder = JsonPathFinder()
@@ -66,14 +68,18 @@ class GrafanaEngine:
 
     def enable_cache(self, expire_after=60, drop_cache=False):
         if expire_after is None:
-            log.info(f"Response cache will never expire (infinite caching)")
+            log.info("Response cache will never expire (infinite caching)")
         elif expire_after == 0:
-            log.info(f"Response cache will expire immediately (expire_after=0)")
+            log.info("Response cache will expire immediately (expire_after=0)")
         else:
             log.info(f"Response cache will expire after {expire_after} seconds")
 
         session = CachedSession(
-            cache_name=__appname__, expire_after=expire_after, use_cache_dir=True, wal=True, **self.session_args
+            cache_name=__appname__,
+            expire_after=expire_after,
+            use_cache_dir=True,
+            wal=True,
+            **self.session_args,
         )
         self.set_session(session)
         self.set_user_agent()
@@ -86,7 +92,7 @@ class GrafanaEngine:
         return self
 
     def clear_cache(self):
-        log.info(f"Clearing cache")
+        log.info("Clearing cache")
         requests_cache.clear()
 
     def enable_concurrency(self, concurrency):
@@ -171,7 +177,11 @@ class GrafanaEngine:
         if Version(self.grafana.version) < Version("11"):
             self.data.notifications = self.grafana.notifications.lookup_channels()
         else:
-            warnings.warn("Notification channel scanning support for Grafana 11 is not implemented yet", UserWarning)
+            warnings.warn(
+                "Notification channel scanning support for Grafana 11 is not implemented yet",
+                UserWarning,
+                stacklevel=2,
+            )
 
     def scan_datasources(self):
         log.info("Scanning datasources")
@@ -185,7 +195,8 @@ class GrafanaEngine:
             if isinstance(ex, GrafanaUnauthorizedError):
                 log.error(
                     self.get_red_message(
-                        "Please use --grafana-token or GRAFANA_TOKEN " "for authenticating with Grafana"
+                        "Please use --grafana-token or GRAFANA_TOKEN "
+                        "for authenticating with Grafana"
                     )
                 )
 
@@ -207,7 +218,7 @@ class GrafanaEngine:
 
         except GrafanaClientError as ex:
             self.handle_grafana_error(ex)
-            return
+            return None
 
         if self.progressbar:
             self.start_progressbar(len(self.data.dashboard_list))
@@ -221,7 +232,9 @@ class GrafanaEngine:
             self.taqadum.close()
 
         # Improve determinism by returning stable sort order.
-        self.data.dashboards = munchify(sorted(self.data.dashboards, key=lambda x: x["dashboard"]["uid"]))
+        self.data.dashboards = munchify(
+            sorted(self.data.dashboards, key=lambda x: x["dashboard"]["uid"])
+        )
 
         return self.data.dashboards
 
@@ -231,7 +244,9 @@ class GrafanaEngine:
         log.error(self.get_red_message(message))
         if isinstance(ex, GrafanaUnauthorizedError):
             log.error(
-                self.get_red_message("Please use --grafana-token or GRAFANA_TOKEN " "for authenticating with Grafana")
+                self.get_red_message(
+                    "Please use --grafana-token or GRAFANA_TOKEN for authenticating with Grafana"
+                )
             )
 
     def fetch_dashboard(self, dashboard_info):
@@ -270,10 +285,13 @@ class GrafanaEngine:
             # for response in await asyncio.gather(*tasks):
             #    pass
 
+    @staticmethod
+    def get_red_message(message):
+        return colored.stylize(message, colored.fg("red") + colored.attr("bold"))
+
 
 class GrafanaWtf(GrafanaEngine):
     def info(self):
-
         response = OrderedDict(
             grafana=OrderedDict(
                 version=self.version,
@@ -308,7 +326,9 @@ class GrafanaWtf(GrafanaEngine):
 
         # Count numbers of panels, annotations and variables for all dashboards.
         try:
-            dashboard_summary = OrderedDict(dashboard_panels=0, dashboard_annotations=0, dashboard_templating=0)
+            dashboard_summary = OrderedDict(
+                dashboard_panels=0, dashboard_annotations=0, dashboard_templating=0
+            )
             for dbdetails in self.dashboard_details():
                 # TODO: Should there any deduplication be applied when counting those entities?
                 dashboard_summary["dashboard_panels"] += len(dbdetails.panels)
@@ -324,7 +344,9 @@ class GrafanaWtf(GrafanaEngine):
     def build_info(self):
         response = None
         error = None
-        error_template = f"The request to {self.grafana_url.rstrip('/')}/api/frontend/settings failed"
+        error_template = (
+            f"The request to {self.grafana_url.rstrip('/')}/api/frontend/settings failed"
+        )
         try:
             response = self.grafana.client.GET("/frontend/settings")
             if not isinstance(response, dict):
@@ -353,7 +375,9 @@ class GrafanaWtf(GrafanaEngine):
             yield DashboardDetails(dashboard=dashboard)
 
     def search(self, expression):
-        log.info('Searching Grafana at "{}" for expression "{}"'.format(self.grafana_url, expression))
+        log.info(
+            'Searching Grafana at "{}" for expression "{}"'.format(self.grafana_url, expression)
+        )
 
         results = Munch(datasources=[], dashboard_list=[], dashboards=[])
 
@@ -370,7 +394,9 @@ class GrafanaWtf(GrafanaEngine):
     def replace(self, expression, replacement, dry_run: bool = False):
         if dry_run:
             log.info("Dry-run mode enabled, skipping any actions")
-        log.info(f'Replacing "{expression}" by "{replacement}" within Grafana at "{self.grafana_url}"')
+        log.info(
+            f'Replacing "{expression}" by "{replacement}" within Grafana at "{self.grafana_url}"'
+        )
         for dashboard in self.data.dashboards:
             payload_before = json.dumps(dashboard)
             payload_after = payload_before.replace(expression, replacement)
@@ -433,29 +459,27 @@ class GrafanaWtf(GrafanaEngine):
             if effective_item:
                 results.append(effective_item)
 
-    @staticmethod
-    def get_red_message(message):
-        return colored.stylize(message, colored.fg("red") + colored.attr("bold"))
-
     def get_dashboard_versions(self, dashboard_id):
         # https://grafana.com/docs/http_api/dashboard_versions/
         get_dashboard_versions_path = "/dashboards/id/%s/versions" % dashboard_id
-        r = self.grafana.dashboard.client.GET(get_dashboard_versions_path)
-        return r
+        return self.grafana.dashboard.client.GET(get_dashboard_versions_path)
 
     def explore_datasources(self):
         # Prepare indexes, mapping dashboards by uid, datasources by name
         # as well as dashboards to datasources and vice versa.
         ix = Indexer(engine=self)
 
-        # Compute list of exploration items, associating datasources with the dashboards that use them.
+        # Compute list of exploration items, associating
+        # datasources with the dashboards that use them.
         results_used = []
         results_unused = []
         for datasource in ix.datasources:
             ds_identifier = datasource.get("uid", datasource.get("name"))
             dashboard_uids = ix.datasource_dashboard_index.get(ds_identifier, [])
             dashboards = list(map(ix.dashboard_by_uid.get, dashboard_uids))
-            item = DatasourceExplorationItem(datasource=datasource, used_in=dashboards, grafana_url=self.grafana_url)
+            item = DatasourceExplorationItem(
+                datasource=datasource, used_in=dashboards, grafana_url=self.grafana_url
+            )
 
             # Format results in a more compact form, using only a subset of all the attributes.
             result = item.format_compact()
@@ -466,15 +490,17 @@ class GrafanaWtf(GrafanaEngine):
                 if result not in results_unused:
                     results_unused.append(result)
 
-        results_used = sorted(results_used, key=lambda x: x["datasource"]["name"] or x["datasource"]["uid"])
-        results_unused = sorted(results_unused, key=lambda x: x["datasource"]["name"] or x["datasource"]["uid"])
+        results_used = sorted(
+            results_used, key=lambda x: x["datasource"]["name"] or x["datasource"]["uid"]
+        )
+        results_unused = sorted(
+            results_unused, key=lambda x: x["datasource"]["name"] or x["datasource"]["uid"]
+        )
 
-        response = OrderedDict(
+        return OrderedDict(
             used=results_used,
             unused=results_unused,
         )
-
-        return response
 
     def explore_dashboards(self, with_data_details: bool = False, queries_only: bool = False):
         # Prepare indexes, mapping dashboards by uid, datasources by name
@@ -484,7 +510,8 @@ class GrafanaWtf(GrafanaEngine):
         # Those dashboard names or uids will be ignored.
         ignore_dashboards = ["-- Grafana --", "-- Mixed --", "grafana", "-- Dashboard --"]
 
-        # Compute list of exploration items, looking for dashboards with missing data sources.
+        # Compute list of exploration items, looking
+        # for dashboards with missing data sources.
         results = []
         for uid in sorted(ix.dashboard_by_uid):
             dashboard = ix.dashboard_by_uid[uid]
@@ -597,13 +624,17 @@ class GrafanaWtf(GrafanaEngine):
         for dashboard in dashboards:
             for panel in dashboard["dashboard"].get("panels", []):
                 if "alert" in panel and panel["alert"]["notifications"]:
-                    related_panels += self.extract_channel_related_information(channel_uid, dashboard, panel)
+                    related_panels += self.extract_channel_related_information(
+                        channel_uid, dashboard, panel
+                    )
 
                 # Some dashboards have a deeper nested structure
                 elif "panels" in panel:
                     for subpanel in panel["panels"]:
                         if "alert" in subpanel and subpanel["alert"]["notifications"]:
-                            related_panels += self.extract_channel_related_information(channel_uid, dashboard, subpanel)
+                            related_panels += self.extract_channel_related_information(
+                                channel_uid, dashboard, subpanel
+                            )
         if related_panels:
             channel["related_panels"] = related_panels
         return channel
@@ -613,7 +644,9 @@ class GrafanaWtf(GrafanaEngine):
         related_information = []
         for notification in panel["alert"]["notifications"]:
             if "uid" in notification and notification["uid"] == channel_uid:
-                related_information.append({"dashboard": dashboard["dashboard"]["title"], "panel": panel["title"]})
+                related_information.append(
+                    {"dashboard": dashboard["dashboard"]["title"], "panel": panel["title"]}
+                )
         return related_information
 
 

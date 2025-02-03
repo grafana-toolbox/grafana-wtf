@@ -1,11 +1,3 @@
-import warnings
-
-import grafana_client
-from grafana_client.elements.plugin import get_plugin_by_id
-from munch import munchify
-from verlib2 import version
-
-warnings.filterwarnings("ignore", category=DeprecationWarning, module=".*docopt.*")
 import json
 import logging
 import re
@@ -13,8 +5,12 @@ import shlex
 import sys
 
 import docopt
+import grafana_client
 import pytest
 import yaml
+from grafana_client.elements.plugin import get_plugin_by_id
+from munch import munchify
+from verlib2 import version
 
 import grafana_wtf.commands
 from tests.conftest import mkdashboard
@@ -24,7 +20,10 @@ def set_command(command, more_options="", cache=False):
     cache_option = ""
     if cache is False:
         cache_option = "--cache-ttl=0"
-    command = f'grafana-wtf --grafana-url="http://localhost:33333" {cache_option} {more_options} {command}'
+    command = (
+        f'grafana-wtf --grafana-url="http://localhost:33333" '
+        f"{cache_option} {more_options} {command}"
+    )
     sys.argv = shlex.split(command)
 
 
@@ -37,7 +36,10 @@ def test_failure_grafana_url_missing():
 
     # Verify output.
     assert ex.match(
-        re.escape('No Grafana URL given. Please use "--grafana-url" option or environment variable "GRAFANA_URL".')
+        re.escape(
+            'No Grafana URL given. Please use "--grafana-url" option '
+            'or environment variable "GRAFANA_URL".'
+        )
     )
 
 
@@ -48,7 +50,10 @@ def test_find_textual_empty(docker_grafana, capsys):
     captured = capsys.readouterr()
 
     # Verify output.
-    assert 'Searching for expression "foobar" at Grafana instance http://localhost:33333' in captured.out
+    assert (
+        'Searching for expression "foobar" at Grafana instance http://localhost:33333'
+        in captured.out
+    )
     assert "Data Sources: 0 hits" in captured.out
     assert "Dashboards: 0 hits" in captured.out
 
@@ -72,7 +77,12 @@ def test_find_textual_select_empty(docker_grafana, capsys, caplog):
 
 def test_find_textual_dashboard_success(ldi_resources, capsys):
     # Only provision specific dashboard(s).
-    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+    ldi_resources(
+        dashboards=[
+            "tests/grafana/dashboards/ldi-v27.json",
+            "tests/grafana/dashboards/ldi-v33.json",
+        ]
+    )
 
     # Run command and capture output.
     set_command("find ldi_readings")
@@ -80,26 +90,43 @@ def test_find_textual_dashboard_success(ldi_resources, capsys):
     captured = capsys.readouterr()
 
     # Verify output.
-    assert 'Searching for expression "ldi_readings" at Grafana instance http://localhost:33333' in captured.out
+    assert (
+        'Searching for expression "ldi_readings" at Grafana instance http://localhost:33333'
+        in captured.out
+    )
     assert "Dashboards: 2 hits" in captured.out
     assert "luftdaten-info-generic-trend" in captured.out
     assert "Title luftdaten.info generic trend" in captured.out
     assert "Folder Testdrive" in captured.out
     assert "UID ioUrPwQiz" in captured.out
-    assert "Dashboard http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33" in captured.out
+    assert (
+        "Dashboard http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33"
+        in captured.out
+    )
     assert (
         "Variables http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33?editview=templating"
         in captured.out
     )
-    assert "View http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33?viewPanel=17" in captured.out
-    assert "Edit http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33?editPanel=17" in captured.out
+    assert (
+        "View http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33?viewPanel=17"
+        in captured.out
+    )
+    assert (
+        "Edit http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33?editPanel=17"
+        in captured.out
+    )
     assert "dashboard.panels.[1].targets.[0].measurement: ldi_readings" in captured.out
     assert "dashboard.panels.[7].panels.[0].targets.[0].measurement: ldi_readings" in captured.out
 
 
 def test_find_textual_datasource_success(ldi_resources, capsys):
     # Only provision specific dashboard(s).
-    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+    ldi_resources(
+        dashboards=[
+            "tests/grafana/dashboards/ldi-v27.json",
+            "tests/grafana/dashboards/ldi-v33.json",
+        ]
+    )
 
     # Run command and capture output.
     set_command("find ldi_v2")
@@ -107,7 +134,10 @@ def test_find_textual_datasource_success(ldi_resources, capsys):
     captured = capsys.readouterr()
 
     # Verify output.
-    assert 'Searching for expression "ldi_v2" at Grafana instance http://localhost:33333' in captured.out
+    assert (
+        'Searching for expression "ldi_v2" at Grafana instance http://localhost:33333'
+        in captured.out
+    )
 
     assert "Data Sources: 1 hits" in captured.out
     assert "name: ldi_v2" in captured.out
@@ -121,7 +151,12 @@ def test_find_textual_datasource_success(ldi_resources, capsys):
 
 def test_find_tabular_dashboard_success(ldi_resources, capsys):
     # Only provision specific dashboard(s).
-    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+    ldi_resources(
+        dashboards=[
+            "tests/grafana/dashboards/ldi-v27.json",
+            "tests/grafana/dashboards/ldi-v33.json",
+        ]
+    )
 
     # Run command and capture output.
     set_command("find ldi_readings", "--format=tabular:pipe")
@@ -129,14 +164,17 @@ def test_find_tabular_dashboard_success(ldi_resources, capsys):
     captured = capsys.readouterr()
 
     # Verify output.
-    assert 'Searching for expression "ldi_readings" at Grafana instance http://localhost:33333' in captured.out
+    assert (
+        'Searching for expression "ldi_readings" at Grafana instance http://localhost:33333'
+        in captured.out
+    )
 
     reference_table = """
 | Type       | Name                             | Title                            | Folder    | UID       | Created              | Updated              | Created by   | Datasources                                                                           | URL                                                                 |
 |:-----------|:---------------------------------|:---------------------------------|:----------|:----------|:---------------------|:---------------------|:-------------|:--------------------------------------------------------------------------------------|:--------------------------------------------------------------------|
 | Dashboards | luftdaten-info-generic-trend-v27 | luftdaten.info generic trend v27 | Testdrive | ioUrPwQiz | xxxx-xx-xxTxx:xx:xxZ | xxxx-xx-xxTxx:xx:xxZ | admin        | -- Grafana --,ldi_v2,weatherbase                                                      | http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27 |
 | Dashboards | luftdaten-info-generic-trend-v33 | luftdaten.info generic trend v33 | Testdrive | jpVsQxRja | xxxx-xx-xxTxx:xx:xxZ | xxxx-xx-xxTxx:xx:xxZ | admin        | -- Grafana --,{'type': 'influxdb', 'uid': 'PDF2762CDFF14A314'},{'uid': 'weatherbase'} | http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33 |
-    """.strip()
+    """.strip()  # noqa: E501
 
     output_table = captured.out[captured.out.find("| Type") :]
     output_table_normalized = re.sub(
@@ -148,7 +186,12 @@ def test_find_tabular_dashboard_success(ldi_resources, capsys):
 
 def test_find_format_json(ldi_resources, capsys):
     # Only provision specific dashboard(s).
-    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+    ldi_resources(
+        dashboards=[
+            "tests/grafana/dashboards/ldi-v27.json",
+            "tests/grafana/dashboards/ldi-v33.json",
+        ]
+    )
 
     # Run command and capture output.
     set_command("find ldi_readings --format=json")
@@ -162,7 +205,12 @@ def test_find_format_json(ldi_resources, capsys):
 
 def test_find_format_yaml(ldi_resources, capsys):
     # Only provision specific dashboard(s).
-    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+    ldi_resources(
+        dashboards=[
+            "tests/grafana/dashboards/ldi-v27.json",
+            "tests/grafana/dashboards/ldi-v33.json",
+        ]
+    )
 
     # Run command and capture output.
     set_command("find ldi_readings --format=yaml")
@@ -176,7 +224,12 @@ def test_find_format_yaml(ldi_resources, capsys):
 
 def test_replace_dashboard_success(ldi_resources, capsys):
     # Only provision specific dashboard(s).
-    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+    ldi_resources(
+        dashboards=[
+            "tests/grafana/dashboards/ldi-v27.json",
+            "tests/grafana/dashboards/ldi-v33.json",
+        ]
+    )
 
     # Rename references from "ldi_v2" to "ldi_v3".
     set_command("replace ldi_v2 ldi_v3")
@@ -187,7 +240,10 @@ def test_replace_dashboard_success(ldi_resources, capsys):
     set_command("find ldi_v3")
     grafana_wtf.commands.run()
     captured = capsys.readouterr()
-    assert 'Searching for expression "ldi_v3" at Grafana instance http://localhost:33333' in captured.out
+    assert (
+        'Searching for expression "ldi_v3" at Grafana instance http://localhost:33333'
+        in captured.out
+    )
 
     # TODO: Expand renaming to data sources.
     assert "Data Sources: 0 hits" in captured.out
@@ -207,7 +263,12 @@ def test_replace_dashboard_success(ldi_resources, capsys):
 
 def test_replace_dashboard_dry_run_success(ldi_resources, capsys):
     # Only provision specific dashboard(s).
-    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+    ldi_resources(
+        dashboards=[
+            "tests/grafana/dashboards/ldi-v27.json",
+            "tests/grafana/dashboards/ldi-v33.json",
+        ]
+    )
 
     # Rename references from "ldi_v2" to "ldi_v3".
     set_command("replace ldi_v2 ldi_v3 --dry-run")
@@ -236,7 +297,12 @@ def test_log_empty(docker_grafana, capsys, caplog):
 
 def test_log_all(ldi_resources, capsys, caplog):
     # Only provision specific dashboard(s).
-    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+    ldi_resources(
+        dashboards=[
+            "tests/grafana/dashboards/ldi-v27.json",
+            "tests/grafana/dashboards/ldi-v33.json",
+        ]
+    )
 
     # Run command and capture output.
     set_command("log")
@@ -252,7 +318,12 @@ def test_log_all(ldi_resources, capsys, caplog):
 
 def test_log_json_success(ldi_resources, capsys, caplog):
     # Only provision specific dashboard(s).
-    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+    ldi_resources(
+        dashboards=[
+            "tests/grafana/dashboards/ldi-v27.json",
+            "tests/grafana/dashboards/ldi-v33.json",
+        ]
+    )
 
     # Run command and capture output.
     set_command("log ioUrPwQiz")
@@ -285,7 +356,12 @@ def test_log_json_success(ldi_resources, capsys, caplog):
 
 def test_log_tabular_success(ldi_resources, capsys, caplog):
     # Only provision specific dashboard(s).
-    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+    ldi_resources(
+        dashboards=[
+            "tests/grafana/dashboards/ldi-v27.json",
+            "tests/grafana/dashboards/ldi-v33.json",
+        ]
+    )
 
     # Run command and capture output.
     set_command("log ioUrPwQiz", "--format=tabular:pipe")
@@ -298,16 +374,23 @@ def test_log_tabular_success(ldi_resources, capsys, caplog):
 
     reference = """
     | Notes: n/a<br/>[Testdrive » luftdaten.info generic trend v27](http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27) | User: admin<br/>Date: xxxx-xx-xxTxx:xx:xxZ      |
-    """.strip()
+    """.strip()  # noqa: E501
 
     first_item_raw = str.splitlines(captured.out)[-1]
-    first_item_normalized = re.sub("(.*)Date: .+|(.*)", r"\1Date: xxxx-xx-xxTxx:xx:xxZ      |\2", first_item_raw, 1)
+    first_item_normalized = re.sub(  # noqa: B034
+        "(.*)Date: .+|(.*)", r"\1Date: xxxx-xx-xxTxx:xx:xxZ      |\2", first_item_raw, 1
+    )
     assert first_item_normalized == reference
 
 
 def test_log_yaml_success(ldi_resources, capsys, caplog):
     # Only provision specific dashboard(s).
-    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+    ldi_resources(
+        dashboards=[
+            "tests/grafana/dashboards/ldi-v27.json",
+            "tests/grafana/dashboards/ldi-v33.json",
+        ]
+    )
 
     # Run command and capture output.
     set_command("log")
@@ -322,7 +405,12 @@ def test_log_yaml_success(ldi_resources, capsys, caplog):
 
 def test_log_filter_sql(ldi_resources, capsys, caplog):
     # Only provision specific dashboard(s).
-    ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json", "tests/grafana/dashboards/ldi-v33.json"])
+    ldi_resources(
+        dashboards=[
+            "tests/grafana/dashboards/ldi-v27.json",
+            "tests/grafana/dashboards/ldi-v33.json",
+        ]
+    )
 
     # Run command and capture output.
     set_command(
@@ -338,13 +426,11 @@ def test_log_filter_sql(ldi_resources, capsys, caplog):
         grafana_wtf.commands.run()
     captured = capsys.readouterr()
 
-    assert set(captured.out.strip().split("\n")) == set(
-        [
-            "- url: http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27",
-            "- url: http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33",
-            "- url: http://localhost:33333/dashboards/f/testdrive/testdrive",
-        ]
-    )
+    assert set(captured.out.strip().split("\n")) == {
+        "- url: http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27",
+        "- url: http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33",
+        "- url: http://localhost:33333/dashboards/f/testdrive/testdrive",
+    }
 
 
 def test_explore_datasources_used(create_datasource, create_dashboard, capsys, caplog):
@@ -404,7 +490,7 @@ def test_explore_dashboards_grafana6(grafana_version, ldi_resources, capsys, cap
 
     # Only for Grafana 6.
     if not grafana_version.startswith("6."):
-        raise pytest.skip(f"Grafana 6 only")
+        raise pytest.skip("Grafana 6 only")
 
     # Only provision specific dashboard.
     ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v27.json"])
@@ -439,7 +525,7 @@ def test_explore_dashboards_grafana7up(grafana_version, ldi_resources, capsys, c
 
     # Only for Grafana 7.
     if version.parse(grafana_version) < version.parse("7"):
-        raise pytest.skip(f"Grafana >= 7 only")
+        raise pytest.skip("Grafana >= 7 only")
 
     # Only provision specific dashboard.
     ldi_resources(dashboards=["tests/grafana/dashboards/ldi-v33.json"])
@@ -501,7 +587,9 @@ def test_explore_dashboards_data_details(ldi_resources, capsys, caplog):
     )
 
 
-def test_explore_dashboards_empty_annotations(grafana_version, create_datasource, create_dashboard, capsys, caplog):
+def test_explore_dashboards_empty_annotations(
+    grafana_version, create_datasource, create_dashboard, capsys, caplog
+):
     # Create a dashboard with an anomalous value in the "annotations" slot.
     dashboard = mkdashboard(title="foo")
     dashboard["annotations"]["list"] = None
@@ -598,7 +686,7 @@ def test_plugins_status_datasource(grafana_version, docker_grafana, capsys, capl
     Verify the plugin status (metrics endpoint) on a 3rd-party "datasource" plugin.
     """
     if version.parse(grafana_version) < version.parse("8"):
-        raise pytest.skip(f"Plugin status inquiry only works on Grafana 8 and newer")
+        raise pytest.skip("Plugin status inquiry only works on Grafana 8 and newer")
 
     # Before conducting a plugin status test, install a non-internal one.
     grafana = grafana_client.GrafanaApi.from_url(url=docker_grafana, timeout=15)
@@ -617,7 +705,9 @@ def test_plugins_status_datasource(grafana_version, docker_grafana, capsys, capl
     assert len(data) >= 28
 
     # Proof the output is correct.
-    plugin = munchify(get_plugin_by_id(plugin_list=data, plugin_id="yesoreyeram-infinity-datasource"))
+    plugin = munchify(
+        get_plugin_by_id(plugin_list=data, plugin_id="yesoreyeram-infinity-datasource")
+    )
     assert "go_gc_duration_seconds" in plugin.metrics
 
 
@@ -626,7 +716,7 @@ def test_plugins_status_app(grafana_version, docker_grafana, capsys, caplog):
     Verify the plugin status (metrics endpoint and health check) on a 3rd-party "app" plugin.
     """
     if version.parse(grafana_version) < version.parse("10"):
-        raise pytest.skip(f"Plugin status inquiry only works on Grafana 10 and newer")
+        raise pytest.skip("Plugin status inquiry only works on Grafana 10 and newer")
 
     # Before conducting a plugin status test, install a non-internal one.
     grafana = grafana_client.GrafanaApi.from_url(url=docker_grafana, timeout=15)
@@ -645,7 +735,9 @@ def test_plugins_status_app(grafana_version, docker_grafana, capsys, caplog):
     assert len(data) >= 28
 
     # Proof the output is correct.
-    plugin = munchify(get_plugin_by_id(plugin_list=data, plugin_id="aws-datasource-provisioner-app"))
+    plugin = munchify(
+        get_plugin_by_id(plugin_list=data, plugin_id="aws-datasource-provisioner-app")
+    )
     assert plugin.id == "aws-datasource-provisioner-app"
     assert "process_virtual_memory_max_bytes" in plugin.metrics
 
@@ -658,7 +750,7 @@ def test_plugins_install_uninstall(grafana_version, docker_grafana, capsys, capl
     Verify the plugin status when installing/uninstalling a plugin.
     """
     if version.parse(grafana_version) < version.parse("8"):
-        raise pytest.skip(f"Plugin status inquiry only works on Grafana 8 and newer")
+        raise pytest.skip("Plugin status inquiry only works on Grafana 8 and newer")
 
     plugin_name = "yesoreyeram-infinity-datasource"
 
