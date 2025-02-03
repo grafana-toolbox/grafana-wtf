@@ -6,6 +6,11 @@ grafana-wtf changelog
 in progress
 ===========
 
+2025-02-03 0.21.1
+=================
+- Fix variable datasources shown as missing datasource.
+  Thank you, @soonann.
+
 2025-01-27 0.21.0
 =================
 - Updated channel scanning to discover in what dashboards
