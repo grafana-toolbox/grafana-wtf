@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 import pytest
 from munch import Munch
 
-from grafana_wtf.core import Indexer, GrafanaWtf
+from grafana_wtf.core import GrafanaWtf, Indexer
 
 
 def test_collect_datasource_items_variable_all():

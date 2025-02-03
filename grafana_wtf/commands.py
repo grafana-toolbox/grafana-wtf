@@ -180,7 +180,7 @@ def run():
       export CACHE_TTL=infinite
       grafana-wtf find geohash
 
-    """
+    """  # noqa: E501
 
     # Parse command line arguments
     options = normalize_options(docopt(run.__doc__, version=f"{__appname__} {__version__}"))
@@ -225,7 +225,8 @@ def run():
     # Sanity checks
     if grafana_url is None:
         raise DocoptExit(
-            'No Grafana URL given. Please use "--grafana-url" option or environment variable "GRAFANA_URL".'
+            'No Grafana URL given. Please use "--grafana-url" option '
+            'or environment variable "GRAFANA_URL".'
         )
 
     log.info(f"Grafana location: {grafana_url}")
@@ -273,7 +274,8 @@ def run():
         # Sanity checks.
         if output_format.startswith("tab") and options.sql:
             raise DocoptExit(
-                f"Options --format={output_format} and --sql can not be used together, only data output is supported."
+                f"Options --format={output_format} and --sql can not be used together, "
+                f"only data output is supported."
             )
 
         entries = engine.log(dashboard_uid=options.dashboard_uid)
@@ -319,7 +321,9 @@ def run():
         output_results(output_format, results)
 
     if options.explore and options.dashboards:
-        results = engine.explore_dashboards(with_data_details=options.data_details, queries_only=options.queries_only)
+        results = engine.explore_dashboards(
+            with_data_details=options.data_details, queries_only=options.queries_only
+        )
         output_results(output_format, results)
 
     if options.explore and options.permissions:

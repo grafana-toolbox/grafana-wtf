@@ -6,7 +6,9 @@ from setuptools import find_packages, setup
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, "README.rst")).read()
 
-no_linux_on_arm = "platform_system != 'Linux' or (platform_machine != 'armv7l' and platform_machine != 'aarch64')"
+no_linux_on_arm = (
+    "platform_system != 'Linux' or (platform_machine != 'armv7l' and platform_machine != 'aarch64')"
+)
 
 requires = [
     # Core

@@ -20,7 +20,11 @@ class TextualSearchReport:
 
     def display(self, expression, result):
         expression = expression or "*"
-        print('Searching for expression "{}" at Grafana instance {}'.format(_m(expression), self.grafana_url))
+        print(
+            'Searching for expression "{}" at Grafana instance {}'.format(
+                _m(expression), self.grafana_url
+            )
+        )
         self.output_items("Data Sources", result.datasources, self.compute_url_datasource)
         self.output_items("Dashboards", result.dashboards, self.compute_url_dashboard)
 
@@ -73,7 +77,7 @@ class TextualSearchReport:
 
             # Output dashboard matches.
             print()
-            subsection = f"Global"
+            subsection = "Global"
             print(_ss(subsection))
             print("-" * len(subsection))
             for match in dashboard_matches:
@@ -103,7 +107,9 @@ class TextualSearchReport:
 
     @staticmethod
     def format_match(match):
-        return "{path}: {value}".format(path=_k(match.full_path), value=_m(str(match.value).strip()))
+        return "{path}: {value}".format(
+            path=_k(match.full_path), value=_m(str(match.value).strip())
+        )
 
     def get_panel(self, node):
         """
@@ -111,11 +117,12 @@ class TextualSearchReport:
         """
         while node:
             last_node = node
-            node = getattr(node, "context")
+            node = node.context
             if node is None:
                 break
             if str(node.path) == "panels":
                 return last_node.value
+        return None
 
     def get_bibdata_panel(self, panel, baseurl, **kwargs):
         """
@@ -148,7 +155,7 @@ class TextualSearchReport:
 
         # Sanity checks.
         if "dashboard" not in item.data:
-            return
+            return None
 
         bibdata = OrderedDict()
         bibdata["Title"] = _v(item.data.dashboard.title)
@@ -164,8 +171,7 @@ class TextualSearchReport:
         key_word = "keys"
         if len(keys) <= 1:
             key_word = "key"
-        answer = "Found in {key_word}: {keys}".format(keys=_k(", ".join(keys)), key_word=key_word)
-        return answer
+        return "Found in {key_word}: {keys}".format(keys=_k(", ".join(keys)), key_word=key_word)
 
     def compute_url_datasource(self, datasource):
         return urljoin(self.grafana_url, "/datasources/edit/{}".format(datasource.data.id))

@@ -120,7 +120,9 @@ class DashboardDataDetails:
 
     def queries_only(self):
         """
-        Return a representation of data details information, only where query expressions are present.
+        Return a representation of data details information.
+
+        Only where query expressions are present.
         """
         # All attributes containing query-likes.
         attributes_query_likes = ["expr", "jql", "query", "rawSql", "target"]
@@ -145,7 +147,11 @@ class DashboardDataDetails:
                             continue
                     # Unnest items with nested "query" slot.
                     for slot in ["query", "target"]:
-                        if slot in new_item and isinstance(new_item[slot], dict) and "query" in new_item[slot]:
+                        if (
+                            slot in new_item
+                            and isinstance(new_item[slot], dict)
+                            and "query" in new_item[slot]
+                        ):
                             new_item["query"] = new_item[slot]["query"]
                     new_items.append(new_item)
             return new_items
@@ -196,6 +202,7 @@ The context of this error is in `DatasourceItem`, using this ingress data:
 {data}
 """.strip(),
                 UserWarning,
+                stacklevel=2,
             )
             del data["datasource"]
 

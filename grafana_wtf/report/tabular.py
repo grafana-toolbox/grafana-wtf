@@ -13,7 +13,7 @@ def get_table_format(output_format):
     if output_format is not None and output_format.startswith("tabular"):
         try:
             tablefmt = output_format.split(":")[1]
-        except:
+        except Exception:
             tablefmt = "psql"
 
     return tablefmt
@@ -29,7 +29,7 @@ class TabularSearchReport(TextualSearchReport):
         print(tabulate(items_rows, headers="keys", tablefmt=self.format))
 
     def get_output_items(self, label, items, url_callback):
-        items_rows = [
+        return [
             {
                 "Type": label,
                 "Name": self.get_item_name(item),
@@ -37,7 +37,6 @@ class TabularSearchReport(TextualSearchReport):
             }
             for item in items
         ]
-        return items_rows
 
     def get_bibdata_dict(self, item, **kwargs):
         # Sanity checks.
@@ -87,8 +86,7 @@ class TabularEditHistoryReport:
     def render(self, output_format: str):
         table_format = get_table_format(output_format)
         entries = self.compact_table(self.to_table(self.data), output_format)
-        output = tabulate(entries, headers="keys", tablefmt=table_format)
-        return output
+        return tabulate(entries, headers="keys", tablefmt=table_format)
 
     @staticmethod
     def to_table(entries):
@@ -105,7 +103,7 @@ class TabularEditHistoryReport:
             yield item
 
     @staticmethod
-    def compact_table(entries, format):
+    def compact_table(entries, format):  # noqa: A002
         seperator = "\n"
         if format.endswith("pipe"):
             seperator = "<br/>"

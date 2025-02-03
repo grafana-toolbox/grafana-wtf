@@ -50,8 +50,7 @@ def docker_grafana(docker_services):
     """
     docker_services.start("grafana")
     public_port = docker_services.wait_for_service("grafana", 3000)
-    url = "http://admin:admin@{docker_services.docker_ip}:{public_port}".format(**locals())
-    return url
+    return "http://admin:admin@{docker_services.docker_ip}:{public_port}".format(**locals())
 
 
 @pytest.fixture
@@ -108,7 +107,7 @@ def create_datasource(docker_grafana, grafana_version):
         else:
             return {"uid": response["uid"], "type": response["type"]}
 
-    def _create_datasource(name: str, type: str = "testdata", access: str = "proxy", **kwargs):
+    def _create_datasource(name: str, type: str = "testdata", access: str = "proxy", **kwargs):  # noqa: A002
         # Reuse existing datasource.
         try:
             response = grafana.datasource.get_datasource_by_name(name)
@@ -131,7 +130,9 @@ def create_datasource(docker_grafana, grafana_version):
             # TODO: Mimic the original response in order to make the removal work.
             # `{'datasource': {'id': 5, 'uid': 'u9wNRyEnk', 'orgId': 1, ...`.
             if not re.match(
-                "Client Error 409: Data source with (the )?same name already exists", str(ex), re.IGNORECASE
+                "Client Error 409: Data source with (the )?same name already exists",
+                str(ex),
+                re.IGNORECASE,
             ):
                 raise
 
@@ -199,7 +200,8 @@ def create_folder(docker_grafana):
         except GrafanaClientError as ex:
             # TODO: Mimic the original response in order to make the removal work.
             error_exists = re.match(
-                "Client Error 409: a folder or dashboard in the general folder with the same name already exists",
+                "Client Error 409: a folder or dashboard in the "
+                "general folder with the same name already exists",
                 str(ex),
                 re.IGNORECASE,
             )
@@ -292,7 +294,7 @@ def ldi_resources(create_datasource, create_folder, create_dashboard):
             uid="PDF2762CDFF14A314",
             url="http://localhost:8086/",
             user="root",
-            password="root",
+            password="root",  # noqa: S106
             database="ldi_v2",
             secureJsonData={"password": "root"},
         )
@@ -320,22 +322,24 @@ def grafana_version(docker_grafana):
     Return Grafana version number.
     """
     engine = GrafanaWtf(grafana_url=docker_grafana, grafana_token=None)
-    grafana_version = engine.version
-    return grafana_version
+    return engine.version
 
 
 def mkdashboard(title: str, datasources: Optional[List[str]] = None):
     """
     Build dashboard with multiple panels, each with a different data source.
     """
-    # datasource = grafanalib.core.DataSourceInput(name="foo", label="foo", pluginId="foo", pluginName="foo")
+    # datasource = grafanalib.core.DataSourceInput(
+    #    name="foo", label="foo", pluginId="foo", pluginName="foo")
 
     datasources = datasources or []
 
     # Build dashboard object model.
     panels = []
     for datasource in datasources:
-        panel = grafanalib.core.Panel(dataSource=datasource, gridPos={"h": 1, "w": 24, "x": 0, "y": 0})
+        panel = grafanalib.core.Panel(
+            dataSource=datasource, gridPos={"h": 1, "w": 24, "x": 0, "y": 0}
+        )
         panels.append(panel.panel_json(overrides={}))
     dashboard = grafanalib.core.Dashboard(title=title, panels=panels)
 
@@ -343,8 +347,7 @@ def mkdashboard(title: str, datasources: Optional[List[str]] = None):
     dashboard_json = StringIO()
     write_dashboard(dashboard, dashboard_json)
     dashboard_json.seek(0)
-    dashboard = json.loads(dashboard_json.read())
-    return dashboard
+    return json.loads(dashboard_json.read())
 
 
 clean_environment()
