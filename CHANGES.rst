@@ -6,6 +6,12 @@ grafana-wtf changelog
 in progress
 ===========
 
+2025-02-04 0.22.0
+=================
+- Added scanning notification channels by name. Thank you, @nikodemas.
+- Fixed exceptions when non-existent notification channel uid is used.
+  Thank you, @nikodemas.
+
 2025-02-03 0.21.1
 =================
 - Fix variable datasources shown as missing datasource.
@@ -13,7 +19,7 @@ in progress
 
 2025-01-27 0.21.0
 =================
-- Updated channel scanning to discover in what dashboards
+- Updated notification channel scanning to discover in what dashboards
   different notification channels are used. Thanks, @nikodemas.
 
 2025-01-11 0.20.2
