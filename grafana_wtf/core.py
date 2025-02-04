@@ -616,7 +616,11 @@ class GrafanaWtf(GrafanaEngine):
         return self.grafana.notifications.lookup_channels()
 
     def channels_list_by_uid(self, channel_uid):
-        channel = self.grafana.notifications.get_channel_by_uid(channel_uid)
+        try:
+            channel = self.grafana.notifications.get_channel_by_uid(channel_uid)
+        except GrafanaClientError as ex:
+            log.error(f"Error fetching the channel {channel_uid}: {ex}")
+            raise SystemExit(1)
 
         # Scan dashboards and panels to find where the channel is used
         dashboards = self.scan_dashboards()
@@ -648,6 +652,19 @@ class GrafanaWtf(GrafanaEngine):
                     {"dashboard": dashboard["dashboard"]["title"], "panel": panel["title"]}
                 )
         return related_information
+
+    def channels_list_by_name(self, name):
+        channel_list = self.channels_list()
+        channel_uid = ""
+        for channel in channel_list:
+            if channel["name"] == name:
+                channel_uid = channel["uid"]
+                break
+        if channel_uid:
+            return self.channels_list_by_uid(channel_uid)
+        else:
+            log.info(f"Channel with the name {name} doesn't exist")
+            raise SystemExit(0)
 
 
 class Indexer:

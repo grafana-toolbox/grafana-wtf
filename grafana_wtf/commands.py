@@ -41,6 +41,7 @@ def run():
       grafana-wtf [options] plugins list [--id=]
       grafana-wtf [options] plugins status [--id=]
       grafana-wtf [options] channels [--uid=]
+      grafana-wtf [options] channels [--name=]
       grafana-wtf --version
       grafana-wtf (-h | --help)
 
@@ -352,6 +353,8 @@ def run():
     if options.channels:
         if options.uid:
             response = engine.channels_list_by_uid(options.uid)
+        elif options.name:
+            response = engine.channels_list_by_name(options.name)
         else:
             response = engine.channels_list()
         output_results(output_format, response)
