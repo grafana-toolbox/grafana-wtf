@@ -19,7 +19,7 @@ requires = [
     "verlib2<0.3",
     # Filtering
     f"pandas<2.3; {no_linux_on_arm}",
-    f"duckdb<1.2; {no_linux_on_arm}",
+    f"duckdb<1.3; {no_linux_on_arm}",
     # Grafana
     "grafana-client>=4,<5",
     "jsonpath-rw>=1.4.0,<2",
