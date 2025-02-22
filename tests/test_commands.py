@@ -10,7 +10,7 @@ import pytest
 import yaml
 from grafana_client.elements.plugin import get_plugin_by_id
 from munch import munchify
-from verlib2 import version
+from verlib2.packaging import version
 
 import grafana_wtf.commands
 from tests.conftest import mkdashboard
