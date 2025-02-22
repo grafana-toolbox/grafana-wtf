@@ -19,7 +19,7 @@ from munch import Munch, munchify
 from tqdm import tqdm
 from tqdm.contrib.logging import tqdm_logging_redirect
 from urllib3.exceptions import InsecureRequestWarning
-from verlib2 import Version
+from verlib2.packaging.version import Version
 
 from grafana_wtf import __appname__, __version__
 from grafana_wtf.compat import CachedSession
@@ -620,7 +620,7 @@ class GrafanaWtf(GrafanaEngine):
             channel = self.grafana.notifications.get_channel_by_uid(channel_uid)
         except GrafanaClientError as ex:
             log.error(f"Error fetching the channel {channel_uid}: {ex}")
-            raise SystemExit(1)
+            raise SystemExit(1) from ex
 
         # Scan dashboards and panels to find where the channel is used
         dashboards = self.scan_dashboards()
