@@ -223,7 +223,7 @@ class GrafanaEngine:
         if self.progressbar:
             self.start_progressbar(len(self.data.dashboard_list))
 
-        if self.concurrency is None or self.concurrency <= 1:
+        if self.concurrency is None or self.concurrency <= 1 or hasattr(self.grafana.client.s, "cache"):
             self.fetch_dashboards()
         else:
             self.fetch_dashboards_parallel()
