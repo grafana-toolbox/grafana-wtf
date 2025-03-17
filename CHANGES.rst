@@ -6,6 +6,9 @@ grafana-wtf changelog
 in progress
 ===========
 - Started using ``versioningit`` for versioning
+- As concurrency and caching together is problematic, and might
+  lead to segfaults, turn off concurrent downloads by default.
+  Thank you, @glitchwizard.
 
 2025-02-04 0.22.0
 =================
