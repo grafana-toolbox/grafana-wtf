@@ -29,8 +29,8 @@ RUN \
     --mount=type=cache,id=uv,target=/root/.cache/uv \
     true \
     && pip install uv \
-    && uv venv --no-project --relocatable /app \
-    && uv pip install --directory=/app /src
+    && uv venv --relocatable /app \
+    && uv pip install --upgrade --compile-bytecode --directory=/app /src
 
 # Install optional software
 RUN wget --quiet --output-document=/tmp/jq "https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-amd64"
