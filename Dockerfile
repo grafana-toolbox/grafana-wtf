@@ -12,7 +12,7 @@ ENV TERM=linux
 
 # Install prerequisites
 RUN apt-get update
-RUN apt-get --yes install wget
+RUN apt-get --yes install git wget
 
 # Configure build environment
 ENV PIP_ROOT_USER_ACTION=ignore

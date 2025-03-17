@@ -2,6 +2,7 @@
 import os
 
 from setuptools import find_packages, setup
+from versioningit import get_cmdclasses
 
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, "README.rst")).read()
@@ -14,6 +15,7 @@ requires = [
     # Core
     "six",
     "docopt-ng>=0.6.2,<0.10",
+    "importlib-metadata; python_version<'3.8'",
     "munch>=2.5.0,<5",
     "tqdm>=4.60.0,<5",
     "verlib2>=0.3.1,<0.4",
@@ -43,7 +45,7 @@ extras = {
 
 setup(
     name="grafana-wtf",
-    version="0.22.0",
+    cmdclass=get_cmdclasses(),
     description="Grep through all Grafana entities in the spirit of git-wtf",
     long_description=README,
     license="AGPL 3, EUPL 1.2",

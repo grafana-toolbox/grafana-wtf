@@ -1,3 +1,15 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = [
+  "setuptools>=42", # At least v42 of setuptools required.
+  "versioningit",
+]
+
+[tool.versioningit.vcs]
+method = "git-archive"
+default-tag = "0.0.0"
+describe-subst = "$Format:%(describe:tags)$"
+
 [tool.ruff]
 line-length = 100
 
