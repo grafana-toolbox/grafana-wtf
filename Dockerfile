@@ -24,9 +24,9 @@ ENV UV_PYTHON_DOWNLOADS=never
 COPY . /src
 
 # Install package and dependencies
+# --mount=type=cache,id=pip,target=/root/.cache/pip \
+# --mount=type=cache,id=uv,target=/root/.cache/uv \
 RUN \
-    --mount=type=cache,id=pip,target=/root/.cache/pip \
-    --mount=type=cache,id=uv,target=/root/.cache/uv \
     true \
     && pip install uv \
     && uv venv --relocatable /app \
