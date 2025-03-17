@@ -5,6 +5,7 @@ grafana-wtf changelog
 
 in progress
 ===========
+- Started using ``versioningit`` for versioning
 
 2025-02-04 0.22.0
 =================
