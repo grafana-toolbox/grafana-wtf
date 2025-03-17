@@ -250,6 +250,11 @@ Watching out for recent editing activity on any dashboards?
     # Display 50 most recent changes across all dashboards.
     grafana-wtf log --number=50
 
+Concurrency
+===========
+
+Use the ``--concurrency`` option, for example ``--concurrency=5``, to enable
+concurrent downloading per ``ThreadPoolExecutor``.
 
 
 ********
