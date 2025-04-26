@@ -5,6 +5,8 @@ grafana-wtf changelog
 
 in progress
 ===========
+- Relaxed logging when dashboards defined as variables can not be found.
+  Thanks, @GrgDev.
 
 2025-03-18 0.23.0
 =================

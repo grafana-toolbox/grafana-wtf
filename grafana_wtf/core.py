@@ -716,7 +716,7 @@ class Indexer:
                 for ds_uid in values:
                     datasource = self.datasource_by_uid.get(ds_uid)
                     if datasource is None:
-                        log.warning(f"Data source '{ds_uid}' not found")
+                        log.debug(f"Data source '{ds_uid}' not found")
                         continue
                     ds = dict(
                         type=datasource.get("type"),
