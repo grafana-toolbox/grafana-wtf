@@ -7,6 +7,8 @@ in progress
 ===========
 - Fixed 404 error on "dash-folder" type when enumerating dashboards.
   Thanks, @oxy-star and @GarbageYard.
+- Fixed collecting data sources defined by dashboard variables. Thanks,
+  @GrgDev, @cronosnull, and @nikodemas.
 
 2025-03-18 0.23.0
 =================
