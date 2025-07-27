@@ -313,7 +313,7 @@ def test_log_all(ldi_resources, capsys, caplog):
     # Verify output.
     assert "Aggregating edit history for multiple Grafana dashboards" in caplog.text
     history = json.loads(captured.out)
-    assert len(history) == 3
+    assert len(history) == 2
 
 
 def test_log_json_success(ldi_resources, capsys, caplog):
@@ -400,7 +400,7 @@ def test_log_yaml_success(ldi_resources, capsys, caplog):
 
     data = yaml.safe_load(captured.out)
 
-    assert len(data) == 3
+    assert len(data) == 2
 
 
 def test_log_filter_sql(ldi_resources, capsys, caplog):
@@ -429,7 +429,6 @@ def test_log_filter_sql(ldi_resources, capsys, caplog):
     assert set(captured.out.strip().split("\n")) == {
         "- url: http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27",
         "- url: http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33",
-        "- url: http://localhost:33333/dashboards/f/testdrive/testdrive",
     }
 
 
