@@ -260,6 +260,8 @@ class GrafanaEngine:
         log.info("Fetching dashboards one by one")
         results = self.data.dashboard_list
         for dashboard_info in results:
+            if dashboard_info.get("type") == "dash-folder":
+                continue
             self.fetch_dashboard(dashboard_info)
 
     def fetch_dashboards_parallel(self):
