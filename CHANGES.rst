@@ -5,6 +5,9 @@ grafana-wtf changelog
 
 in progress
 ===========
+
+2025-07-27 0.23.1
+=================
 - Fixed 404 error on "dash-folder" type when enumerating dashboards.
   Thanks, @oxy-star and @GarbageYard.
 
