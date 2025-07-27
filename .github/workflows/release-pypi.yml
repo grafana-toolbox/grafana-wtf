@@ -1,0 +1,61 @@
+# Stage Python source distribution and wheel packages through GitHub Actions (GHA) to Python Package Index (PyPI).
+name: "Release: Python package"
+
+on:
+
+  # Build and publish packages when running a release.
+  push:
+    tags:
+      - '*'
+
+  # Build packages on each pull request for validation purposes.
+  pull_request:
+
+  # Build packages each night for validation purposes.
+  schedule:
+    - cron: '0 4 * * *'
+
+  # Allow the job to be triggered manually.
+  workflow_dispatch:
+
+jobs:
+  build-and-publish:
+    name: "Build and publish to PyPI"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest"]
+        python-version: ["3.13"]
+    env:
+      OS_TYPE: ${{ matrix.os }}
+      PYTHON_VERSION: ${{ matrix.python-version }}
+      UV_SYSTEM_PYTHON: 1
+
+    # Trusted publishing.
+    # Specifying a GitHub environment is optional, but strongly encouraged
+    environment: pypi
+    permissions:
+      # IMPORTANT: this permission is mandatory for Trusted Publishing
+      id-token: write
+
+    steps:
+      - name: Acquire sources
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Build package
+        run: |
+          uv pip install build
+          python -m build
+
+      - name: Publish package to PyPI
+        if: startsWith(github.event.ref, 'refs/tags')
+        uses: pypa/gh-action-pypi-publish@release/v1
