@@ -715,10 +715,10 @@ class Indexer:
             # Datasources defined as variables.
             if "type" in node and node["type"] == "datasource":
                 values = to_list(node.get("current", {}).get("value"))
-                for ds_uid in values:
-                    datasource = self.datasource_by_uid.get(ds_uid)
+                for ds_name in values:
+                    datasource = self.datasource_by_name.get(ds_name)
                     if datasource is None:
-                        log.warning(f"Data source '{ds_uid}' not found")
+                        log.warning(f"Data source '{ds_name}' not found")
                         continue
                     ds = dict(
                         type=datasource.get("type"),
