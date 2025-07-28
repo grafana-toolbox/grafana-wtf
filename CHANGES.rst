@@ -6,12 +6,15 @@ grafana-wtf changelog
 in progress
 ===========
 
+2025-07-28 0.23.2
+=================
+- Fixed collecting data sources defined by dashboard variables. Thanks,
+  @GrgDev, @cronosnull, and @nikodemas.
+
 2025-07-27 0.23.1
 =================
 - Fixed 404 error on "dash-folder" type when enumerating dashboards.
   Thanks, @oxy-star and @GarbageYard.
-- Fixed collecting data sources defined by dashboard variables. Thanks,
-  @GrgDev, @cronosnull, and @nikodemas.
 
 2025-03-18 0.23.0
 =================
