@@ -5,6 +5,9 @@ grafana-wtf changelog
 
 in progress
 ===========
+
+2025-09-05 0.23.3
+=================
 - Fixed ``grafana-wtf log`` subcommand for Grafana >= 11.6.0.
 - Fixed compatibility with Grafana >= 12.x.
 - Improved ``get_dashboard_versions`` to collect all pages
