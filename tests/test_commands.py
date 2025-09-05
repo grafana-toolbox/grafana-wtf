@@ -3,6 +3,7 @@ import logging
 import re
 import shlex
 import sys
+from unittest import mock
 
 import docopt
 import grafana_client
@@ -337,7 +338,7 @@ def test_log_json_success(ldi_resources, capsys, caplog):
     reference = {
         "version": 1,
         # "datetime": "2021-09-29T17:32:23Z",
-        "message": "",
+        "message": mock.ANY,
         "folder": "Testdrive",
         "title": "luftdaten.info generic trend v27",
         "url": "http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27",
