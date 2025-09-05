@@ -6,6 +6,7 @@ grafana-wtf changelog
 in progress
 ===========
 - Fixed ``grafana-wtf log`` subcommand for Grafana >= 11.6.0.
+- Fixed compatibility with Grafana >= 12.x.
 
 2025-07-28 0.23.2
 =================

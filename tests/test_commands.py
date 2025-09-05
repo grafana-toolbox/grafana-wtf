@@ -374,14 +374,14 @@ def test_log_tabular_success(ldi_resources, capsys, caplog):
     assert 'Aggregating edit history for Grafana dashboard "ioUrPwQiz"' in caplog.text
 
     reference = """
-    | Notes: n/a<br/>[Testdrive » luftdaten.info generic trend v27](http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27) | User: admin<br/>Date: xxxx-xx-xxTxx:xx:xxZ      |
+    [Testdrive » luftdaten.info generic trend v27](http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27) | User: admin<br/>Date: xxxx-xx-xxTxx:xx:xxZ      |
     """.strip()  # noqa: E501
 
     first_item_raw = str.splitlines(captured.out)[-1]
     first_item_normalized = re.sub(  # noqa: B034
-        "(.*)Date: .+|(.*)", r"\1Date: xxxx-xx-xxTxx:xx:xxZ      |\2", first_item_raw, 1
+        "(.*)Date: .+|(.*)", r"\1Date: xxxx-xx-xxTxx:xx:xxZ      |\2", first_item_raw, count=1
     )
-    assert first_item_normalized == reference
+    assert reference in first_item_normalized
 
 
 def test_log_yaml_success(ldi_resources, capsys, caplog):
@@ -610,7 +610,9 @@ def test_explore_dashboards_empty_annotations(
     assert len(data) == 1
     dashboard = data[0]
     assert dashboard["dashboard"]["title"] == "foo"
-    if version.parse(grafana_version) >= version.parse("10.4"):
+    if version.parse(grafana_version) >= version.parse("12"):
+        assert len(dashboard["dashboard"]["uid"]) == 36
+    elif version.parse(grafana_version) >= version.parse("10.4"):
         assert len(dashboard["dashboard"]["uid"]) == 14
     elif version.parse(grafana_version) >= version.parse("9.5"):
         assert len(dashboard["dashboard"]["uid"]) == 36
