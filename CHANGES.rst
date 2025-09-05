@@ -7,6 +7,8 @@ in progress
 ===========
 - Fixed ``grafana-wtf log`` subcommand for Grafana >= 11.6.0.
 - Fixed compatibility with Grafana >= 12.x.
+- Improved ``get_dashboard_versions`` to collect all pages
+  to avoid missing history. Thanks, @coderabbitai.
 
 2025-07-28 0.23.2
 =================
