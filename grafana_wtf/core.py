@@ -464,11 +464,21 @@ class GrafanaWtf(GrafanaEngine):
     def get_dashboard_versions(self, dashboard_id):
         # https://grafana.com/docs/http_api/dashboard_versions/
         get_dashboard_versions_path = "/dashboards/id/%s/versions" % dashboard_id
-        data = self.grafana.dashboard.client.GET(get_dashboard_versions_path)
-        if "continueToken" in data:
-            return data["versions"]
-        else:
-            return data
+        results = []
+        params = {}
+        while True:
+            data = self.grafana.dashboard.client.GET(get_dashboard_versions_path, params=params)
+            # Older Grafana returned a plain list.
+            if isinstance(data, list):
+                results.extend(data)
+                break
+            # Newer Grafana returns a dict with `versions` and optional `continueToken`.
+            results.extend(data.get("versions", []))
+            token = data.get("continueToken")
+            if not token:
+                break
+            params = {"continueToken": token}
+        return results
 
     def explore_datasources(self):
         # Prepare indexes, mapping dashboards by uid, datasources by name
