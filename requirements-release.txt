@@ -1,5 +1,5 @@
 bump2version<2
 twine<7
 keyring<26
-ruff<0.13
+ruff<0.14
 build<2
