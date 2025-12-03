@@ -73,7 +73,7 @@ jobs:
 
       - name: Run tests
         run: |
-          make test
+          pytest --keepalive --show-capture=all
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
