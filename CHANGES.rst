@@ -5,6 +5,9 @@ grafana-wtf changelog
 
 in progress
 ===========
+
+2025-12-03 0.23.4
+=================
 - CI: Validated support for Python 3.14
 - Dependencies: Permit installation of pandas 2.3, duckdb 1.4, and grafana-client 5.x
 
