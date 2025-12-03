@@ -20,10 +20,10 @@ requires = [
     "tqdm>=4.60.0,<5",
     "verlib2>=0.3.1,<0.4",
     # Filtering
-    f"pandas<2.3; {no_linux_on_arm}",
-    f"duckdb<1.3; {no_linux_on_arm}",
+    f"pandas<2.4; {no_linux_on_arm}",
+    f"duckdb<1.5; {no_linux_on_arm}",
     # Grafana
-    "grafana-client>=4,<5",
+    "grafana-client>=4,<6",
     "jsonpath-rw>=1.4.0,<2",
     # Caching
     "requests-cache>=0.8.0,<2",

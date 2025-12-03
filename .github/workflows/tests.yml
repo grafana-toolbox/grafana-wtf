@@ -69,7 +69,7 @@ jobs:
 
       - name: Set up project
         run: |
-          uv pip install --editable='.[test]'
+          uv pip install --upgrade --only-binary=duckdb --only-binary=pandas --editable='.[test]'
 
       - name: Run tests
         run: |
