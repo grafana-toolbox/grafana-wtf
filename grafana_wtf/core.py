@@ -95,7 +95,9 @@ class GrafanaEngine:
         log.info("Clearing cache")
         requests_cache.clear()
 
-    def enable_concurrency(self, concurrency):
+    def enable_concurrency(self, concurrency: int):
+        if concurrency == 1:
+            concurrency = 0
         self.concurrency = concurrency
 
     @classmethod
