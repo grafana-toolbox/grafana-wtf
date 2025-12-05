@@ -254,8 +254,7 @@ class GrafanaEngine:
     def fetch_dashboard(self, dashboard_info):
         log.debug(f'Fetching dashboard "{dashboard_info["title"]}" ({dashboard_info["uid"]})')
         dashboard = self.grafana.dashboard.get_dashboard(dashboard_info["uid"])
-        if dashboard_info.get("type") != "dash-folder":
-            self.data.dashboards.append(dashboard)
+        self.data.dashboards.append(dashboard)
         if self.taqadum is not None:
             self.taqadum.update(1)
 
@@ -263,6 +262,8 @@ class GrafanaEngine:
         log.info("Fetching dashboards one by one")
         results = self.data.dashboard_list
         for dashboard_info in results:
+            if dashboard_info.get("type") == "dash-folder":
+                continue
             self.fetch_dashboard(dashboard_info)
 
     def fetch_dashboards_parallel(self):
