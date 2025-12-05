@@ -5,6 +5,9 @@ grafana-wtf changelog
 
 in progress
 ===========
+
+2025-12-05 0.23.5
+=================
 - Masked problematic ``--concurrency=1`` setting
 
 2025-12-03 0.23.4
