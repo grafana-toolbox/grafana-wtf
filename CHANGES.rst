@@ -5,7 +5,6 @@ grafana-wtf changelog
 
 in progress
 ===========
-- Started using ``--concurrency=1`` as default value. Thank you, @IgorOhrimenko.
 
 2025-12-03 0.23.4
 =================

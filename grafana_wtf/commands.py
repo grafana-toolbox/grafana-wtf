@@ -53,7 +53,7 @@ def run():
       --format=<format>                 Output format. One of textual, tabular, json, yaml.
       --cache-ttl=<cache-ttl>           Time-to-live for the request cache in seconds. [default: 3600]
       --drop-cache                      Drop cache before requesting resources
-      --concurrency=<concurrency>       Run multiple requests in parallel. [default: 1]
+      --concurrency=<concurrency>       Run multiple requests in parallel. [default: 0]
       --dry-run                         Dry-run mode for the `replace` subcommand.
       --verbose                         Enable verbose mode
       --version                         Show version information
