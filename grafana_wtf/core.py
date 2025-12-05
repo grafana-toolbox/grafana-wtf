@@ -50,7 +50,7 @@ class GrafanaEngine:
         self.grafana_url = grafana_url
         self.grafana_token = grafana_token
 
-        self.concurrency = 5
+        self.concurrency = 0
 
         self.grafana = self.grafana_client_factory(
             self.grafana_url, grafana_token=self.grafana_token
@@ -95,7 +95,9 @@ class GrafanaEngine:
         log.info("Clearing cache")
         requests_cache.clear()
 
-    def enable_concurrency(self, concurrency):
+    def enable_concurrency(self, concurrency: int):
+        if concurrency == 1:
+            concurrency = 0
         self.concurrency = concurrency
 
     @classmethod
