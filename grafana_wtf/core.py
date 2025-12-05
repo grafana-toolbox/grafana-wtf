@@ -50,7 +50,7 @@ class GrafanaEngine:
         self.grafana_url = grafana_url
         self.grafana_token = grafana_token
 
-        self.concurrency = 5
+        self.concurrency = 0
 
         self.grafana = self.grafana_client_factory(
             self.grafana_url, grafana_token=self.grafana_token
