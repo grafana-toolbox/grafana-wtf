@@ -215,7 +215,15 @@ class GrafanaEngine:
                         self.handle_grafana_error(ex)
                         continue
             else:
-                self.data.dashboard_list = self.grafana.search.search_dashboards(limit=5000)
+                page = 1
+                limit = 5000
+                while True:
+                    log.info(f"Fetching dashboards page {page}")
+                    results = self.grafana.search.search_dashboards(limit=limit, page=page)
+                    self.data.dashboard_list.extend(results)
+                    if len(results) < limit:
+                        break
+                    page += 1
             log.info("Found {} dashboard(s)".format(len(self.data.dashboard_list)))
 
         except GrafanaClientError as ex:
