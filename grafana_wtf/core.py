@@ -204,6 +204,7 @@ class GrafanaEngine:
 
     def scan_dashboards(self, dashboard_uids=None):
         log.info("Scanning dashboards")
+        self.data.dashboard_list = []
         try:
             if dashboard_uids is not None:
                 for uid in dashboard_uids:
