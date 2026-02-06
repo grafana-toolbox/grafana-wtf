@@ -5,6 +5,9 @@ grafana-wtf changelog
 
 in progress
 ===========
+
+2026-02-06 0.24.0
+=================
 - Added support for processing more than 5000 dashboards. Thanks, @Speissi.
 
 2025-12-05 0.23.5
