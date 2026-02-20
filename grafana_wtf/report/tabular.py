@@ -29,20 +29,14 @@ class TabularSearchReport(TextualSearchReport):
         print(tabulate(items_rows, headers="keys", tablefmt=self.format))
 
     def get_output_items(self, label, items, url_callback):
-        output = []
-        for item in items:
-            entry = {
+        return [
+            {
                 "Type": label,
                 "Name": self.get_item_name(item),
                 **self.get_bibdata_dict(item, URL=url_callback(item)),
             }
-            if "matches" in item.meta and item.meta.matches:
-                entry["Matches"] = [
-                    {"path": str(match.full_path), "value": match.value}
-                    for match in item.meta.matches
-                ]
-            output.append(entry)
-        return output
+            for item in items
+        ]
 
     def get_bibdata_dict(self, item, **kwargs):
         # Sanity checks.
