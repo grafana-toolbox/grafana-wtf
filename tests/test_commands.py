@@ -202,6 +202,12 @@ def test_find_format_json(ldi_resources, capsys):
     # Verify output.
     data = json.loads(captured.out)
     assert len(data) == 3
+    assert len(data["dashboards"]) == 2
+    for dashboard in data["dashboards"]:
+        assert "Matches" in dashboard
+        assert len(dashboard["Matches"]) == 13
+        assert all(m["value"] == "ldi_readings" for m in dashboard["Matches"])
+        assert all("path" in m for m in dashboard["Matches"])
 
 
 def test_find_format_yaml(ldi_resources, capsys):
@@ -221,6 +227,12 @@ def test_find_format_yaml(ldi_resources, capsys):
     # Verify output.
     data = yaml.safe_load(captured.out)
     assert len(data) == 3
+    assert len(data["dashboards"]) == 2
+    for dashboard in data["dashboards"]:
+        assert "Matches" in dashboard
+        assert len(dashboard["Matches"]) == 13
+        assert all(m["value"] == "ldi_readings" for m in dashboard["Matches"])
+        assert all("path" in m for m in dashboard["Matches"])
 
 
 def test_replace_dashboard_success(ldi_resources, capsys):
