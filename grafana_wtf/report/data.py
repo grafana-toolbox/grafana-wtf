@@ -33,6 +33,16 @@ class DataSearchReport(TabularSearchReport):
         self.verbose = verbose
         self.format = format
 
+    def get_output_items(self, label, items, url_callback):
+        output = super().get_output_items(label, items, url_callback)
+        for entry, item in zip(output, items):
+            if "matches" in item.meta and item.meta.matches:
+                entry["Matches"] = [
+                    {"path": str(match.full_path), "value": match.value}
+                    for match in item.meta.matches
+                ]
+        return output
+
     def display(self, expression, result):
         expression = expression or "*"
         log.info(f"Searching for expression '{expression}' at Grafana instance {self.grafana_url}")
