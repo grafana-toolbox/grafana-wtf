@@ -37,10 +37,9 @@ class TabularSearchReport(TextualSearchReport):
                 **self.get_bibdata_dict(item, URL=url_callback(item)),
             }
             if "matches" in item.meta and item.meta.matches:
-                entry["matches"] = [
+                entry["Matches"] = [
                     {"path": str(match.full_path), "value": match.value}
                     for match in item.meta.matches
-                    if isinstance(match.value, (str, int, float, bool, list))
                 ]
             output.append(entry)
         return output
