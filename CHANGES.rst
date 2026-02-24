@@ -6,6 +6,10 @@ grafana-wtf changelog
 in progress
 ===========
 
+2026-02-24 0.24.1
+=================
+- ``find``: Added matches to JSON and YAML outputs. Thanks, @Speissi.
+
 2026-02-06 0.24.0
 =================
 - Added support for processing more than 5000 dashboards. Thanks, @Speissi.
