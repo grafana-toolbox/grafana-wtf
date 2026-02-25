@@ -442,7 +442,10 @@ class GrafanaWtf(GrafanaEngine):
             if dashboard_uid is not None and dashboard_data["uid"] != dashboard_uid:
                 continue
 
-            dashboard_versions = self.get_dashboard_versions(dashboard_data["id"])
+            dashboard_versions = self.get_dashboard_versions(
+                dashboard_id=dashboard_data["id"], 
+                dashboard_uid=dashboard_data["uid"],
+            )
             for dashboard_revision in dashboard_versions:
                 entry = OrderedDict(
                     version=dashboard_revision["version"],
@@ -472,9 +475,23 @@ class GrafanaWtf(GrafanaEngine):
             if effective_item:
                 results.append(effective_item)
 
-    def get_dashboard_versions(self, dashboard_id):
-        # https://grafana.com/docs/http_api/dashboard_versions/
-        get_dashboard_versions_path = "/dashboards/id/%s/versions" % dashboard_id
+    def get_dashboard_versions(self, dashboard_id=None, dashboard_uid=None):
+        """
+        Get all dashboard versions by dashboard UID.
+
+        https://grafana.com/docs/http_api/dashboard_versions/
+        """
+
+        # Grafana 8 and earlier does not support the uid-based endpoint yet?
+        if Version(self.version) < Version("9"):
+            dashboard_uid = None
+
+        if dashboard_uid is not None:
+            get_dashboard_versions_path = "/dashboards/uid/%s/versions" % dashboard_uid
+        elif dashboard_id is not None:
+            get_dashboard_versions_path = "/dashboards/id/%s/versions" % dashboard_id
+        else:
+            raise ValueError("Either dashboard_id or dashboard_uid must be specified")
         results = []
         params = {}
         while True:

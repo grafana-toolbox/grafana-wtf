@@ -150,7 +150,7 @@ def test_find_textual_datasource_success(ldi_resources, capsys):
     assert "dashboard.panels.[7].panels.[0].datasource: ldi_v2" in captured.out
 
 
-def test_find_tabular_dashboard_success(ldi_resources, capsys):
+def test_find_tabular_dashboard_success(grafana_version, ldi_resources, capsys):
     # Only provision specific dashboard(s).
     ldi_resources(
         dashboards=[
@@ -170,12 +170,24 @@ def test_find_tabular_dashboard_success(ldi_resources, capsys):
         in captured.out
     )
 
-    reference_table = """
+    reference_table_grafana_12_3 = """
 | Type       | Name                             | Title                            | Folder    | UID       | Created              | Updated              | Created by   | Datasources                                                                           | URL                                                                 |
 |:-----------|:---------------------------------|:---------------------------------|:----------|:----------|:---------------------|:---------------------|:-------------|:--------------------------------------------------------------------------------------|:--------------------------------------------------------------------|
 | Dashboards | luftdaten-info-generic-trend-v27 | luftdaten.info generic trend v27 | Testdrive | ioUrPwQiz | xxxx-xx-xxTxx:xx:xxZ | xxxx-xx-xxTxx:xx:xxZ | admin        | -- Grafana --,ldi_v2,weatherbase                                                      | http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27 |
 | Dashboards | luftdaten-info-generic-trend-v33 | luftdaten.info generic trend v33 | Testdrive | jpVsQxRja | xxxx-xx-xxTxx:xx:xxZ | xxxx-xx-xxTxx:xx:xxZ | admin        | -- Grafana --,{'type': 'influxdb', 'uid': 'PDF2762CDFF14A314'},{'uid': 'weatherbase'} | http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33 |
     """.strip()  # noqa: E501
+
+    reference_table_grafana_12_4 = """
+| Type       | Name                             | Title                            | Folder    | UID       | Created              | Updated              | Created by   | Datasources                                                                           | URL                                                                 |
+|:-----------|:---------------------------------|:---------------------------------|:----------|:----------|:---------------------|:---------------------|:-------------|:--------------------------------------------------------------------------------------|:--------------------------------------------------------------------|
+| Dashboards | luftdaten-info-generic-trend-v27 | luftdaten.info generic trend v27 | Testdrive | ioUrPwQiz | xxxx-xx-xxTxx:xx:xxZ | xxxx-xx-xxTxx:xx:xxZ | Anonymous    | -- Grafana --,ldi_v2,weatherbase                                                      | http://localhost:33333/d/ioUrPwQiz/luftdaten-info-generic-trend-v27 |
+| Dashboards | luftdaten-info-generic-trend-v33 | luftdaten.info generic trend v33 | Testdrive | jpVsQxRja | xxxx-xx-xxTxx:xx:xxZ | xxxx-xx-xxTxx:xx:xxZ | Anonymous    | -- Grafana --,{'type': 'influxdb', 'uid': 'PDF2762CDFF14A314'},{'uid': 'weatherbase'} | http://localhost:33333/d/jpVsQxRja/luftdaten-info-generic-trend-v33 |
+    """.strip()  # noqa: E501
+
+    if version.parse(grafana_version) < version.parse("12.4"):
+        reference_table = reference_table_grafana_12_3
+    else:
+        reference_table = reference_table_grafana_12_4
 
     output_table = captured.out[captured.out.find("| Type") :]
     output_table_normalized = re.sub(
