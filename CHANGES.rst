@@ -5,6 +5,7 @@ grafana-wtf changelog
 
 in progress
 ===========
+- Validated compatibility with Grafana >= 12.4.
 
 2026-02-24 0.24.1
 =================
