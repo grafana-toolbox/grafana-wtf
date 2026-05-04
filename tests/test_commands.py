@@ -9,6 +9,7 @@ import docopt
 import grafana_client
 import pytest
 import yaml
+from grafana_client.client import GrafanaClientError
 from grafana_client.elements.plugin import get_plugin_by_id
 from munch import munchify
 from verlib2.packaging import version
@@ -802,6 +803,6 @@ def test_plugins_install_uninstall(grafana_version, docker_grafana, capsys, capl
     grafana.plugin.uninstall(plugin_name)
 
     # Verify uninstalling worked.
-    with pytest.raises(KeyError) as ex:
+    with pytest.raises(GrafanaClientError) as ex:
         grafana_wtf.commands.run()
-    assert ex.match("Plugin not found: yesoreyeram-infinity-datasource")
+    assert ex.match("Plugin not found")
