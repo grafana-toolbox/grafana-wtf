@@ -61,7 +61,7 @@ class DashboardDataDetails:
 
     @classmethod
     def from_dashboard_details(cls, dbdetails: DashboardDetails):
-        ds_panels = cls.collect_data_nodes(dbdetails.panels)
+        ds_panels = cls.collect_data_nodes(cls.flatten_panels(dbdetails.panels))
         ds_annotations = cls.collect_data_nodes(dbdetails.annotations)
         ds_templating = cls.collect_data_nodes(dbdetails.templating)
 
@@ -75,6 +75,22 @@ class DashboardDataDetails:
                     targets.append(target)
 
         return cls(panels=targets, annotations=ds_annotations, templating=ds_templating)
+
+    @staticmethod
+    def flatten_panels(panels):
+        """
+        Expand nested panels of collapsed rows into a flat list.
+
+        Collapsed rows (type == "row") carry their child panels in a nested
+        "panels" attribute, which would otherwise be skipped.
+        """
+        out = []
+        for panel in panels or []:
+            if panel.get("type") == "row" and panel.get("panels"):
+                out.extend(DashboardDataDetails.flatten_panels(panel["panels"]))
+            else:
+                out.append(panel)
+        return out
 
     @staticmethod
     def collect_data_nodes(element):
