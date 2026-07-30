@@ -26,6 +26,7 @@ class GrafanaDataModel:
     annotations: Optional[List[Munch]] = dataclasses.field(default_factory=list)
     snapshots: Optional[List[Munch]] = dataclasses.field(default_factory=list)
     notifications: Optional[List[Munch]] = dataclasses.field(default_factory=list)
+    alert_rules: Optional[List[Munch]] = dataclasses.field(default_factory=list)
 
 
 @dataclasses.dataclass

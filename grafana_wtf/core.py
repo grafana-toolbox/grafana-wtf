@@ -12,7 +12,6 @@ from urllib.parse import parse_qs, urljoin, urlparse
 
 import colored
 import niquests
-import requests_cache
 from grafana_client.api import GrafanaApi
 from grafana_client.client import GrafanaClientError, GrafanaUnauthorizedError
 from munch import Munch, munchify
@@ -93,7 +92,7 @@ class GrafanaEngine:
 
     def clear_cache(self):
         log.info("Clearing cache")
-        requests_cache.clear()
+        self.grafana.client.s.cache.clear()
 
     def enable_concurrency(self, concurrency: int):
         if concurrency == 1:
@@ -153,6 +152,7 @@ class GrafanaEngine:
         self.scan_annotations()
         self.scan_snapshots()
         self.scan_notifications()
+        self.scan_alert_rules()
 
     def scan_admin_stats(self):
         self.data.admin_stats = self.grafana.admin.stats()
@@ -184,6 +184,18 @@ class GrafanaEngine:
                 UserWarning,
                 stacklevel=2,
             )
+
+    def scan_alert_rules(self):
+        if Version(self.grafana.version) < Version("8"):
+            warnings.warn(
+                "Unified Alerting is not available on Grafana < 8",
+                UserWarning,
+                stacklevel=2,
+            )
+            return
+        log.info("Scanning alert rules")
+        self.data.alert_rules = munchify(self.grafana.alertingprovisioning.get_alertrules_all())
+        log.info("Found {} alert rule(s)".format(len(self.data.alert_rules)))
 
     def scan_datasources(self):
         log.info("Scanning datasources")
@@ -593,6 +605,10 @@ class GrafanaWtf(GrafanaEngine):
             results.append(result)
 
         return results
+
+    def explore_alert_rules(self):
+        self.scan_alert_rules()
+        return self.data.alert_rules
 
     def explore_permissions(self):
         self.scan_folders()
