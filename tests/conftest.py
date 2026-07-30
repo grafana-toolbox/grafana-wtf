@@ -277,6 +277,75 @@ def create_dashboard(docker_grafana):
 
 
 @pytest.fixture
+def create_alert_rule(docker_grafana):
+    """
+    Create a Grafana Unified Alerting rule from a test case.
+    After the test case finished, it will remove the alert rule again.
+
+    Requires Grafana 8+ with Unified Alerting enabled.
+
+    The JSON response to `create_alertrule` looks like this::
+
+        {
+          "uid": "abc123",
+          "title": "Test alert rule",
+          "condition": "A",
+          "data": [...],
+          "folderUID": "general",
+          "ruleGroup": "test-group",
+          "noDataState": "NoData",
+          "execErrState": "Error",
+          "for": "5m",
+          "orgId": 1
+        }
+    """
+
+    # Reference to `grafana-client`.
+    grafana = GrafanaWtf.grafana_client_factory(docker_grafana)
+
+    # Keep track of alert rule uids in order to delete them afterwards.
+    alert_rule_uids = []
+
+    def _create_alert_rule(title: str = "wtf-test-alert-rule", folder_uid: str = "general"):
+        alertrule = {
+            "title": title,
+            "condition": "A",
+            "data": [
+                {
+                    "refId": "A",
+                    "datasourceUid": "__expr__",
+                    "queryType": "",
+                    "relativeTimeRange": {"from": 600, "to": 0},
+                    "model": {
+                        "type": "math",
+                        "expression": "1 > 0",
+                        "refId": "A",
+                    },
+                }
+            ],
+            "folderUID": folder_uid,
+            "ruleGroup": "wtf-test-group",
+            "noDataState": "NoData",
+            "execErrState": "Error",
+            "for": "5m",
+            "orgId": 1,
+        }
+        response = grafana.alertingprovisioning.create_alertrule(alertrule, disable_provenance=True)
+        uid = response["uid"]
+        alert_rule_uids.append(uid)
+        return uid
+
+    yield _create_alert_rule
+
+    if CLEANUP_RESOURCES:
+        for uid in alert_rule_uids:
+            try:
+                grafana.alertingprovisioning.delete_alertrule(uid)
+            except GrafanaClientError:
+                pass
+
+
+@pytest.fixture
 def ldi_resources(create_datasource, create_folder, create_dashboard):
     """
     Create a Grafana dashboard from a test case.

@@ -772,6 +772,29 @@ def test_plugins_status_app(grafana_version, docker_grafana, capsys, caplog):
         assert plugin.health == {"message": "", "status": "OK"}
 
 
+def test_explore_alerts(grafana_version, create_alert_rule, capsys, caplog):
+    """
+    Verify that `explore alerts` lists Unified Alerting rules.
+    """
+    if version.parse(grafana_version) < version.parse("8"):
+        raise pytest.skip("Unified Alerting is only available on Grafana 8+")
+
+    # Create an alert rule and capture its UID.
+    rule_uid = create_alert_rule(title="wtf-test-alert-rule")
+
+    # Run command and capture JSON output.
+    set_command("explore alerts", "--format=json")
+    with caplog.at_level(logging.DEBUG):
+        grafana_wtf.commands.run()
+    captured = capsys.readouterr()
+
+    # Verify the created alert rule is present in the output.
+    data = json.loads(captured.out)
+    assert isinstance(data, list)
+    uids = [item["uid"] for item in data]
+    assert rule_uid in uids
+
+
 def test_plugins_install_uninstall(grafana_version, docker_grafana, capsys, caplog):
     """
     Verify the plugin status when installing/uninstalling a plugin.
