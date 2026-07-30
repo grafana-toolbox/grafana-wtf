@@ -186,9 +186,9 @@ class GrafanaEngine:
             )
 
     def scan_alert_rules(self):
-        if Version(self.grafana.version) < Version("8"):
+        if Version(self.grafana.version) < Version("9"):
             warnings.warn(
-                "Unified Alerting is not available on Grafana < 8",
+                "Unified Alerting is not available on Grafana < 9",
                 UserWarning,
                 stacklevel=2,
             )

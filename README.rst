@@ -195,7 +195,7 @@ How to find unused data sources?
 Explore Unified Alerting rules
 ==============================
 
-Dump all alert rules (Grafana 8+)::
+Dump all alert rules (Grafana 9+)::
 
     # Display all Unified Alerting rules.
     grafana-wtf explore alerts --format=json

@@ -776,8 +776,8 @@ def test_explore_alerts(grafana_version, create_alert_rule, capsys, caplog):
     """
     Verify that `explore alerts` lists Unified Alerting rules.
     """
-    if version.parse(grafana_version) < version.parse("8"):
-        raise pytest.skip("Unified Alerting is only available on Grafana 8+")
+    if version.parse(grafana_version) < version.parse("9"):
+        raise pytest.skip("Unified Alerting is only available on Grafana 9+")
 
     # Create an alert rule and capture its UID.
     rule_uid = create_alert_rule(title="wtf-test-alert-rule")

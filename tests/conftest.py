@@ -282,7 +282,7 @@ def create_alert_rule(docker_grafana):
     Create a Grafana Unified Alerting rule from a test case.
     After the test case finished, it will remove the alert rule again.
 
-    Requires Grafana 8+ with Unified Alerting enabled.
+    Requires Grafana 9+ with Unified Alerting enabled.
 
     The JSON response to `create_alertrule` looks like this::
 
