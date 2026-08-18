@@ -32,6 +32,7 @@ def run():
     """
     Usage:
       grafana-wtf [options] info
+      grafana-wtf [options] explore alerts
       grafana-wtf [options] explore datasources
       grafana-wtf [options] explore dashboards [--data-details] [--queries-only]
       grafana-wtf [options] explore permissions
@@ -77,6 +78,14 @@ def run():
 
       # Display Grafana version.
       grafana-wtf info --format=json | jq -r '.grafana.version'
+
+    Explore alerts:
+
+      # Display all Unified Alerting rules.
+      grafana-wtf explore alerts --format=json
+
+      # Display only alert rule UIDs.
+      grafana-wtf explore alerts --format=json | jq '.[].uid'
 
     Explore data sources:
 
@@ -325,6 +334,10 @@ def run():
         results = engine.explore_dashboards(
             with_data_details=options.data_details, queries_only=options.queries_only
         )
+        output_results(output_format, results)
+
+    if options.explore and options.alerts:
+        results = engine.explore_alert_rules()
         output_results(output_format, results)
 
     if options.explore and options.permissions:

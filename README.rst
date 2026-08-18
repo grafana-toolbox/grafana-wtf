@@ -64,11 +64,12 @@ Display 50 most recent changes across all dashboards.
 
     grafana-wtf log --number=50
 
-Explore dashboards and datasources in more detail.
+Explore dashboards, datasources, and alert rules in more detail.
 ::
 
     grafana-wtf explore dashboards
     grafana-wtf explore datasources
+    grafana-wtf explore alerts
 
 Explore plugins.
 ::
@@ -189,6 +190,18 @@ How to find unused data sources?
 
     # Display names of unused datasources as a flat list.
     grafana-wtf explore datasources --format=json | jq -r '.unused[].datasource.name'
+
+
+Explore Unified Alerting rules
+==============================
+
+Dump all alert rules (Grafana 9+)::
+
+    # Display all Unified Alerting rules.
+    grafana-wtf explore alerts --format=json
+
+    # Display only alert rule UIDs.
+    grafana-wtf explore alerts --format=json | jq '.[].uid'
 
 
 Explore dashboards
