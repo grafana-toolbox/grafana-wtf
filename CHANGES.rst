@@ -5,6 +5,9 @@ grafana-wtf changelog
 
 in progress
 ===========
+
+2026-08-18 0.25.0
+=================
 - Added ``explore alerts`` command for Grafana Unified Alerting rules.
   Thanks, @nikodemas.
 
