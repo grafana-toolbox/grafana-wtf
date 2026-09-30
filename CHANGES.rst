@@ -5,6 +5,7 @@ grafana-wtf changelog
 
 in progress
 ===========
+- fix: surface queries nested inside collapsed dashboard rows. Thanks, @PrayagS.
 
 2026-08-18 0.25.0
 =================
