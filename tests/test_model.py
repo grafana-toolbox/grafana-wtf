@@ -3,7 +3,7 @@ import re
 import pytest
 from munch import Munch
 
-from grafana_wtf.model import DatasourceItem
+from grafana_wtf.model import DashboardDataDetails, DatasourceItem
 
 DATA = dict(uid="foo", name="bar", type="baz", url="qux")
 
@@ -35,6 +35,33 @@ def test_datasource_item_dict_unknown_attribute():
     with pytest.raises(TypeError) as ex:
         DatasourceItem.from_payload(mydata)
     assert ex.match(re.escape("__init__() got an unexpected keyword argument 'more'"))
+
+
+def test_flatten_panels_expands_collapsed_rows():
+    """
+    Panels nested inside collapsed rows must be surfaced.
+
+    https://github.com/grafana-toolbox/grafana-wtf/issues/nested-rows
+    """
+    panels = [
+        {"id": 1, "type": "timeseries", "datasource": "prom"},
+        {
+            "id": 2,
+            "type": "row",
+            "panels": [
+                {"id": 3, "type": "timeseries", "datasource": "prom"},
+                {
+                    "id": 4,
+                    "type": "row",
+                    "panels": [{"id": 5, "type": "timeseries", "datasource": "prom"}],
+                },
+            ],
+        },
+    ]
+    flat = DashboardDataDetails.flatten_panels(panels)
+    ids = [p["id"] for p in flat]
+    assert ids == [1, 3, 5]
+    assert all(p["type"] != "row" for p in flat)
 
 
 def test_datasource_item_dict_compensate_datasource():
