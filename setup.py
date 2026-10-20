@@ -20,8 +20,8 @@ requires = [
     "tqdm>=4.60.0,<5",
     "verlib2>=0.3.1,<0.4",
     # Filtering
-    f"pandas<2.4; {no_linux_on_arm}",
-    f"duckdb<1.5; {no_linux_on_arm}",
+    f"pandas<3.2; {no_linux_on_arm}",
+    f"duckdb<2.1; {no_linux_on_arm}",
     # Grafana
     "grafana-client>=4,<6",
     "jsonpath-rw>=1.4.0,<2",
@@ -73,6 +73,7 @@ setup(
         "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3.13",
         "Programming Language :: Python :: 3.14",
+        "Programming Language :: Python :: 3.15",
         "Topic :: Communications",
         "Topic :: Database",
         "Topic :: Internet",

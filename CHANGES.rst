@@ -5,6 +5,7 @@ grafana-wtf changelog
 
 in progress
 ===========
+- Validated support for Python 3.15
 
 2026-09-30 0.25.1
 =================
