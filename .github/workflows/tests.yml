@@ -25,10 +25,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "ubuntu-latest" ]
+        os: [ "ubuntu-22.04" ]
         python-version: [
           "3.8",
-          "3.14",
+          "3.15",
         ]
         grafana-version:
           - "6.7.6"
